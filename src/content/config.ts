@@ -55,6 +55,16 @@ const projects = defineCollection({
     featured: z.boolean().default(false).optional(),
     priority: z.number().int().nonnegative().optional(),
     visibility: z.enum(['public', 'private']).default('public').optional(),
+    external: z
+      .object({
+        github: z
+          .object({
+            repo: z.string(), // e.g., "owner/repo"
+            branch: z.string().default('main').optional(),
+          })
+          .optional(),
+      })
+      .optional(),
   }),
 });
 
@@ -68,4 +78,3 @@ const tags = defineCollection({
 });
 
 export const collections = { projects, tags };
-

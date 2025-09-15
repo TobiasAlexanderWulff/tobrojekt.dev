@@ -27,6 +27,7 @@ This repo is intentionally tech‑agnostic at this stage. For overarching goals,
 Notes
 - Search uses Pagefind. The `pagefind` index is generated in `postbuild`; search UI assets are only available after `npm run build`.
 - Content is managed via Astro Content Collections in `src/content/`. See schemas in `src/content/config.ts`.
+ - Optional external metadata: You can add `external.github` to a project entry to fetch the latest commit date at build time. Set `GITHUB_TOKEN` to raise rate limits; builds gracefully fall back if the API is unavailable.
 
 ## Content Model
 See tech‑neutral fields and invariants in `AGENTS.md` (Projects, Tags/Categories, Site Metadata). Astro content schemas live in `src/content/config.ts`.

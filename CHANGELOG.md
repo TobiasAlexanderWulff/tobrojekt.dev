@@ -18,3 +18,7 @@ The format is inspired by Keep a Changelog. Semantic Versioning will be adopted 
   - Example MDX project at `src/content/projects/tobrojekt-dev.mdx`.
   - Tags data at `src/content/tags/`.
   - Pages: home, projects list, project detail, tags, search.
+- Sitemap and robots endpoints: `src/pages/sitemap.xml.ts`, `src/pages/robots.txt.ts`.
+- Project detail page now shows tags, status, and dates.
+- Tetris project entry updated with `dates.updated` and `priority`.
+ - Optional GitHub integration: Fetch latest commit date for projects with `external.github` metadata.

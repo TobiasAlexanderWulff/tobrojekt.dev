@@ -1,6 +1,7 @@
 ---
 import Base from "~/layouts/Base.astro";
 import { getCollection } from 'astro:content';
+import { getLatestCommitDate, formatYMD } from "~/lib/github";
 
 export async function getStaticPaths() {
   const entries = await getCollection('projects');
@@ -11,6 +12,15 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
+
+// Prefer external GitHub updated date when configured
+let externalUpdated: string | null = null;
+const gh = entry.data.external?.github as { repo?: string; branch?: string } | undefined;
+if (gh?.repo) {
+  externalUpdated = await getLatestCommitDate(gh.repo, gh.branch ?? 'main');
+}
+const updatedDate = externalUpdated ?? entry.data.dates?.updated;
+const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
 ---
 <Base title={`${entry.data.title} – tobrojekt.dev`} description={entry.data.summary}>
   <article class="container py-10">
@@ -30,8 +40,8 @@ const { Content } = await entry.render();
           {entry.data.dates?.completed ? (
             <span class="ml-3">Completed: {entry.data.dates.completed}</span>
           ) : null}
-          {!entry.data.dates?.completed && entry.data.dates?.updated ? (
-            <span class="ml-3">Updated: {entry.data.dates.updated}</span>
+          {!entry.data.dates?.completed && displayUpdated ? (
+            <span class="ml-3">Updated: {displayUpdated}</span>
           ) : null}
         </p>
       ) : null}

@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { getLatestCommitDate } from "~/lib/github";
 
 export async function GET({ site }: { site: URL }) {
   const projects = await getCollection('projects');
@@ -25,8 +26,20 @@ export async function GET({ site }: { site: URL }) {
     add(`/tags/${t.data.id}`);
   }
 
+  // Pre-fetch external updated dates for projects with GitHub metadata
+  const externalUpdated = new Map<string, string>();
+  await Promise.all(
+    projects.map(async (p) => {
+      const gh = (p.data as any).external?.github as { repo?: string; branch?: string } | undefined;
+      if (gh?.repo) {
+        const dt = await getLatestCommitDate(gh.repo, gh.branch ?? 'main');
+        if (dt) externalUpdated.set(p.slug, dt);
+      }
+    })
+  );
+
   const projectLastmod = (p: (typeof projects)[number]) =>
-    p.data.dates?.updated ?? p.data.dates?.completed ?? p.data.dates?.created ?? undefined;
+    externalUpdated.get(p.slug) ?? p.data.dates?.updated ?? p.data.dates?.completed ?? p.data.dates?.created ?? undefined;
 
   const xmlItems = [
     // Static pages (no lastmod)
@@ -55,4 +68,3 @@ export async function GET({ site }: { site: URL }) {
     },
   });
 }
-
