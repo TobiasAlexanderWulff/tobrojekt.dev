@@ -31,7 +31,38 @@
       "width": 3000,
       "height": 1500
     },
-    "images": []
+    "images": [
+      {
+        "src": "media/sigmoid_fashionmnist_overall_gradient_heatmap.png",
+        "alt": "Zusammengefasste Gradienten Heatmap (Sigmoid, FashionMNIST)",
+        "width": 3600,
+        "height": 2295
+      },
+      {
+        "src": "media/spline_fashionmnist_overall_gradient_heatmap.png",
+        "alt": "Zusammengefasste Gradienten Heatmap (Spline, FashionMNIST)",
+        "width": 3600,
+        "height": 2295
+      },
+      {
+        "src": "media/fashionmnist_combined_accuracy.png",
+        "alt": "Kombinierte Genauigkeiten (FashionMNIST)",
+        "width": 3000,
+        "height": 1500
+      },
+      {
+        "src": "media/fashionmnist_combined_log10loss.png",
+        "alt": "Kombinierte Log10-Verluste (FashionMNIST)",
+        "width": 3000,
+        "height": 1500
+      },
+      {
+        "src": "media/train_times.png",
+        "alt": "Trainingszeiten über Experimente (Balkendiagramm)",
+        "width": 2400,
+        "height": 1500
+      }
+    ]
   },
   "dates": {
     "created": "2025-07-08",

@@ -53,6 +53,20 @@ const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
           ))}
         </div>
       ) : null}
+      {entry.data.media?.social_card?.src ? (
+        <figure class="mt-4 max-w-4xl mx-auto inline-flex">
+          <img
+            src={entry.data.media.social_card.src}
+            alt={entry.data.media.social_card.alt}
+            width={entry.data.media.social_card.width}
+            height={entry.data.media.social_card.height}
+            class="w-full h-auto rounded border"
+            loading="eager"
+            decoding="async"
+            onerror="this.onerror=null;this.style.display='none'"
+          />
+        </figure>
+      ) : null}
       {entry.data.links?.length ? (
         <div class="mt-3 flex flex-wrap gap-3">
           {entry.data.links.map((l) => {
@@ -74,5 +88,24 @@ const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
     <div class="prose max-w-none">
       <Content />
     </div>
+    {Array.isArray(entry.data.media?.images) && entry.data.media.images.length > 0 ? (
+      <section class="mt-8">
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {entry.data.media.images.map((img) => (
+            <li class="border rounded overflow-hidden">
+              <img
+                src={img.src}
+                alt={img.alt}
+                width={img.width}
+                height={img.height}
+                loading="lazy"
+                decoding="async"
+                class="w-full h-auto"
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ) : null}
   </article>
 </Base>

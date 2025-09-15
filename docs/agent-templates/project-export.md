@@ -30,7 +30,9 @@ Dieses Template instruiert einen Coding‑Agenten in einem Fremd‑Repository, a
 - `tags`/`categories`: Aus Tech/Domain/Use‑Cases; 5–10 Tags, kurz und konsistent.
 - `roles`/`skills`: Z. B. `engineering`, `design`, relevante Skills/Technologien.
 - `links`: Mindestens `source`; optional `demo`, `docs`, `related` (Label + URL).
-- `media`: 1–3 Bilder, ideal ein Cover/Social‑Bild; immer `alt`, wenn möglich `width`/`height`.
+- `media`: Ein Social‑Bild für die Vorschau/Hero und optional 1–6 Galeriebilder.
+  - `social_card`: Empfohlen 1200×630 (1.91:1), Alt‑Text erforderlich; `width`/`height` wenn verfügbar.
+  - `images`: Zusätzliche Screenshots/Diagramme; Alt‑Text erforderlich; `width`/`height` wenn verfügbar.
 - `dates`: ISO‑8601 (`YYYY-MM-DD`) für `created`, `updated`; optional `started`, `completed`.
 - `metrics`: Nur stabile Zahlen (z. B. GitHub Stars) plus `collectedAt` Datum; sonst weglassen.
 - `featured`/`priority`/`visibility`: aus Eingaben setzen; Defaults respektieren.
@@ -42,7 +44,7 @@ Lege Dateien relativ zum Arbeitsverzeichnis im folgenden Pfad an:
 ```
 portfolio-export/<slug>/
   ├─ project.json
-  ├─ social-card.png         (optional, 1200×630)
+  ├─ social-card.png         (optional, empfohlen 1200×630)
   └─ media/                  (weitere Bilder/Assets)
 ```
 
@@ -70,14 +72,15 @@ portfolio-export/<slug>/
     "related": [{ "label": "<Name>", "url": "https://…" }]
   },
   "media": {
-    "cover": {
-      "src": "media/cover.png",
+    "social_card": {
+      "src": "social-card.png",
       "alt": "<Alt-Text>",
       "width": 1200,
       "height": 630
     },
     "images": [
-      { "src": "media/screenshot-1.png", "alt": "<Alt>", "width": 1600, "height": 900 }
+      { "src": "media/screenshot-1.png", "alt": "<Alt>", "width": 1600, "height": 900 },
+      { "src": "media/screenshot-2.png", "alt": "<Alt>", "width": 1600, "height": 900 }
     ]
   },
   "dates": {
@@ -108,7 +111,7 @@ portfolio-export/<slug>/
 ## 8) Validierung (Checkliste vor Übergabe)
 - Pflichtfelder gesetzt: `id`, `slug`, `title`, `summary`, `visibility`.
 - URLs absolut und plausibel; externe Erreichbarkeit nicht hart voraussetzen.
-- Alle `media.*.alt` nicht leer; Dimensionen, wenn eruierbar.
+- Alle `media.*.alt` nicht leer; Dimensionen, wenn eruierbar. `social_card` nach Möglichkeit 1200×630.
 - ISO‑Datumformat; keine futuristischen Datumswerte.
 - Keine Secrets/Keys im Exportordner.
 - Wenn `metrics` gesetzt, dann inkl. `collectedAt` (ISO‑Datum).
