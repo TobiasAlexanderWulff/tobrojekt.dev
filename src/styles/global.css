@@ -15,3 +15,9 @@
   padding-right: 1rem;
 }
 
+/* Minimal markdown/MDX styles when typography plugin is absent */
+.prose ul { list-style: disc; margin-left: 1.25rem; padding-left: 0.25rem; }
+.prose ol { list-style: decimal; margin-left: 1.25rem; padding-left: 0.25rem; }
+.prose li { margin: 0.25rem 0; }
+.prose h2, .prose h3 { margin-top: 1.25rem; font-weight: 600; }
+.prose p + ul, .prose p + ol { margin-top: 0.5rem; }

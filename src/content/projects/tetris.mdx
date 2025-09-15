@@ -1,30 +1,114 @@
 ---
-id: "proj_tetris"
+id: "gh:TobiasAlexanderWulff/tetris"
 title: "Tetris"
-summary: "A React + TypeScript Tetris game."
-status: "active"
-tags: ["game", "react", "typescript", "tetris"]
-roles: ["owner", "developer"]
-skills: ["react", "typescript"]
+summary: "Ein modernes Tetris in TypeScript – organisiert in einer aufgeräumten Monorepo: leichte Core-Engine plus schneller Vite + React Web-Client mit anpassbaren Controls, Audio und lokalen Highscores."
+status: active
+tags: 
+  - typescript
+  - react
+  - vite
+  - "web-audio"
+  - pnpm
+  - game
+  - monorepo
+categories: 
+  - game
+  - "web-app"
+roles: 
+  - engineering
+skills: 
+  - TypeScript
+  - React
+  - Vite
+  - Web Audio API
+  - State management
+  - Unit testing (Vitest)
 links:
   - rel: "demo"
-    label: "Play online"
+    label: "Play Online"
     url: "https://tetris.tobrojekt.dev"
     icon: "/icons/tetris.svg"
   - rel: "source"
     label: "GitHub"
     url: "https://github.com/TobiasAlexanderWulff/tetris"
-external:
-  github:
+media: 
+  social_card: 
+    src: "/projects/tetris/cover.png"
+    alt: "Gameplay view with playfield, next queue, and HUD."
+    width: 3000
+    height: 1500
+  images: 
+    - 
+      src: "/projects/tetris/screenshot-gameplay.png"
+      alt: "In-game action at high level with colorful tetromino stack."
+      width: 1908
+      height: 1022
+    - 
+      src: "/projects/tetris/screenshot-settings.png"
+      alt: "Settings modal with controls, DAS/ARR, theme, audio, and highscores actions."
+      width: 606
+      height: 853
+    - 
+      src: "/projects/tetris/screenshot-gameover.png"
+      alt: "Game Over dialog showing score table with new #1 score."
+      width: 963
+      height: 971
+dates: 
+  created: "2025-09-09"
+  updated: "2025-09-14"
+featured: true
+priority: 999
+visibility: public
+external: 
+  github: 
     repo: "TobiasAlexanderWulff/tetris"
     branch: "main"
-dates:
-  updated: "2025-09-15"
-priority: 2
-featured: true
-visibility: "public"
 ---
 
-A browser-based Tetris built with React and TypeScript.
+Dieses Projekt ist eine modulare **Tetris-Implementierung** in einer Monorepo-Struktur mit zwei Packages:  
+- `@tetris/core` – Engine-Scaffolding  
+- `@tetris/web` – spielbarer Web-Client auf Basis von HTML5 Canvas (60 FPS)  
 
-Features include keyboard controls, piece previews, and responsive layout. The project showcases a clean component architecture and game-loop state management in React.
+# Tetris Monorepo
+
+Dieses Projekt ist eine pragmatische **Tetris-Implementierung** und wird in einer **zwei-Package-Monorepo** organisiert:
+
+- `@tetris/core` – Engine-Scaffolding, das grundlegende Spiellogik und Datenstrukturen bereitstellt  
+- `@tetris/web` – der spielbare Web-Client, der über ein HTML5-Canvas rendert und auf eine flüssige 60 FPS Erfahrung ausgelegt ist  
+
+---
+
+## Features
+
+- **Gameplay & Regeln**  
+  - Guideline-inspirierte Mechaniken: SRS, 7-Bag-Randomizer, klassisches Scoring  
+  - Unterstützt Ghost Piece, Hold-Funktion und Next-Queue  
+  - Einstellbare Parameter wie DAS, ARR und 180°-Rotation  
+  - Lokale Highscores mit Export-, Import- und Clear-Optionen  
+
+- **UI & UX**  
+  - Schlanke, klare Oberfläche  
+  - Konfigurierbare Themes  
+  - Optionale Animationen und Maussteuerung  
+
+- **Audio**  
+  - Abstrakte Audio-Service-Schicht mit Web-Audio-Adapter  
+  - Engine-Events wie Line Clear, Tetris und Level Up werden in SFX und Musik gemappt  
+  - Zukunftssicher erweiterbar für Musik und individuelle Soundsets  
+
+---
+
+## Technologie & Projektpflege
+
+- **TypeScript** als durchgehende Sprache  
+- **Vite** für schnelle Entwicklungs- und Build-Zyklen  
+- **Vitest** und **Testing Library** für Unit- und UI-Tests  
+- **ESLint** und **Prettier** für Codequalität und Konsistenz  
+
+Darüber hinaus sorgt die Monorepo-Struktur für klare Abgrenzungen und Wiederverwendbarkeit. Projekt­hygiene steht im Vordergrund – mit gemeinsamen Workspace-Skripten, CI-Hooks und einer dokumentierten Roadmap für künftige Features wie Maussteuerung und erweiterte Audiofunktionen.  
+
+---
+
+## Zielsetzung
+
+Dieses MVP bietet ein solides Fundament für eine guideline-orientierte Tetris-Variante. Es kombiniert eine moderne technische Basis mit klarer Architektur und schafft so Raum für zukünftige Erweiterungen, ohne Kompromisse bei Lesbarkeit, Testbarkeit und Performance.

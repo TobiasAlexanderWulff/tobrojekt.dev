@@ -1,0 +1,110 @@
+---
+id: "gh:TobiasAlexanderWulff/spline-vgp-project"
+title: "Spline-VGP-Projekt"
+summary: "Untersuchung einer Spline-basierten Sigmoid-Aktivierung zur Abschwächung des Vanishing-Gradient-Problems in tiefen MLPs; reproduzierbare Experimente mit Auto-Plots im Vergleich zu ReLU und Sigmoid."
+status: active
+tags: 
+  - python
+  - pytorch
+  - "deep-learning"
+  - "activation-function"
+  - spline
+  - "vanishing-gradient"
+  - mlp
+  - experiment
+  - visualization
+  - reproducibility
+categories: 
+  - "machine-learning"
+  - research
+roles: 
+  - engineering
+  - research
+skills: 
+  - Python
+  - PyTorch
+  - NumPy
+  - Pandas
+  - Matplotlib
+  - Seaborn
+  - YAML
+links: 
+  - 
+    rel: source
+    label: GitHub
+    url: "https://github.com/TobiasAlexanderWulff/spline-vgp-project"
+media: 
+  social_card: 
+    src: "/projects/spline-vgp-projekt/cover.png"
+    alt: Sigmoid vs. Spline Aktivierung und Ableitungen
+    width: 3000
+    height: 1500
+  images: 
+    - 
+      src: "/projects/spline-vgp-projekt/sigmoid_fashionmnist_overall_gradient_heatmap.png"
+      alt: "Zusammengefasste Gradienten Heatmap (Sigmoid, FashionMNIST)"
+      width: 3600
+      height: 2295
+    - 
+      src: "/projects/spline-vgp-projekt/spline_fashionmnist_overall_gradient_heatmap.png"
+      alt: "Zusammengefasste Gradienten Heatmap (Spline, FashionMNIST)"
+      width: 3600
+      height: 2295
+    - 
+      src: "/projects/spline-vgp-projekt/fashionmnist_combined_accuracy.png"
+      alt: Kombinierte Genauigkeiten (FashionMNIST)
+      width: 3000
+      height: 1500
+    - 
+      src: "/projects/spline-vgp-projekt/fashionmnist_combined_log10loss.png"
+      alt: "Kombinierte Log10-Verluste (FashionMNIST)"
+      width: 3000
+      height: 1500
+    - 
+      src: "/projects/spline-vgp-projekt/train_times.png"
+      alt: Trainingszeiten über Experimente (Balkendiagramm)
+      width: 2400
+      height: 1500
+dates: 
+  created: "2025-07-08"
+  updated: "2025-08-24"
+  started: "2025-07-08"
+featured: true
+priority: 999
+visibility: public
+external: 
+  github: 
+    repo: "TobiasAlexanderWulff/spline-vgp-project"
+---
+
+In diesem Projekt wird eine **Spline-basierte Variante der Sigmoid-Aktivierung** untersucht.  
+Die Funktion verhält sich im Zentrum ähnlich wie die klassische Sigmoid, läuft an den Rändern jedoch linear aus.  
+Das Ziel ist es, in tiefen MLPs stabilere Gradienten zu erreichen und das Vanishing-Gradient-Problem zu reduzieren.  
+
+---
+
+### Ziele und Vorgehen
+- Reproduzierbare Experimente über YAML-Konfigurationen (Einzelläufe, Batch-Tests, Smoke-Tests)  
+- Datensätze: FashionMNIST und CIFAR-10, optional Tiny ImageNet  
+- Konsistente Logs pro Epoche mit Loss, Accuracy und Gradientenmetriken  
+- Automatisch generierte Plots für Lernkurven, Gradienten-Heatmaps und Trainingszeiten  
+- Fairer Vergleich zwischen ReLU, klassischer Sigmoid und Spline-Sigmoid  
+
+---
+
+### Technischer Rahmen
+Die Aktivierungsfunktion wird mithilfe **kubischer Hermite-Splines** umgesetzt, mit konfigurierbarer Segmentanzahl und anpassbaren x-Grenzen.  
+Trainiert wird mit **PyTorch**, **Adam** und **CrossEntropy**, unter Einsatz deterministischer Seeds sowie geeigneter CUDNN- und TF32-Einstellungen.  
+
+Die Codebasis ist modular aufgebaut:  
+- `models/activations.py` (Basisaktivierungen)  
+- `models/sigmoid_spline_activation.py` (Spline-Implementierung)  
+- `training/trainer.py` (Trainingslogik)  
+- `training/utils.py` (Hilfsfunktionen)  
+
+---
+
+### Erwartetes Ergebnis
+Das Projekt soll nachvollziehbare und wiederholbare Vergleiche ermöglichen,  
+schnelle Explorationszyklen unterstützen und klare Artefakte wie Logs und Plots liefern.  
+

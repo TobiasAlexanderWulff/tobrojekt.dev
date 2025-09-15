@@ -22,6 +22,22 @@ if (gh?.repo) {
 }
 const updatedDate = externalUpdated ?? entry.data.dates?.updated;
 const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
+
+// Prefer an inline playable demo when available
+const demoLink = entry.data.links?.find((l) => l.rel === 'demo');
+let inlineDemoUrl: string | null = null;
+if (demoLink?.url) {
+  try {
+    const parsedDemoUrl = new URL(demoLink.url);
+    if (parsedDemoUrl.protocol === 'https:') {
+      inlineDemoUrl = parsedDemoUrl.toString();
+    }
+  } catch {
+    inlineDemoUrl = null;
+  }
+}
+const sc = entry.data.media?.social_card;
+const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}%` : '56.25%';
 ---
 <Base title={`${entry.data.title} – tobrojekt.dev`} description={entry.data.summary}>
   <article class="container py-10">
@@ -53,6 +69,47 @@ const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
           ))}
         </div>
       ) : null}
+      {inlineDemoUrl ? (
+        <section class="mt-4 max-w-4xl">
+          <div class="rounded border overflow-hidden">
+            <div class="relative w-full" style={`padding-top: ${aspectPadding}`}>
+              <iframe
+                src={inlineDemoUrl}
+                title={`${entry.data.title} demo`}
+                loading="lazy"
+                allow="autoplay; fullscreen; clipboard-write; gamepad"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
+                class="absolute inset-0 w-full h-full"
+              ></iframe>
+            </div>
+            <div class="px-3 py-2 text-xs text-slate-600 bg-slate-50 border-t">
+              If the demo fails to load in your browser, open it in a new tab:
+              <a
+                href={demoLink?.url ?? inlineDemoUrl}
+                class="ml-1 text-blue-700 hover:underline"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {demoLink?.label ?? 'Open demo'}
+              </a>
+            </div>
+          </div>
+        </section>
+      ) : entry.data.media?.social_card?.src ? (
+        <figure class="mt-4 max-w-4xl mx-auto inline-flex">
+          <img
+            src={entry.data.media.social_card.src}
+            alt={entry.data.media.social_card.alt}
+            width={entry.data.media.social_card.width}
+            height={entry.data.media.social_card.height}
+            class="w-full h-auto rounded border"
+            loading="eager"
+            decoding="async"
+            onerror="this.onerror=null;this.style.display='none'"
+          />
+        </figure>
+      ) : null}
       {entry.data.links?.length ? (
         <div class="mt-3 flex flex-wrap gap-3">
           {entry.data.links.map((l) => {
@@ -74,5 +131,26 @@ const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
     <div class="prose max-w-none">
       <Content />
     </div>
+    {Array.isArray(entry.data.media?.images) && entry.data.media.images.length > 0 ? (
+      <section class="mt-8">
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {entry.data.media.images.map((img) => (
+            <li class="border rounded overflow-hidden">
+              <div class="h-64 flex items-center justify-center">
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  width={img.width}
+                  height={img.height}
+                  loading="lazy"
+                  decoding="async"
+                  class="max-w-full max-h-full object-contain"
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ) : null}
   </article>
 </Base>
