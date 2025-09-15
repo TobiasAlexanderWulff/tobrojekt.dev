@@ -29,7 +29,7 @@ Dieses Template instruiert einen Coding‑Agenten in einem Fremd‑Repository, a
 - `status`: `planned` | `active` | `completed` | `archived` (herleiten und begründen).
 - `tags`/`categories`: Aus Tech/Domain/Use‑Cases; 5–10 Tags, kurz und konsistent.
 - `roles`/`skills`: Z. B. `engineering`, `design`, relevante Skills/Technologien.
-- `links`: Mindestens `source`; optional `demo`, `docs`, `related` (Label + URL).
+- `links`: Mindestens `source`; optional `demo`, `docs`, `related` (Label + URL). `demo` sollte eine `https://`-URL verwenden, damit der Client eine eingebettete Vorschau rendern kann; andere Protokolle erscheinen nur als externe Links.
 - `media`: Ein Social‑Bild für die Vorschau/Hero und optional 1–6 Galeriebilder.
   - `social_card`: Empfohlen 1200×630 (1.91:1), Alt‑Text erforderlich; `width`/`height` wenn verfügbar.
   - `images`: Zusätzliche Screenshots/Diagramme; Alt‑Text erforderlich; `width`/`height` wenn verfügbar.
