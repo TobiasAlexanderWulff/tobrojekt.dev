@@ -19,11 +19,18 @@ This repo is intentionally tech‑agnostic at this stage. For overarching goals,
 - `tests/` — automated checks (structure depends on chosen stack)
 
 ## Getting Started
-- Technology stack and setup instructions will be added later once selected.
-- In the meantime, content model and workflow guidance live in `AGENTS.md`.
+- Requires: Node.js 18+ and npm (or pnpm/yarn).
+- Install deps: `npm install`
+- Start dev server: `npm run dev`
+- Build: `npm run build` (generates `dist/`)
+
+Notes
+- Search uses Pagefind. The `pagefind` index is generated in `postbuild`; search UI assets are only available after `npm run build`.
+- Content is managed via Astro Content Collections in `src/content/`. See schemas in `src/content/config.ts`.
 
 ## Content Model
-See tech‑neutral fields and invariants in `AGENTS.md` (Projects, Tags/Categories, Site Metadata). Stack‑specific schemas will be documented separately once selected.
+See tech‑neutral fields and invariants in `AGENTS.md` (Projects, Tags/Categories, Site Metadata). Astro content schemas live in `src/content/config.ts`.
+Projects are MDX files under `src/content/projects/`. Tags are JSON under `src/content/tags/`.
 
 ## Roadmap
 High‑level milestones (M0–M4) are outlined in `AGENTS.md` under Features & Roadmap.
@@ -34,4 +41,3 @@ High‑level milestones (M0–M4) are outlined in `AGENTS.md` under Features & R
 
 ## Changelog
 See `CHANGELOG.md` for notable changes.
-

@@ -1,0 +1,47 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getCollection } from 'astro:content';
+
+const all = await getCollection('projects');
+const featured = all
+  .filter((p) => p.data.visibility !== 'private' && p.data.featured)
+  .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
+const recent = all
+  .filter((p) => p.data.visibility !== 'private')
+  .slice(0, 6);
+---
+<Base title="tobrojekt.dev" description="Projects hub and portfolio">
+  <section class="container py-12">
+    <h1 class="text-3xl font-bold mb-3">Hello, I’m Tobias</h1>
+    <p class="text-slate-700 max-w-prose">This is my evolving home for projects. Featured work appears below; explore the full list on the Projects page.</p>
+  </section>
+
+  <section class="container py-6">
+    <h2 class="text-2xl font-semibold mb-4">Featured Projects</h2>
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {featured.map((p) => (
+        <li class="p-4 border rounded hover:shadow-sm transition">
+          <a href={`/projects/${p.slug}`} class="block">
+            <h3 class="font-semibold">{p.data.title}</h3>
+            <p class="text-slate-700 text-sm">{p.data.summary}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container py-6">
+    <h2 class="text-2xl font-semibold mb-4">Recently Added</h2>
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {recent.map((p) => (
+        <li class="p-4 border rounded hover:shadow-sm transition">
+          <a href={`/projects/${p.slug}`} class="block">
+            <h3 class="font-semibold">{p.data.title}</h3>
+            <p class="text-slate-700 text-sm">{p.data.summary}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+

@@ -1,0 +1,32 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const tags = await getCollection('tags');
+  return tags.map((t) => ({ params: { tag: t.data.id }, props: { tag: t.data.id, label: t.data.label } }));
+}
+
+const { tag, label } = Astro.props as { tag: string; label: string };
+const projects = (await getCollection('projects')).filter((p) => (p.data.tags ?? []).includes(tag) && p.data.visibility !== 'private');
+---
+<Base title={`${label} – Tags – tobrojekt.dev`} description={`Projects tagged ${label}`}>
+  <section class="container py-10">
+    <h1 class="text-3xl font-bold mb-6">Tag: {label}</h1>
+    {projects.length === 0 ? (
+      <p class="text-slate-700">No projects with this tag yet.</p>
+    ) : (
+      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {projects.map((p) => (
+          <li class="p-4 border rounded hover:shadow-sm transition">
+            <a href={`/projects/${p.slug}`} class="block">
+              <h3 class="font-semibold">{p.data.title}</h3>
+              <p class="text-slate-700 text-sm">{p.data.summary}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+</Base>
+

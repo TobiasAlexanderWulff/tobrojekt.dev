@@ -1,0 +1,33 @@
+---
+import "~/styles/global.css";
+const { title = "tobrojekt.dev", description = "Projects hub and portfolio" } = Astro.props;
+---
+<html lang="en" class="h-full bg-white text-slate-900">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header class="border-b">
+      <nav class="container flex items-center gap-4 py-4">
+        <a href="/" class="font-semibold">tobrojekt.dev</a>
+        <a href="/projects" class="text-slate-600 hover:text-slate-900">Projects</a>
+        <a href="/tags" class="text-slate-600 hover:text-slate-900">Tags</a>
+        <a href="/search" class="ml-auto text-slate-600 hover:text-slate-900">Search</a>
+      </nav>
+    </header>
+    <main class="flex-1">
+      <slot />
+    </main>
+    <footer class="border-t">
+      <div class="container py-6 text-sm text-slate-600">
+        © {new Date().getFullYear()} Tobias Wulff. All rights reserved.
+      </div>
+    </footer>
+  </body>
+  
+</html>
+

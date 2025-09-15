@@ -1,0 +1,20 @@
+---
+import Base from "~/layouts/Base.astro";
+---
+<Base title="Search – tobrojekt.dev" description="Search projects and pages">
+  <section class="container py-10">
+    <h1 class="text-3xl font-bold mb-6">Search</h1>
+    <div id="search"></div>
+  </section>
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <script defer src="/pagefind/pagefind-ui.js"></script>
+  <script>
+    // Initialize Pagefind UI if assets are available (present after build)
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.PagefindUI) {
+        new window.PagefindUI({ element: '#search', showSubResults: true });
+      }
+    });
+  </script>
+</Base>
+
