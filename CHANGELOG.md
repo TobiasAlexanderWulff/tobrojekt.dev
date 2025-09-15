@@ -21,4 +21,5 @@ The format is inspired by Keep a Changelog. Semantic Versioning will be adopted 
 - Sitemap and robots endpoints: `src/pages/sitemap.xml.ts`, `src/pages/robots.txt.ts`.
 - Project detail page now shows tags, status, and dates.
 - Tetris project entry updated with `dates.updated` and `priority`.
- - Optional GitHub integration: Fetch latest commit date for projects with `external.github` metadata.
+- Optional GitHub integration: Fetch latest commit date for projects with `external.github` metadata.
+ - Link icons: You can provide a per-link `icon` to override favicon fetching; added `public/icons/tetris.svg` and set it for the Tetris demo link.

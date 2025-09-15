@@ -2,6 +2,7 @@
 import Base from "~/layouts/Base.astro";
 import { getCollection } from 'astro:content';
 import { getLatestCommitDate, formatYMD } from "~/lib/github";
+import { faviconFor } from "~/lib/links";
 
 export async function getStaticPaths() {
   const entries = await getCollection('projects');
@@ -54,9 +55,19 @@ const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
       ) : null}
       {entry.data.links?.length ? (
         <div class="mt-3 flex flex-wrap gap-3">
-          {entry.data.links.map((l) => (
-            <a href={l.url} class="text-sm text-blue-700 hover:underline" rel="noopener noreferrer" target="_blank">{l.label ?? l.rel}</a>
-          ))}
+          {entry.data.links.map((l) => {
+            const fav = faviconFor(l.url);
+            const src = l.icon ?? fav.src;
+            const onerr = l.icon ? undefined : (fav.fallback ? `this.onerror=null;this.src='${fav.fallback}'` : undefined);
+            return (
+              <a href={l.url} class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline" rel="noopener noreferrer" target="_blank">
+                {src ? (
+                  <img src={src} alt={fav.alt} width="16" height="16" loading="lazy" class="w-4 h-4 rounded-sm" onerror={onerr} />
+                ) : null}
+                <span>{l.label ?? l.rel}</span>
+              </a>
+            );
+          })}
         </div>
       ) : null}
     </header>

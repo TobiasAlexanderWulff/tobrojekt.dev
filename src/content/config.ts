@@ -4,6 +4,7 @@ const linkSchema = z.object({
   rel: z.enum(['source', 'demo', 'docs', 'related', 'other']).optional().default('other'),
   label: z.string().optional(),
   url: z.string().url(),
+  icon: z.string().optional(), // Optional override/icon path or URL
 });
 
 const imageSchema = z.object({

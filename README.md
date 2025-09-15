@@ -27,7 +27,8 @@ This repo is intentionally tech‑agnostic at this stage. For overarching goals,
 Notes
 - Search uses Pagefind. The `pagefind` index is generated in `postbuild`; search UI assets are only available after `npm run build`.
 - Content is managed via Astro Content Collections in `src/content/`. See schemas in `src/content/config.ts`.
- - Optional external metadata: You can add `external.github` to a project entry to fetch the latest commit date at build time. Set `GITHUB_TOKEN` to raise rate limits; builds gracefully fall back if the API is unavailable.
+- Optional external metadata: You can add `external.github` to a project entry to fetch the latest commit date at build time. Set `GITHUB_TOKEN` to raise rate limits; builds gracefully fall back if the API is unavailable.
+ - Favicons: The UI attempts `https://{host}/favicon.ico` with a fallback to DuckDuckGo's icon service. For hosts that don't expose a fetchable favicon, you can override per link by adding `icon: "/icons/<name>.svg"` (or any URL) in the project's `links` array. Place local icons under `public/icons/`.
 
 ## Content Model
 See tech‑neutral fields and invariants in `AGENTS.md` (Projects, Tags/Categories, Site Metadata). Astro content schemas live in `src/content/config.ts`.
