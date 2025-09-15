@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "postbuild": "pagefind --site dist"
+    "postbuild": "pagefind --site dist",
+    "import:projects": "node scripts/import-portfolio-export.mjs"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.3.5",

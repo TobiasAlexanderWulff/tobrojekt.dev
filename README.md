@@ -34,6 +34,19 @@ Notes
 See tech‑neutral fields and invariants in `AGENTS.md` (Projects, Tags/Categories, Site Metadata). Astro content schemas live in `src/content/config.ts`.
 Projects are MDX files under `src/content/projects/`. Tags are JSON under `src/content/tags/`.
 
+## Projekt‑Exporte und Import
+- Agent‑Template: `docs/agent-templates/project-export.md` beschreibt, wie ein externer Agent alle Portfolio‑Daten sammelt und als Export bereitstellt.
+- Ablage der Exporte: Lege jeden Export unter `portfolio-export/<slug>/project.json` ab; Medien relativ in `portfolio-export/<slug>/media/` (optional `social-card.png`).
+- Import in diese Seite:
+  - Alle Exporte importieren: `node scripts/import-portfolio-export.mjs`
+  - Nur ein Projekt: `node scripts/import-portfolio-export.mjs --slug <slug>`
+  - Vorhandene MDX überschreiben: `node scripts/import-portfolio-export.mjs --force`
+
+Was der Import tut:
+- Erzeugt `src/content/projects/<slug>.mdx` mit Frontmatter, die `src/content/config.ts` entspricht.
+- Kopiert Medien nach `public/projects/<slug>/` und passt Pfade in der Frontmatter an.
+- Mappt Link‑Objektform (`source`/`demo`/`docs`/`related`) zu `links[]` mit `rel`/`url`/`label`.
+
 ## Roadmap
 High‑level milestones (M0–M4) are outlined in `AGENTS.md` under Features & Roadmap.
 
