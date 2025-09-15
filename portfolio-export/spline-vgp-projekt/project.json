@@ -1,0 +1,45 @@
+{
+  "id": "gh:TobiasAlexanderWulff/spline-vgp-project",
+  "slug": "spline-vgp-projekt",
+  "title": "Spline-VGP-Projekt",
+  "summary": "Untersuchung einer Spline-basierten Sigmoid-Aktivierung zur Abschwächung des Vanishing-Gradient-Problems in tiefen MLPs; reproduzierbare Experimente mit Auto-Plots im Vergleich zu ReLU und Sigmoid.",
+  "description": "Dieses Projekt evaluiert eine Spline-basierte Sigmoid-Aktivierungsfunktion, die im Kernbereich sigmoid-ähnlich ist und außerhalb linear ausläuft, um das Vanishing-Gradient-Problem (VGP) in tiefen Feedforward-Netzen zu mildern. Die Aktivierung basiert auf kubischen (Hermite-)Splines mit konfigurierbarer Segmentanzahl und x-Grenzen. Als Baselines dienen ReLU und Sigmoid.\n\nExperimente werden über YAML-Dateien definiert (FashionMNIST, CIFAR-10, optional Tiny ImageNet-200). Einzelläufe und Batch-Runs (inkl. Smoke-Varianten) erzeugen pro Epoche konsistente Logs mit Trainings- und Validierungsmetriken (Loss/Accuracy) sowie Gradientenstatistiken (mean-|grad|, Grad-Norm) je Parameter. Ein Plot-Skript sammelt alle vorhandenen CSVs und erzeugt Gradient-Heatmaps, Lernkurven und eine Übersicht der Trainingszeiten.\n\nDie Implementierung nutzt PyTorch (MLP/Initialisierung, Adam + CrossEntropyLoss) und setzt auf deterministische Seeds sowie geeignete CUDNN/TF32-Einstellungen für reproduzierbare und effiziente Läufe. Datasets werden automatisch geladen (Tiny ImageNet manuell). Die Codebasis ist modular: Aktivierungen in `models/activations.py`, Spline in `models/sigmoid_spline_activation.py`, Trainingslogik in `training/trainer.py` und Hilfsfunktionen in `training/utils.py`.\n\nZiel ist ein nachvollziehbarer, datengestützter Vergleich der Aktivierungen im Hinblick auf Stabilität der Gradienten in tiefen Netzen, begleitet von klaren Artefakten (Logs/Plots), die Wiederholbarkeit und schnelle Explorationszyklen ermöglichen.",
+  "status": "active",
+  "tags": [
+    "python",
+    "pytorch",
+    "deep-learning",
+    "activation-function",
+    "spline",
+    "vanishing-gradient",
+    "mlp",
+    "experimentation",
+    "visualization",
+    "reproducibility"
+  ],
+  "categories": ["machine-learning", "research"],
+  "roles": ["engineering", "research"],
+  "skills": ["Python", "PyTorch", "NumPy", "Pandas", "Matplotlib", "Seaborn", "YAML"],
+  "links": {
+    "source": "https://github.com/TobiasAlexanderWulff/spline-vgp-project",
+    "docs": "https://github.com/TobiasAlexanderWulff/spline-vgp-project#readme"
+  },
+  "media": {
+    "cover": {
+      "src": "media/cover.png",
+      "alt": "Sigmoid vs. Spline Aktivierung und Ableitungen",
+      "width": 3000,
+      "height": 1500
+    },
+    "images": []
+  },
+  "dates": {
+    "created": "2025-07-08",
+    "updated": "2025-08-24",
+    "started": "2025-07-08"
+  },
+  "visibility": "public",
+  "featured": false,
+  "priority": 999
+}
+
