@@ -22,6 +22,11 @@ if (gh?.repo) {
 }
 const updatedDate = externalUpdated ?? entry.data.dates?.updated;
 const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
+
+// Prefer an inline playable demo when available
+const demoLink = entry.data.links?.find((l) => l.rel === 'demo');
+const sc = entry.data.media?.social_card;
+const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}%` : '56.25%';
 ---
 <Base title={`${entry.data.title} – tobrojekt.dev`} description={entry.data.summary}>
   <article class="container py-10">
@@ -53,7 +58,25 @@ const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
           ))}
         </div>
       ) : null}
-      {entry.data.media?.social_card?.src ? (
+      {demoLink ? (
+        <section class="mt-4 max-w-4xl">
+          <div class="rounded border overflow-hidden">
+            <div class="relative w-full" style={`padding-top: ${aspectPadding}`}>
+              <iframe
+                src={demoLink.url}
+                title={`${entry.data.title} demo`}
+                loading="lazy"
+                allow="autoplay; fullscreen; clipboard-write; gamepad"
+                class="absolute inset-0 w-full h-full"
+              ></iframe>
+            </div>
+            <div class="px-3 py-2 text-xs text-slate-600 bg-slate-50 border-t">
+              If the demo fails to load in your browser, open it in a new tab:
+              <a href={demoLink.url} class="ml-1 text-blue-700 hover:underline" rel="noopener noreferrer" target="_blank">{demoLink.label ?? 'Open demo'}</a>
+            </div>
+          </div>
+        </section>
+      ) : entry.data.media?.social_card?.src ? (
         <figure class="mt-4 max-w-4xl mx-auto inline-flex">
           <img
             src={entry.data.media.social_card.src}
