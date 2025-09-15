@@ -43,3 +43,13 @@ High‑level milestones (M0–M4) are outlined in `AGENTS.md` under Features & R
 
 ## Changelog
 See `CHANGELOG.md` for notable changes.
+
+## Deploy
+- Cloudflare Pages (recommended for static sites):
+  - Build command: `npm run build`
+  - Build output directory: `dist`
+  - No deploy command needed. Alternatively, use `npx wrangler pages deploy dist` for direct uploads.
+- Cloudflare Workers (serve static assets via Worker):
+  - This repo includes `wrangler.jsonc` with `assets.directory` set to `./dist`.
+  - After building, run: `npx wrangler deploy`
+  - This uploads `dist` and serves it from a Worker on `*.workers.dev` (or your bound routes).

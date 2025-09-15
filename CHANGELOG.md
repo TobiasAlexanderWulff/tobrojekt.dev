@@ -23,3 +23,4 @@ The format is inspired by Keep a Changelog. Semantic Versioning will be adopted 
 - Tetris project entry updated with `dates.updated` and `priority`.
 - Optional GitHub integration: Fetch latest commit date for projects with `external.github` metadata.
  - Link icons: You can provide a per-link `icon` to override favicon fetching; added `public/icons/tetris.svg` and set it for the Tetris demo link.
+ - Cloudflare Workers deploy config: `wrangler.jsonc` to deploy the built `dist/` as static assets with `npx wrangler deploy`.

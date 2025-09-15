@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers deploy: serve static assets from ./dist
+  "name": "tobrojekt-dev",
+  "compatibility_date": "2025-09-15",
+  "assets": {
+    "directory": "./dist"
+  }
+}
+
