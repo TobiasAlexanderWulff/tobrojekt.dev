@@ -93,15 +93,17 @@ const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
         <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {entry.data.media.images.map((img) => (
             <li class="border rounded overflow-hidden">
-              <img
-                src={img.src}
-                alt={img.alt}
-                width={img.width}
-                height={img.height}
-                loading="lazy"
-                decoding="async"
-                class="w-full h-auto"
-              />
+              <div class="h-64 flex items-center justify-center">
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  width={img.width}
+                  height={img.height}
+                  loading="lazy"
+                  decoding="async"
+                  class="max-w-full max-h-full object-contain"
+                />
+              </div>
             </li>
           ))}
         </ul>
