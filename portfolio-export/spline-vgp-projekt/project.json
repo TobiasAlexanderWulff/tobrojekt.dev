@@ -13,7 +13,7 @@
     "spline",
     "vanishing-gradient",
     "mlp",
-    "experimentation",
+    "experiment",
     "visualization",
     "reproducibility"
   ],
@@ -21,8 +21,7 @@
   "roles": ["engineering", "research"],
   "skills": ["Python", "PyTorch", "NumPy", "Pandas", "Matplotlib", "Seaborn", "YAML"],
   "links": {
-    "source": "https://github.com/TobiasAlexanderWulff/spline-vgp-project",
-    "docs": "https://github.com/TobiasAlexanderWulff/spline-vgp-project#readme"
+    "source": "https://github.com/TobiasAlexanderWulff/spline-vgp-project"
   },
   "media": {
     "cover": {
@@ -70,7 +69,7 @@
     "started": "2025-07-08"
   },
   "visibility": "public",
-  "featured": false,
+  "featured": true,
   "priority": 999
 }
 
