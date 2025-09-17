@@ -14,17 +14,19 @@ This repo is intentionally tech‑agnostic at this stage. For overarching goals,
 - `content/tags/` — tag/category metadata placeholders
 - `public/` — public static assets (e.g., favicons, social images)
 - `assets/` — raw media to prepare/optimize for `public/`
-- `config/` — site metadata, feature flags, redirects map (future)
+- `config/` — site metadata, navigation, and redirects map (schema-validated)
 - `docs/` — documentation, ADRs, design notes (see `docs/adr/`)
 - `tests/` — automated checks (structure depends on chosen stack)
 
 ## Getting Started
 - Requires: Node.js 18+ and npm (or pnpm/yarn).
 - Install deps: `npm install`
+- Validate config: `npm run lint:config`
 - Start dev server: `npm run dev`
 - Build: `npm run build` (generates `dist/`)
 
 Notes
+- Site-wide metadata, primary navigation, and redirects are managed in `config/site.json` and `config/redirects.json`; run `npm run lint:config` to validate them against JSON Schema.
 - Search uses Pagefind. The `pagefind` index is generated in `postbuild`; search UI assets are only available after `npm run build`.
 - Content is managed via Astro Content Collections in `src/content/`. See schemas in `src/content/config.ts`.
 - Optional external metadata: You can add `external.github` to a project entry to fetch the latest commit date at build time. Set `GITHUB_TOKEN` to raise rate limits; builds gracefully fall back if the API is unavailable.
@@ -59,11 +61,7 @@ High‑level milestones (M0–M4) are outlined in `AGENTS.md` under Features & R
 See `CHANGELOG.md` for notable changes.
 
 ## Deploy
-- Cloudflare Pages (recommended for static sites):
+- Cloudflare Pages (current production setup):
   - Build command: `npm run build`
   - Build output directory: `dist`
-  - No deploy command needed. Alternatively, use `npx wrangler pages deploy dist` for direct uploads.
-- Cloudflare Workers (serve static assets via Worker):
-  - This repo includes `wrangler.jsonc` with `assets.directory` set to `./dist`.
-  - After building, run: `npx wrangler deploy`
-  - This uploads `dist` and serves it from a Worker on `*.workers.dev` (or your bound routes).
+  - Deploy via the Pages UI or your connected Git repository.
