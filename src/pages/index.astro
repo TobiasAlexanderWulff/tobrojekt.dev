@@ -9,6 +9,10 @@ import {
   resolveLocalizedValue,
 } from "~/lib/i18n";
 
+/**
+ * Home page highlights featured projects before a lightweight recent list.
+ * Filtering happens server-side so static builds stay fast.
+ */
 const all = await getCollection('projects');
 const featured = all
   .filter((p) => p.data.visibility !== 'private' && p.data.featured)

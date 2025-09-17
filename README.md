@@ -57,6 +57,9 @@ High‑level milestones (M0–M4) are outlined in `AGENTS.md` under Features & R
 - Follow the guidelines in `AGENTS.md` (operating principles, DoD, validation).
 - For notable decisions, add a short ADR under `docs/adr/`.
 
+## Additional Documentation
+- `docs/development/code-structure.md` — stack-specific overview (Astro layout, localization, search, scripts).
+
 ## Changelog
 See `CHANGELOG.md` for notable changes.
 
