@@ -1,30 +1,15 @@
 import { getCollection } from 'astro:content';
 import { getLatestCommitDate } from "~/lib/github";
+import { defaultLocale, localizePath, locales } from "~/lib/i18n";
+
+type SitemapEntry = {
+  path: string;
+  lastmod?: string;
+};
 
 export async function GET({ site }: { site: URL }) {
   const projects = await getCollection('projects');
   const tags = await getCollection('tags');
-
-  const urls: string[] = [];
-
-  const add = (path: string) => urls.push(new URL(path, site).href);
-
-  // Core pages
-  add('/');
-  add('/projects');
-  add('/tags');
-  add('/search');
-
-  // Project detail pages (public only)
-  for (const p of projects) {
-    if (p.data.visibility === 'private') continue;
-    add(`/projects/${p.slug}`);
-  }
-
-  // Tag pages
-  for (const t of tags) {
-    add(`/tags/${t.data.id}`);
-  }
 
   // Pre-fetch external updated dates for projects with GitHub metadata
   const externalUpdated = new Map<string, string>();
@@ -39,27 +24,56 @@ export async function GET({ site }: { site: URL }) {
   );
 
   const projectLastmod = (p: (typeof projects)[number]) =>
-    externalUpdated.get(p.slug) ?? p.data.dates?.updated ?? p.data.dates?.completed ?? p.data.dates?.created ?? undefined;
+    externalUpdated.get(p.slug) ??
+    p.data.dates?.updated ??
+    p.data.dates?.completed ??
+    p.data.dates?.created ??
+    undefined;
 
-  const xmlItems = [
-    // Static pages (no lastmod)
-    ...['/', '/projects', '/tags', '/search'].map((path) =>
-      `<url><loc>${new URL(path, site).href}</loc></url>`
-    ),
-    // Project pages with optional lastmod
-    ...projects
-      .filter((p) => p.data.visibility !== 'private')
-      .map((p) => {
-        const loc = new URL(`/projects/${p.slug}`, site).href;
-        const lm = projectLastmod(p);
-        return `<url><loc>${loc}</loc>${lm ? `<lastmod>${new Date(lm).toISOString()}</lastmod>` : ''}</url>`;
-      }),
-    // Tag pages (no lastmod)
-    ...tags.map((t) => `<url><loc>${new URL(`/tags/${t.data.id}`, site).href}</loc></url>`),
-  ].join('');
+  const entries: SitemapEntry[] = [];
+
+  const staticPaths = ['/', '/projects', '/tags', '/search'];
+  for (const path of staticPaths) {
+    entries.push({ path });
+  }
+
+  for (const p of projects) {
+    if (p.data.visibility === 'private') continue;
+    const lastmod = projectLastmod(p);
+    entries.push({
+      path: `/projects/${p.slug}`,
+      lastmod: lastmod ? new Date(lastmod).toISOString() : undefined,
+    });
+  }
+
+  for (const t of tags) {
+    entries.push({ path: `/tags/${t.data.id}` });
+  }
+
+  const xmlItems = entries
+    .map((entry) => {
+      const localized = locales.map((locale) => ({
+        locale,
+        href: new URL(localizePath(entry.path, locale), site).href,
+      }));
+      const defaultHref =
+        localized.find((item) => item.locale === defaultLocale)?.href ??
+        new URL(entry.path, site).href;
+      const lastmodTag = entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : '';
+      const alternateLinks =
+        localized
+          .map(
+            (item) =>
+              `<xhtml:link rel="alternate" hreflang="${item.locale}" href="${item.href}" />`
+          )
+          .join('') +
+        `<xhtml:link rel="alternate" hreflang="x-default" href="${defaultHref}" />`;
+      return `<url><loc>${defaultHref}</loc>${lastmodTag}${alternateLinks}</url>`;
+    })
+    .join('');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${xmlItems}</urlset>`;
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${xmlItems}</urlset>`;
 
   return new Response(xml, {
     headers: {

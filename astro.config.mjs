@@ -6,6 +6,14 @@ import { fileURLToPath } from 'url';
 // https://docs.astro.build
 export default defineConfig({
   site: 'https://tobrojekt.dev',
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'de'],
+    strategy: 'prefix-other',
+    fallback: {
+      de: 'en',
+    },
+  },
   integrations: [mdx(), tailwind()],
   vite: {
     resolve: {

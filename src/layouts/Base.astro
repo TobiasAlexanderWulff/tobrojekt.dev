@@ -1,22 +1,66 @@
 ---
 import "~/styles/global.css";
-const { title = "tobrojekt.dev", description = "Projects hub and portfolio" } = Astro.props;
+import LangToggle from "~/components/LangToggle.astro";
+import type { Locale, LocalizedValue } from "~/lib/i18n";
+import {
+  getDictionary,
+  localizePath,
+  resolveLocale,
+  resolveLocalizedValue,
+} from "~/lib/i18n";
+
+type BaseProps = {
+  title?: LocalizedValue<string>;
+  description?: LocalizedValue<string>;
+};
+
+const props = Astro.props as BaseProps;
+const locale: Locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+
+const resolvedTitle =
+  resolveLocalizedValue(props.title, locale) ?? `${dictionary.site.name}`;
+const resolvedDescription =
+  resolveLocalizedValue(props.description, locale) ?? dictionary.site.description;
+
+const navLinks = [
+  {
+    href: localizePath("/projects", locale),
+    label: dictionary.nav.projects,
+  },
+  {
+    href: localizePath("/tags", locale),
+    label: dictionary.nav.tags,
+  },
+];
+
+const searchHref = localizePath("/search", locale);
+const pathname = Astro.url.pathname;
+const currentYear = new Date().getFullYear();
 ---
-<html lang="en" class="h-full bg-white text-slate-900">
+<html lang={locale} class="h-full bg-white text-slate-900">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{resolvedTitle}</title>
+    <meta name="description" content={resolvedDescription} />
     <link rel="icon" href="/favicon.ico" />
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b">
       <nav class="container flex items-center gap-4 py-4">
-        <a href="/" class="font-semibold">tobrojekt.dev</a>
-        <a href="/projects" class="text-slate-600 hover:text-slate-900">Projects</a>
-        <a href="/tags" class="text-slate-600 hover:text-slate-900">Tags</a>
-        <a href="/search" class="ml-auto text-slate-600 hover:text-slate-900">Search</a>
+        <a href={localizePath("/", locale)} class="font-semibold">
+          {dictionary.site.name}
+        </a>
+        {navLinks.map((link) => (
+          <a href={link.href} class="text-slate-600 hover:text-slate-900">
+            {link.label}
+          </a>
+        ))}
+        <a href={searchHref} class="ml-auto text-slate-600 hover:text-slate-900">
+          {dictionary.nav.search}
+        </a>
+        <LangToggle class="ml-3" locale={locale} pathname={pathname} />
       </nav>
     </header>
     <main class="flex-1">
@@ -24,10 +68,9 @@ const { title = "tobrojekt.dev", description = "Projects hub and portfolio" } = 
     </main>
     <footer class="border-t">
       <div class="container py-6 text-sm text-slate-600">
-        © {new Date().getFullYear()} Tobias Wulff. All rights reserved.
+        © {currentYear} Tobias Wulff. {dictionary.footer.rights}
       </div>
     </footer>
   </body>
   
 </html>
-
