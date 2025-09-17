@@ -1,9 +1,14 @@
 ---
 import Base from "~/layouts/Base.astro";
+import { getDictionary, resolveLocale } from "~/lib/i18n";
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const pageTitle = `${dictionary.search.heading} – ${dictionary.site.name}`;
 ---
-<Base title="Search – tobrojekt.dev" description="Search projects and pages">
+<Base title={pageTitle} description={dictionary.search.metaDescription}>
   <section class="container py-10">
-    <h1 class="text-3xl font-bold mb-6">Search</h1>
+    <h1 class="text-3xl font-bold mb-6">{dictionary.search.heading}</h1>
     <div id="search"></div>
   </section>
   <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
@@ -17,4 +22,3 @@ import Base from "~/layouts/Base.astro";
     });
   </script>
 </Base>
-

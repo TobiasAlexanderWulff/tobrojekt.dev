@@ -1,0 +1,10 @@
+---
+import * as page from "../../tags/[tag].astro";
+
+export const getStaticPaths = page.getStaticPaths;
+const Component = page.default;
+const props = Astro.props;
+---
+
+<Component {...props} />
+

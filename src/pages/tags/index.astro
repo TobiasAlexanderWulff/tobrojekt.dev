@@ -1,6 +1,7 @@
 ---
 import Base from "~/layouts/Base.astro";
 import { getCollection } from 'astro:content';
+import { getDictionary, resolveLocale, localizePath } from "~/lib/i18n";
 
 const tags = await getCollection('tags');
 const projects = await getCollection('projects');
@@ -8,14 +9,21 @@ const projects = await getCollection('projects');
 const counts = Object.fromEntries(
   tags.map((t) => [t.data.id, projects.filter((p) => (p.data.tags ?? []).includes(t.data.id)).length])
 );
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const pageTitle = `${dictionary.tagsIndex.heading} – ${dictionary.site.name}`;
 ---
-<Base title="Tags – tobrojekt.dev" description="Browse projects by tag">
+<Base title={pageTitle} description={dictionary.tagsIndex.metaDescription}>
   <section class="container py-10">
-    <h1 class="text-3xl font-bold mb-6">Tags</h1>
+    <h1 class="text-3xl font-bold mb-6">{dictionary.tagsIndex.heading}</h1>
     <ul class="flex flex-wrap gap-3">
       {tags.map((t) => (
         <li>
-          <a href={`/tags/${t.data.id}`} class="px-3 py-1 rounded border hover:bg-slate-50">
+          <a
+            href={localizePath(`/tags/${t.data.id}`, locale)}
+            class="px-3 py-1 rounded border hover:bg-slate-50"
+          >
             {t.data.label} <span class="text-slate-500">({counts[t.data.id] ?? 0})</span>
           </a>
         </li>
@@ -23,4 +31,3 @@ const counts = Object.fromEntries(
     </ul>
   </section>
 </Base>
-

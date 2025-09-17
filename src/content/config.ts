@@ -1,5 +1,13 @@
 import { defineCollection, z } from 'astro:content';
 
+const localizedString = z.union([
+  z.string(),
+  z.object({
+    en: z.string(),
+    de: z.string().optional(),
+  }),
+]);
+
 const linkSchema = z.object({
   rel: z.enum(['source', 'demo', 'docs', 'related', 'other']).optional().default('other'),
   label: z.string().optional(),
@@ -34,9 +42,9 @@ const projects = defineCollection({
   type: 'content',
   schema: z.object({
     id: z.string(),
-    title: z.string(),
-    summary: z.string(),
-    description: z.string().optional(),
+    title: localizedString,
+    summary: localizedString,
+    description: localizedString.optional(),
     status: z.enum(['planned', 'active', 'completed', 'archived']).default('active').optional(),
     tags: z.array(z.string()).default([]),
     categories: z.array(z.string()).default([]).optional(),

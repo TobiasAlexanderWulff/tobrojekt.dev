@@ -1,0 +1,66 @@
+---
+import type { Locale } from '~/lib/i18n';
+import {
+  LOCALE_STORAGE_KEY,
+  getDictionary,
+  localizePath,
+  locales,
+} from '~/lib/i18n';
+
+const props = Astro.props as {
+  locale: Locale;
+  pathname: string;
+  class?: string;
+};
+
+const { locale, pathname } = props;
+const className = props.class ?? '';
+const dictionary = getDictionary(locale);
+const storageKey = LOCALE_STORAGE_KEY;
+---
+<div
+  class={`flex items-center gap-1 ${className}`.trim()}
+  role="group"
+  aria-label={dictionary.site.languageLabel}
+  data-storage-key={storageKey}
+>
+  {locales.map((code) => {
+    const isActive = code === locale;
+    const href = localizePath(pathname, code);
+    const label = dictionary.site.localeNames[code];
+    return (
+      <a
+        href={href}
+        data-lang-link
+        data-locale={code}
+        lang={code}
+        class={`px-2 py-1 text-sm rounded border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 ${
+          isActive
+            ? 'bg-slate-900 text-white border-slate-900'
+            : 'text-slate-600 hover:text-slate-900 border-slate-300 hover:border-slate-400'
+        }`}
+        aria-current={isActive ? 'true' : undefined}
+      >
+        {label}
+      </a>
+    );
+  })}
+</div>
+<script>
+  const container = document.currentScript?.previousElementSibling;
+  if (container instanceof HTMLElement) {
+    const storageKey = container.dataset.storageKey;
+    container.querySelectorAll('[data-lang-link]').forEach((link) => {
+      link.addEventListener('click', () => {
+        const locale = link.dataset.locale;
+        try {
+          if (locale && storageKey) {
+            localStorage.setItem(storageKey, locale);
+          }
+        } catch (err) {
+          // Local storage might be unavailable (e.g. disabled cookies)
+        }
+      });
+    });
+  }
+</script>

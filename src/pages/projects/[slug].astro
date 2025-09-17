@@ -3,6 +3,12 @@ import Base from "~/layouts/Base.astro";
 import { getCollection } from 'astro:content';
 import { getLatestCommitDate, formatYMD } from "~/lib/github";
 import { faviconFor } from "~/lib/links";
+import {
+  getDictionary,
+  resolveLocale,
+  localizePath,
+  resolveLocalizedValue,
+} from "~/lib/i18n";
 
 export async function getStaticPaths() {
   const entries = await getCollection('projects');
@@ -13,6 +19,22 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const localizedTitle = resolveLocalizedValue(entry.data.title, locale) ?? '';
+const localizedSummary = resolveLocalizedValue(entry.data.summary, locale) ?? '';
+const statusLabel = entry.data.status
+  ? dictionary.projectDetail.statusLabels[entry.data.status] ?? entry.data.status
+  : null;
+const startedLabel = entry.data.dates?.started
+  ? dictionary.projectDetail.started
+  : dictionary.projectDetail.created;
+const startedValue = entry.data.dates?.started ?? entry.data.dates?.created ?? null;
+const completedValue = entry.data.dates?.completed ?? null;
+
+const pageTitle = `${localizedTitle} – ${dictionary.site.name}`;
+const pageDescription = localizedSummary;
 
 // Prefer external GitHub updated date when configured
 let externalUpdated: string | null = null;
@@ -39,33 +61,34 @@ if (demoLink?.url) {
 const sc = entry.data.media?.social_card;
 const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}%` : '56.25%';
 ---
-<Base title={`${entry.data.title} – tobrojekt.dev`} description={entry.data.summary}>
+<Base title={pageTitle} description={pageDescription}>
   <article class="container py-10">
     <header class="mb-6">
-      <h1 class="text-3xl font-bold">{entry.data.title}</h1>
-      <p class="text-slate-700">{entry.data.summary}</p>
-      {(entry.data.status || entry.data.dates) ? (
+      <h1 class="text-3xl font-bold">{localizedTitle}</h1>
+      <p class="text-slate-700">{localizedSummary}</p>
+      {(statusLabel || entry.data.dates) ? (
         <p class="text-sm text-slate-600 mt-1">
-          {entry.data.status ? (
+          {statusLabel ? (
             <>
-              Status: <span class="capitalize">{entry.data.status}</span>
+              {dictionary.projectDetail.status}:{' '}
+              <span class="capitalize">{statusLabel}</span>
             </>
           ) : null}
-          {entry.data.dates?.started || entry.data.dates?.created ? (
-            <span class="ml-3">Started: {entry.data.dates?.started ?? entry.data.dates?.created}</span>
+          {startedValue ? (
+            <span class="ml-3">{startedLabel}: {startedValue}</span>
           ) : null}
-          {entry.data.dates?.completed ? (
-            <span class="ml-3">Completed: {entry.data.dates.completed}</span>
+          {completedValue ? (
+            <span class="ml-3">{dictionary.projectDetail.completed}: {completedValue}</span>
           ) : null}
           {!entry.data.dates?.completed && displayUpdated ? (
-            <span class="ml-3">Updated: {displayUpdated}</span>
+            <span class="ml-3">{dictionary.projectDetail.updated}: {displayUpdated}</span>
           ) : null}
         </p>
       ) : null}
       {entry.data.tags?.length ? (
         <div class="mt-2 flex flex-wrap gap-2">
           {entry.data.tags.map((t) => (
-            <a href={`/tags/${t}`} class="text-xs bg-slate-100 px-2 py-1 rounded">{t}</a>
+            <a href={localizePath(`/tags/${t}`, locale)} class="text-xs bg-slate-100 px-2 py-1 rounded">{t}</a>
           ))}
         </div>
       ) : null}
@@ -75,7 +98,7 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
             <div class="relative w-full" style={`padding-top: ${aspectPadding}`}>
               <iframe
                 src={inlineDemoUrl}
-                title={`${entry.data.title} demo`}
+                title={`${localizedTitle} demo`}
                 loading="lazy"
                 allow="autoplay; fullscreen; clipboard-write; gamepad"
                 allowfullscreen
@@ -84,14 +107,14 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
               ></iframe>
             </div>
             <div class="px-3 py-2 text-xs text-slate-600 bg-slate-50 border-t">
-              If the demo fails to load in your browser, open it in a new tab:
+              {dictionary.projectDetail.inlineDemoFallback}
               <a
                 href={demoLink?.url ?? inlineDemoUrl}
                 class="ml-1 text-blue-700 hover:underline"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                {demoLink?.label ?? 'Open demo'}
+                {demoLink?.label ?? dictionary.projectDetail.openDemo}
               </a>
             </div>
           </div>

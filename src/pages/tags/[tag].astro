@@ -2,6 +2,12 @@
 import Base from "~/layouts/Base.astro";
 import { getCollection } from 'astro:content';
 import { faviconFor } from "~/lib/links";
+import {
+  getDictionary,
+  resolveLocale,
+  localizePath,
+  resolveLocalizedValue,
+} from "~/lib/i18n";
 
 export async function getStaticPaths() {
   const tags = await getCollection('tags');
@@ -10,23 +16,33 @@ export async function getStaticPaths() {
 
 const { tag, label } = Astro.props as { tag: string; label: string };
 const projects = (await getCollection('projects')).filter((p) => (p.data.tags ?? []).includes(tag) && p.data.visibility !== 'private');
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const pageTitle = `${dictionary.tagsIndex.detailMetaTitle(label)} – ${dictionary.site.name}`;
+const pageDescription = dictionary.tagsIndex.detailMetaDescription(label);
+const localizedProjects = projects.map((entry) => ({
+  entry,
+  title: resolveLocalizedValue(entry.data.title, locale) ?? '',
+  summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
+}));
 ---
-<Base title={`${label} – Tags – tobrojekt.dev`} description={`Projects tagged ${label}`}>
+<Base title={pageTitle} description={pageDescription}>
   <section class="container py-10">
-    <h1 class="text-3xl font-bold mb-6">Tag: {label}</h1>
-    {projects.length === 0 ? (
-      <p class="text-slate-700">No projects with this tag yet.</p>
+    <h1 class="text-3xl font-bold mb-6">{dictionary.tagsIndex.detailTitle(label)}</h1>
+    {localizedProjects.length === 0 ? (
+      <p class="text-slate-700">{dictionary.tagsIndex.empty}</p>
     ) : (
       <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((p) => (
+        {localizedProjects.map(({ entry, title, summary }) => (
           <li class="p-4 border rounded hover:shadow-sm transition">
-            <a href={`/projects/${p.slug}`} class="block">
-              <h3 class="font-semibold">{p.data.title}</h3>
-              <p class="text-slate-700 text-sm">{p.data.summary}</p>
+            <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
+              <h3 class="font-semibold">{title}</h3>
+              <p class="text-slate-700 text-sm">{summary}</p>
             </a>
-            {p.data.links?.length ? (
+            {entry.data.links?.length ? (
               <div class="mt-2 flex items-center gap-2">
-                {p.data.links.map((l) => {
+                {entry.data.links.map((l) => {
                   const fav = faviconFor(l.url);
                   const src = l.icon ?? fav.src;
                   const onerr = l.icon ? undefined : (fav.fallback ? `this.onerror=null;this.src='${fav.fallback}'` : undefined);
