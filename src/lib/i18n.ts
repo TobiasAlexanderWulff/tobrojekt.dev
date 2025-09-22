@@ -34,6 +34,7 @@ export type Dictionary = {
   footer: {
     rights: string;
   };
+  links: Record<'demo' | 'docs' | 'github' | 'source' | 'related' | 'other', string>;
   homepage: {
     heroTitle: string;
     heroIntro: string;
@@ -92,6 +93,14 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     footer: {
       rights: 'All rights reserved.',
+    },
+    links: {
+      demo: 'Live demo',
+      docs: 'Documentation',
+      github: 'GitHub',
+      source: 'Source code',
+      related: 'Related link',
+      other: 'External link',
     },
     homepage: {
       heroTitle: 'Hello, I’m Tobias',
@@ -154,6 +163,14 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     footer: {
       rights: 'Alle Rechte vorbehalten.',
+    },
+    links: {
+      demo: 'Live-Demo',
+      docs: 'Dokumentation',
+      github: 'GitHub',
+      source: 'Quellcode',
+      related: 'Verwandter Link',
+      other: 'Externer Link',
     },
     homepage: {
       heroTitle: 'Hallo, ich bin Tobias',

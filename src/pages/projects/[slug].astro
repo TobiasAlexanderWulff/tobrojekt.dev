@@ -2,7 +2,7 @@
 import Base from "~/layouts/Base.astro";
 import { getCollection } from 'astro:content';
 import { getLatestCommitDate, formatYMD } from "~/lib/github";
-import { faviconFor } from "~/lib/links";
+import { resolveProjectLink } from "~/lib/links";
 import {
   getDictionary,
   resolveLocale,
@@ -60,6 +60,7 @@ if (demoLink?.url) {
 }
 const sc = entry.data.media?.social_card;
 const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}%` : '56.25%';
+const resolvedLinks = (entry.data.links ?? []).map((link) => resolveProjectLink(link, dictionary));
 ---
 <Base title={pageTitle} description={pageDescription}>
   <article class="container py-10">
@@ -133,21 +134,31 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
           />
         </figure>
       ) : null}
-      {entry.data.links?.length ? (
+      {resolvedLinks.length ? (
         <div class="mt-3 flex flex-wrap gap-3">
-          {entry.data.links.map((l) => {
-            const fav = faviconFor(l.url);
-            const src = l.icon ?? fav.src;
-            const onerr = l.icon ? undefined : (fav.fallback ? `this.onerror=null;this.src='${fav.fallback}'` : undefined);
-            return (
-              <a href={l.url} class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline dark:text-blue-400" rel="noopener noreferrer" target="_blank">
-                {src ? (
-                  <img src={src} alt={fav.alt} width="16" height="16" loading="lazy" class="w-4 h-4 rounded-sm" onerror={onerr} />
-                ) : null}
-                <span>{l.label ?? l.rel}</span>
-              </a>
-            );
-          })}
+          {resolvedLinks.map((link) => (
+            <a
+              href={link.href}
+              class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline dark:text-blue-400"
+              rel="noopener noreferrer"
+              target="_blank"
+              title={link.label}
+            >
+              <img
+                src={link.icon.light}
+                alt={link.icon.alt}
+                width="16"
+                height="16"
+                loading="lazy"
+                class="w-4 h-4 rounded-sm"
+                data-theme-image
+                data-theme-src-light={link.icon.light}
+                data-theme-src-dark={link.icon.dark}
+                onerror={link.icon.onError}
+              />
+              <span>{link.label}</span>
+            </a>
+          ))}
         </div>
       ) : null}
     </header>

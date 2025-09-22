@@ -75,13 +75,15 @@ const storageKey = THEME_STORAGE_KEY;
       }
     };
 
-    const updateLogos = (theme) => {
-      const logos = document.querySelectorAll('[data-site-logo]');
-      logos.forEach((logo) => {
-        if (!(logo instanceof HTMLImageElement)) return;
-        const next = theme === 'dark' ? logo.dataset.logoDark : logo.dataset.logoLight;
-        if (next && logo.getAttribute('src') !== next) {
-          logo.setAttribute('src', next);
+    const updateThemeImages = (theme) => {
+      const images = document.querySelectorAll('[data-theme-image]');
+      images.forEach((node) => {
+        if (!(node instanceof HTMLImageElement)) return;
+        const lightSrc = node.dataset.themeSrcLight;
+        const darkSrc = node.dataset.themeSrcDark;
+        const next = theme === 'dark' ? darkSrc ?? lightSrc : lightSrc ?? darkSrc;
+        if (next && node.getAttribute('src') !== next) {
+          node.setAttribute('src', next);
         }
       });
     };
@@ -92,7 +94,7 @@ const storageKey = THEME_STORAGE_KEY;
         button.setAttribute('aria-pressed', isDark ? 'true' : 'false');
         setIconState(button, theme);
       });
-      updateLogos(theme);
+      updateThemeImages(theme);
     };
 
     const applyTheme = (theme) => {

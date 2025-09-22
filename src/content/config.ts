@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { linkTypeList } from '~/lib/links';
 
 /**
  * Astro content collection schemas mirror the tech-neutral project model in
@@ -15,10 +16,11 @@ const localizedString = z.union([
 ]);
 
 const linkSchema = z.object({
-  rel: z.enum(['source', 'demo', 'docs', 'related', 'other']).optional().default('other'),
+  rel: z.enum(linkTypeList).optional().default('other'),
   label: z.string().optional(),
   url: z.string().url(),
   icon: z.string().optional(), // Optional override/icon path or URL
+  iconDark: z.string().optional(),
 });
 
 const imageSchema = z.object({
