@@ -56,38 +56,125 @@ const currentYear = new Date().getFullYear();
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b">
-      <nav class="container flex items-center gap-4 py-2">
-        <a
-          href={localizePath("/", locale)}
-          class="flex items-center gap-2 font-semibold text-slate-900"
-        >
-          <span class="relative flex h-16 w-16 items-center justify-center">
-            <span
-              class="logo-skeleton absolute inset-0 rounded bg-slate-200/80 animate-pulse"
-              aria-hidden="true"
-            ></span>
-            <img
-              src="/logo.svg"
-              alt=""
-              loading="eager"
-              class="logo-img h-16 w-16 object-contain transition-opacity duration-200 data-[loaded=false]:opacity-0 data-[loaded=true]:opacity-100"
-              data-loaded="false"
-              onload="this.dataset.loaded='true'; const skeleton = this.previousElementSibling; if (skeleton) skeleton.remove();"
-              aria-hidden="true"
-            />
-          </span>
-          <span>{dictionary.site.name}</span>
-        </a>
-        {navLinks.map((link) => (
-          <a href={link.href} class="text-slate-600 hover:text-slate-900">
-            {link.label}
+      <nav class="container flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:gap-6 sm:py-2">
+        <div class="flex items-center justify-between gap-4 sm:justify-start">
+          <a
+            href={localizePath("/", locale)}
+            class="flex items-center gap-2 font-semibold text-slate-900"
+          >
+            <span class="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
+              <span
+                class="logo-skeleton absolute inset-0 rounded bg-slate-200/80 animate-pulse"
+                aria-hidden="true"
+              ></span>
+              <img
+                src="/logo.svg"
+                alt=""
+                loading="eager"
+                class="logo-img h-14 w-14 object-contain transition-opacity duration-200 data-[loaded=false]:opacity-0 data-[loaded=true]:opacity-100 sm:h-16 sm:w-16"
+                data-loaded="false"
+                onload="this.dataset.loaded='true'; const skeleton = this.previousElementSibling; if (skeleton) skeleton.remove();"
+                aria-hidden="true"
+              />
+            </span>
+            <span>{dictionary.site.name}</span>
           </a>
-        ))}
-        <a href={searchHref} class="ml-auto text-slate-600 hover:text-slate-900">
-          {dictionary.nav.search}
-        </a>
-        <LangToggle class="ml-3" locale={locale} pathname={pathname} />
+          <button
+            type="button"
+            class="flex h-10 w-10 items-center justify-center rounded border border-slate-300 text-slate-600 hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 sm:hidden"
+            data-nav-toggle
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+          >
+            <span class="sr-only">Menu</span>
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" d="M3 6.5h14M3 10h14M3 13.5h14" />
+            </svg>
+          </button>
+        </div>
+        <div
+          id="primary-navigation"
+          data-nav-menu
+          data-open="false"
+          class="hidden flex-col gap-3 text-slate-600 sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-4"
+        >
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 sm:flex-1">
+            {navLinks.map((link) => (
+              <a
+                href={link.href}
+                class="hover:text-slate-900"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href={searchHref}
+              class="hover:text-slate-900 sm:ml-auto"
+            >
+              {dictionary.nav.search}
+            </a>
+          </div>
+          <LangToggle
+            class="mt-2 border-t border-slate-200 pt-2 sm:mt-0 sm:border-0 sm:p-0 sm:ml-3"
+            locale={locale}
+            pathname={pathname}
+          />
+        </div>
       </nav>
+      <script>
+        if (typeof window !== 'undefined') {
+          const navToggle = document.querySelector('[data-nav-toggle]');
+          const navMenu = document.querySelector('[data-nav-menu]');
+          if (navToggle instanceof HTMLElement && navMenu instanceof HTMLElement) {
+            const setState = (open: boolean) => {
+              navMenu.dataset.open = open ? 'true' : 'false';
+              navMenu.classList.toggle('hidden', !open);
+              navToggle.setAttribute('aria-expanded', open.toString());
+            };
+
+            const enforceDesktopLayout = () => {
+              navMenu.classList.remove('hidden');
+              navToggle.setAttribute('aria-expanded', 'true');
+            };
+
+            const resetMobileLayout = () => {
+              navMenu.dataset.open = 'false';
+              navMenu.classList.add('hidden');
+              navToggle.setAttribute('aria-expanded', 'false');
+            };
+
+            const mql = window.matchMedia('(min-width: 640px)');
+            if (mql.matches) {
+              enforceDesktopLayout();
+            } else {
+              resetMobileLayout();
+            }
+
+            mql.addEventListener('change', (event: MediaQueryListEvent) => {
+              if (event.matches) {
+                enforceDesktopLayout();
+              } else {
+                resetMobileLayout();
+              }
+            });
+
+            navToggle.addEventListener('click', () => {
+              if (mql.matches) {
+                return;
+              }
+              const shouldOpen = navMenu.classList.contains('hidden');
+              setState(shouldOpen);
+            });
+          }
+        }
+      </script>
     </header>
     <main class="flex-1">
       <slot />
