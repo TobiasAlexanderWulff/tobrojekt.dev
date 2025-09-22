@@ -1,5 +1,11 @@
 import { defineCollection, z } from 'astro:content';
 
+/**
+ * Astro content collection schemas mirror the tech-neutral project model in
+ * `AGENTS.md`. Keep this file focused on shaping and validating content; avoid
+ * presentation-specific concerns so the content layer remains portable.
+ */
+
 const localizedString = z.union([
   z.string(),
   z.object({
@@ -38,6 +44,10 @@ const datesSchema = z
   })
   .optional();
 
+/**
+ * Project entries contain localized text, optional media, and external metadata
+ * used to hydrate list/detail pages. Fields align with the shared content model.
+ */
 const projects = defineCollection({
   type: 'content',
   schema: z.object({
@@ -77,6 +87,7 @@ const projects = defineCollection({
   }),
 });
 
+/** Lightweight taxonomy entries for tag/category landing pages. */
 const tags = defineCollection({
   type: 'data',
   schema: z.object({
@@ -86,4 +97,5 @@ const tags = defineCollection({
   }),
 });
 
+/** Exported to Astro so `getCollection()` can hydrate the strongly-typed data. */
 export const collections = { projects, tags };

@@ -26,9 +26,9 @@ export async function getLatestCommitDate(
   }
 }
 
+/** Normalize various date inputs to a YYYY-MM-DD string for sitemap usage. */
 export function formatYMD(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date;
   if (Number.isNaN(d.getTime())) return '';
   return d.toISOString().slice(0, 10);
 }
-

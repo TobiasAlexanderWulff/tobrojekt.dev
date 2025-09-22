@@ -1,3 +1,8 @@
+/**
+ * Locale primitives and helpers used to drive language-aware routing and copy.
+ * Prefer consuming through these utilities so UI components stay decoupled
+ * from the raw dictionary implementation.
+ */
 export const locales = ['en', 'de'] as const;
 export type Locale = (typeof locales)[number];
 
@@ -64,6 +69,7 @@ export type Dictionary = {
   };
 };
 
+// In-memory dictionaries kept small so they can be treeshaken by Astro.
 const dictionaries: Record<Locale, Dictionary> = {
   en: {
     site: {
@@ -189,10 +195,16 @@ const dictionaries: Record<Locale, Dictionary> = {
   },
 };
 
+/**
+ * Type guard for locales coming from user input (URL segments, storage, etc.).
+ */
 export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
 }
 
+/**
+ * Return the matching dictionary or fall back to the default language.
+ */
 export function getDictionary(locale: string | undefined): Dictionary {
   if (locale && isLocale(locale)) {
     return dictionaries[locale];
@@ -200,10 +212,17 @@ export function getDictionary(locale: string | undefined): Dictionary {
   return dictionaries[defaultLocale];
 }
 
+/**
+ * Resolve a safe Locale value from external input.
+ */
 export function resolveLocale(locale: string | undefined): Locale {
   return isLocale(locale ?? '') ? (locale as Locale) : defaultLocale;
 }
 
+/**
+ * Expand localized content down to a single value using an explicit locale,
+ * falling back to the default language and finally the first available entry.
+ */
 export function resolveLocalizedValue<T>(value: LocalizedValue<T> | undefined, locale: Locale): T | undefined {
   if (value === undefined || value === null) {
     return undefined;
@@ -226,6 +245,9 @@ export function resolveLocalizedValue<T>(value: LocalizedValue<T> | undefined, l
   return first;
 }
 
+/**
+ * Remove any non-default locale prefix from a pathname while preserving root.
+ */
 export function stripLocaleFromPath(pathname: string): string {
   const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;
   for (const locale of locales) {
@@ -242,6 +264,9 @@ export function stripLocaleFromPath(pathname: string): string {
   return normalized || '/';
 }
 
+/**
+ * Prefix a path with the locale unless it represents the default locale.
+ */
 export function localizePath(pathname: string, locale: Locale): string {
   const normalized = stripLocaleFromPath(pathname);
   if (locale === defaultLocale) {

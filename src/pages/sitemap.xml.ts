@@ -7,6 +7,10 @@ type SitemapEntry = {
   lastmod?: string;
 };
 
+/**
+ * Generate a localized sitemap that favors project metadata and external GitHub
+ * commit timestamps when available. Astro calls this handler at build time.
+ */
 export async function GET({ site }: { site: URL }) {
   const projects = await getCollection('projects');
   const tags = await getCollection('tags');

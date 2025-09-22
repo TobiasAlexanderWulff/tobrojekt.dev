@@ -2,6 +2,7 @@
 import Base from "~/layouts/Base.astro";
 import { getDictionary, resolveLocale } from "~/lib/i18n";
 
+// Pagefind-powered search shell; assets load post-build from /pagefind/.
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const pageTitle = `${dictionary.search.heading} – ${dictionary.site.name}`;

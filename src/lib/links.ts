@@ -1,3 +1,4 @@
+/** Extract the hostname from a URL string, returning null on invalid input. */
 export function parseHost(url: string): string | null {
   try {
     const u = new URL(url);
@@ -7,6 +8,10 @@ export function parseHost(url: string): string | null {
   }
 }
 
+/**
+ * Build a favicon descriptor for external links, preferring the site's own
+ * icon before falling back to DuckDuckGo's cached favicons.
+ */
 export function faviconFor(url: string): { src: string; fallback?: string; alt: string } {
   const host = parseHost(url);
   if (!host) {
@@ -16,4 +21,3 @@ export function faviconFor(url: string): { src: string; fallback?: string; alt: 
   const fallback = `https://icons.duckduckgo.com/ip3/${host}.ico`;
   return { src: primary, fallback, alt: `${host} favicon` };
 }
-
