@@ -95,12 +95,15 @@ const currentYear = new Date().getFullYear();
                 aria-hidden="true"
               ></span>
               <img
-                src="/logo.svg"
+                src="/logo-light.svg"
                 alt=""
                 loading="eager"
                 class="logo-img h-14 w-14 object-contain transition-opacity duration-200 data-[loaded=false]:opacity-0 data-[loaded=true]:opacity-100 sm:h-16 sm:w-16"
                 data-loaded="false"
-                onload="this.dataset.loaded='true'; const skeleton = this.previousElementSibling; if (skeleton) skeleton.remove();"
+                data-site-logo
+                data-logo-light="/logo-light.svg"
+                data-logo-dark="/logo-dark.svg"
+                onload="this.dataset.loaded='true'; const skeleton = this.previousElementSibling; if (skeleton?.classList?.contains('logo-skeleton')) { skeleton.remove(); }"
                 aria-hidden="true"
               />
             </span>

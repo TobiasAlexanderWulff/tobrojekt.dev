@@ -75,12 +75,24 @@ const storageKey = THEME_STORAGE_KEY;
       }
     };
 
+    const updateLogos = (theme) => {
+      const logos = document.querySelectorAll('[data-site-logo]');
+      logos.forEach((logo) => {
+        if (!(logo instanceof HTMLImageElement)) return;
+        const next = theme === 'dark' ? logo.dataset.logoDark : logo.dataset.logoLight;
+        if (next && logo.getAttribute('src') !== next) {
+          logo.setAttribute('src', next);
+        }
+      });
+    };
+
     const updateButtons = (theme) => {
       const isDark = theme === 'dark';
       buttons.forEach((button) => {
         button.setAttribute('aria-pressed', isDark ? 'true' : 'false');
         setIconState(button, theme);
       });
+      updateLogos(theme);
     };
 
     const applyTheme = (theme) => {
