@@ -65,9 +65,9 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
   <article class="container py-10">
     <header class="mb-6">
       <h1 class="text-3xl font-bold">{localizedTitle}</h1>
-      <p class="text-slate-700">{localizedSummary}</p>
+      <p class="text-slate-700 dark:text-slate-300">{localizedSummary}</p>
       {(statusLabel || entry.data.dates) ? (
-        <p class="text-sm text-slate-600 mt-1">
+        <p class="text-sm text-slate-600 mt-1 dark:text-slate-400">
           {statusLabel ? (
             <>
               {dictionary.projectDetail.status}:{' '}
@@ -88,13 +88,13 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
       {entry.data.tags?.length ? (
         <div class="mt-2 flex flex-wrap gap-2">
           {entry.data.tags.map((t) => (
-            <a href={localizePath(`/tags/${t}`, locale)} class="text-xs bg-slate-100 px-2 py-1 rounded">{t}</a>
+            <a href={localizePath(`/tags/${t}`, locale)} class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-700 dark:bg-slate-800 dark:text-slate-200">{t}</a>
           ))}
         </div>
       ) : null}
       {inlineDemoUrl ? (
         <section class="mt-4 max-w-4xl">
-          <div class="rounded border overflow-hidden">
+          <div class="rounded border border-slate-200 overflow-hidden dark:border-slate-700">
             <div class="relative w-full" style={`padding-top: ${aspectPadding}`}>
               <iframe
                 src={inlineDemoUrl}
@@ -106,11 +106,11 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
                 class="absolute inset-0 w-full h-full"
               ></iframe>
             </div>
-            <div class="px-3 py-2 text-xs text-slate-600 bg-slate-50 border-t">
+            <div class="px-3 py-2 text-xs text-slate-600 bg-slate-50 border-t border-slate-200 dark:text-slate-400 dark:bg-slate-800 dark:border-slate-700">
               {dictionary.projectDetail.inlineDemoFallback}
               <a
                 href={demoLink?.url ?? inlineDemoUrl}
-                class="ml-1 text-blue-700 hover:underline"
+                class="ml-1 text-blue-700 hover:underline dark:text-blue-400"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -126,7 +126,7 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
             alt={entry.data.media.social_card.alt}
             width={entry.data.media.social_card.width}
             height={entry.data.media.social_card.height}
-            class="w-full h-auto rounded border"
+            class="w-full h-auto rounded border border-slate-200 dark:border-slate-700"
             loading="eager"
             decoding="async"
             onerror="this.onerror=null;this.style.display='none'"
@@ -140,7 +140,7 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
             const src = l.icon ?? fav.src;
             const onerr = l.icon ? undefined : (fav.fallback ? `this.onerror=null;this.src='${fav.fallback}'` : undefined);
             return (
-              <a href={l.url} class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline" rel="noopener noreferrer" target="_blank">
+              <a href={l.url} class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline dark:text-blue-400" rel="noopener noreferrer" target="_blank">
                 {src ? (
                   <img src={src} alt={fav.alt} width="16" height="16" loading="lazy" class="w-4 h-4 rounded-sm" onerror={onerr} />
                 ) : null}
@@ -158,8 +158,8 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
       <section class="mt-8">
         <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {entry.data.media.images.map((img) => (
-            <li class="border rounded overflow-hidden">
-              <div class="h-64 flex items-center justify-center">
+            <li class="border rounded overflow-hidden border-slate-200 dark:border-slate-700">
+              <div class="h-64 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
                 <img
                   src={img.src}
                   alt={img.alt}

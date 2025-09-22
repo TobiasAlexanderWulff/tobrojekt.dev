@@ -37,20 +37,20 @@ const recentLocalized = recent.map((entry) => ({
 <Base>
   <section class="container py-12">
     <h1 class="text-3xl font-bold mb-3">{dictionary.homepage.heroTitle}</h1>
-    <p class="text-slate-700 max-w-prose">{dictionary.homepage.heroIntro}</p>
+    <p class="text-slate-700 max-w-prose dark:text-slate-300">{dictionary.homepage.heroIntro}</p>
   </section>
 
   <section class="container py-6">
     <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.featuredHeading}</h2>
     {featuredLocalized.length === 0 ? (
-      <p class="text-slate-600">{dictionary.homepage.featuredEmpty}</p>
+      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.featuredEmpty}</p>
     ) : (
       <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {featuredLocalized.map(({ entry, title, summary }) => (
-          <li class="p-4 border rounded hover:shadow-sm transition">
+          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
             <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
               <h3 class="font-semibold">{title}</h3>
-              <p class="text-slate-700 text-sm">{summary}</p>
+              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
             </a>
             {entry.data.links?.length ? (
               <div class="mt-2 flex items-center gap-2">
@@ -77,14 +77,14 @@ const recentLocalized = recent.map((entry) => ({
   <section class="container py-6">
     <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.recentHeading}</h2>
     {recentLocalized.length === 0 ? (
-      <p class="text-slate-600">{dictionary.homepage.recentEmpty}</p>
+      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.recentEmpty}</p>
     ) : (
       <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {recentLocalized.map(({ entry, title, summary }) => (
-          <li class="p-4 border rounded hover:shadow-sm transition">
+          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
             <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
               <h3 class="font-semibold">{title}</h3>
-              <p class="text-slate-700 text-sm">{summary}</p>
+              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
             </a>
             {entry.data.links?.length ? (
               <div class="mt-2 flex items-center gap-2">

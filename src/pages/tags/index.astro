@@ -22,9 +22,9 @@ const pageTitle = `${dictionary.tagsIndex.heading} – ${dictionary.site.name}`;
         <li>
           <a
             href={localizePath(`/tags/${t.data.id}`, locale)}
-            class="px-3 py-1 rounded border hover:bg-slate-50"
+            class="px-3 py-1 rounded border border-slate-300 transition hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800"
           >
-            {t.data.label} <span class="text-slate-500">({counts[t.data.id] ?? 0})</span>
+            {t.data.label} <span class="text-slate-500 dark:text-slate-400">({counts[t.data.id] ?? 0})</span>
           </a>
         </li>
       ))}

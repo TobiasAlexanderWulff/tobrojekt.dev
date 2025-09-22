@@ -23,6 +23,7 @@ export type Dictionary = {
     languageLabel: string;
     localeNames: Record<Locale, string>;
     toggleAria: string;
+    themeToggle: string;
   };
   nav: {
     home: string;
@@ -81,6 +82,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         de: 'Deutsch',
       },
       toggleAria: 'Change language',
+      themeToggle: 'Toggle color theme',
     },
     nav: {
       home: 'Home',
@@ -142,6 +144,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         de: 'Deutsch',
       },
       toggleAria: 'Sprache ändern',
+      themeToggle: 'Farbschema umschalten',
     },
     nav: {
       home: 'Start',

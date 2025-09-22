@@ -1,6 +1,7 @@
 ---
 import "~/styles/global.css";
 import LangToggle from "~/components/LangToggle.astro";
+import ThemeToggle from "~/components/ThemeToggle.astro";
 import type { Locale, LocalizedValue } from "~/lib/i18n";
 import {
   getDictionary,
@@ -8,6 +9,7 @@ import {
   resolveLocale,
   resolveLocalizedValue,
 } from "~/lib/i18n";
+import { THEME_STORAGE_KEY } from "~/lib/theme";
 
 type BaseProps = {
   title?: LocalizedValue<string>;
@@ -39,7 +41,7 @@ const searchHref = localizePath("/search", locale);
 const pathname = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
 ---
-<html lang={locale} class="h-full bg-white text-slate-900">
+<html lang={locale} class="h-full" data-theme="light" data-theme-storage={THEME_STORAGE_KEY}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -53,18 +55,43 @@ const currentYear = new Date().getFullYear();
         .logo-skeleton { display: none !important; }
       </style>
     </noscript>
+    <script is:inline>
+      (function () {
+        const root = document.documentElement;
+        const storageKey = root?.dataset?.themeStorage || 'preferred-theme';
+        const prefersDark = () =>
+          typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches
+            : false;
+        const setTheme = (theme) => {
+          if (!root) return;
+          root.classList.toggle('dark', theme === 'dark');
+          root.dataset.theme = theme;
+        };
+        try {
+          const stored = storageKey ? localStorage.getItem(storageKey) : null;
+          if (stored === 'light' || stored === 'dark') {
+            setTheme(stored);
+            return;
+          }
+        } catch (err) {
+          // Ignore storage access issues and fall back to system preference.
+        }
+        setTheme(prefersDark() ? 'dark' : 'light');
+      })();
+    </script>
   </head>
-  <body class="min-h-screen flex flex-col">
-    <header class="border-b">
-      <nav class="container flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:gap-6 sm:py-2">
+  <body class="min-h-screen flex flex-col bg-white text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100">
+    <header class="border-b border-slate-200 dark:border-slate-800">
+      <nav class="container flex flex-col gap-3 py-3 text-slate-700 sm:flex-row sm:items-center sm:gap-6 sm:py-2 dark:text-slate-300">
         <div class="flex items-center justify-between gap-4 sm:justify-start">
           <a
             href={localizePath("/", locale)}
-            class="flex items-center gap-2 font-semibold text-slate-900"
+            class="flex items-center gap-2 font-semibold text-slate-900 transition-colors hover:text-slate-700 dark:text-white dark:hover:text-slate-200"
           >
             <span class="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
               <span
-                class="logo-skeleton absolute inset-0 rounded bg-slate-200/80 animate-pulse"
+                class="logo-skeleton absolute inset-0 rounded bg-slate-200/80 animate-pulse dark:bg-slate-700/60"
                 aria-hidden="true"
               ></span>
               <img
@@ -81,7 +108,7 @@ const currentYear = new Date().getFullYear();
           </a>
           <button
             type="button"
-            class="flex h-10 w-10 items-center justify-center rounded border border-slate-300 text-slate-600 hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 sm:hidden"
+            class="flex h-10 w-10 items-center justify-center rounded border border-slate-300 text-slate-600 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 sm:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-white dark:focus-visible:ring-slate-500"
             data-nav-toggle
             aria-expanded="false"
             aria-controls="primary-navigation"
@@ -103,29 +130,34 @@ const currentYear = new Date().getFullYear();
           id="primary-navigation"
           data-nav-menu
           data-open="false"
-          class="hidden flex-col gap-3 text-slate-600 sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-4"
+          class="hidden flex-col gap-3 text-slate-600 sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-4 dark:text-slate-300"
         >
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 sm:flex-1">
             {navLinks.map((link) => (
               <a
                 href={link.href}
-                class="hover:text-slate-900"
+                class="transition hover:text-slate-900 dark:hover:text-white"
               >
                 {link.label}
               </a>
             ))}
             <a
               href={searchHref}
-              class="hover:text-slate-900 sm:ml-auto"
+              class="transition hover:text-slate-900 sm:ml-auto dark:hover:text-white"
             >
               {dictionary.nav.search}
             </a>
           </div>
-          <LangToggle
-            class="mt-2 border-t border-slate-200 pt-2 sm:mt-0 sm:border-0 sm:p-0 sm:ml-3"
-            locale={locale}
-            pathname={pathname}
-          />
+          <div class="mt-2 border-t border-slate-200 pt-2 sm:mt-0 sm:border-0 sm:p-0 sm:ml-3 dark:border-slate-700">
+            <div class="flex flex-wrap items-center gap-2 sm:justify-end">
+              <ThemeToggle locale={locale} />
+              <LangToggle
+                class="sm:ml-1"
+                locale={locale}
+                pathname={pathname}
+              />
+            </div>
+          </div>
         </div>
       </nav>
       <script>
@@ -179,8 +211,8 @@ const currentYear = new Date().getFullYear();
     <main class="flex-1">
       <slot />
     </main>
-    <footer class="border-t">
-      <div class="container py-6 text-sm text-slate-600">
+    <footer class="border-t border-slate-200 dark:border-slate-800">
+      <div class="container py-6 text-sm text-slate-600 dark:text-slate-400">
         © {currentYear} Tobias Wulff. {dictionary.footer.rights}
       </div>
     </footer>
