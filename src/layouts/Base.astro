@@ -45,13 +45,38 @@ const currentYear = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{resolvedTitle}</title>
     <meta name="description" content={resolvedDescription} />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <noscript>
+      <style>
+        .logo-img { opacity: 1 !important; }
+        .logo-skeleton { display: none !important; }
+      </style>
+    </noscript>
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b">
-      <nav class="container flex items-center gap-4 py-4">
-        <a href={localizePath("/", locale)} class="font-semibold">
-          {dictionary.site.name}
+      <nav class="container flex items-center gap-4 py-2">
+        <a
+          href={localizePath("/", locale)}
+          class="flex items-center gap-2 font-semibold text-slate-900"
+        >
+          <span class="relative flex h-16 w-16 items-center justify-center">
+            <span
+              class="logo-skeleton absolute inset-0 rounded bg-slate-200/80 animate-pulse"
+              aria-hidden="true"
+            ></span>
+            <img
+              src="/logo.svg"
+              alt=""
+              loading="eager"
+              class="logo-img h-16 w-16 object-contain transition-opacity duration-200 data-[loaded=false]:opacity-0 data-[loaded=true]:opacity-100"
+              data-loaded="false"
+              onload="this.dataset.loaded='true'; const skeleton = this.previousElementSibling; if (skeleton) skeleton.remove();"
+              aria-hidden="true"
+            />
+          </span>
+          <span>{dictionary.site.name}</span>
         </a>
         {navLinks.map((link) => (
           <a href={link.href} class="text-slate-600 hover:text-slate-900">
