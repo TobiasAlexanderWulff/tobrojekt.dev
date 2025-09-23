@@ -1,7 +1,7 @@
 ---
 import Base from "~/layouts/Base.astro";
 import { getCollection } from 'astro:content';
-import { faviconFor } from "~/lib/links";
+import { resolveProjectLink } from "~/lib/links";
 import {
   getDictionary,
   resolveLocale,
@@ -27,45 +27,58 @@ const featuredLocalized = featured.map((entry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
+  links: (entry.data.links ?? []).map((link) => resolveProjectLink(link, dictionary)),
 }));
 const recentLocalized = recent.map((entry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
+  links: (entry.data.links ?? []).map((link) => resolveProjectLink(link, dictionary)),
 }));
 ---
 <Base>
   <section class="container py-12">
     <h1 class="text-3xl font-bold mb-3">{dictionary.homepage.heroTitle}</h1>
-    <p class="text-slate-700 max-w-prose">{dictionary.homepage.heroIntro}</p>
+    <p class="text-slate-700 max-w-prose dark:text-slate-300">{dictionary.homepage.heroIntro}</p>
   </section>
 
   <section class="container py-6">
     <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.featuredHeading}</h2>
     {featuredLocalized.length === 0 ? (
-      <p class="text-slate-600">{dictionary.homepage.featuredEmpty}</p>
+      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.featuredEmpty}</p>
     ) : (
       <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredLocalized.map(({ entry, title, summary }) => (
-          <li class="p-4 border rounded hover:shadow-sm transition">
+        {featuredLocalized.map(({ entry, title, summary, links }) => (
+          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
             <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
               <h3 class="font-semibold">{title}</h3>
-              <p class="text-slate-700 text-sm">{summary}</p>
+              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
             </a>
-            {entry.data.links?.length ? (
+            {links.length ? (
               <div class="mt-2 flex items-center gap-2">
-                {entry.data.links.map((l) => {
-                  const fav = faviconFor(l.url);
-                  const src = l.icon ?? fav.src;
-                  const onerr = l.icon ? undefined : (fav.fallback ? `this.onerror=null;this.src='${fav.fallback}'` : undefined);
-                  return (
-                    <a href={l.url} rel="noopener noreferrer" target="_blank" aria-label={l.label ?? l.rel ?? l.url} class="inline-flex">
-                      {src ? (
-                        <img src={src} alt={fav.alt} width="16" height="16" loading="lazy" class="w-4 h-4 rounded-sm" onerror={onerr} />
-                      ) : null}
-                    </a>
-                  );
-                })}
+                {links.map((link) => (
+                  <a
+                    href={link.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    aria-label={link.ariaLabel}
+                    class="inline-flex"
+                    title={link.label}
+                  >
+                    <img
+                      src={link.icon.light}
+                      alt={link.icon.alt}
+                      width="16"
+                      height="16"
+                      loading="lazy"
+                      class="w-4 h-4 rounded-sm"
+                      data-theme-image
+                      data-theme-src-light={link.icon.light}
+                      data-theme-src-dark={link.icon.dark}
+                      onerror={link.icon.onError}
+                    />
+                  </a>
+                ))}
               </div>
             ) : null}
           </li>
@@ -77,29 +90,40 @@ const recentLocalized = recent.map((entry) => ({
   <section class="container py-6">
     <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.recentHeading}</h2>
     {recentLocalized.length === 0 ? (
-      <p class="text-slate-600">{dictionary.homepage.recentEmpty}</p>
+      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.recentEmpty}</p>
     ) : (
       <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {recentLocalized.map(({ entry, title, summary }) => (
-          <li class="p-4 border rounded hover:shadow-sm transition">
+        {recentLocalized.map(({ entry, title, summary, links }) => (
+          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
             <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
               <h3 class="font-semibold">{title}</h3>
-              <p class="text-slate-700 text-sm">{summary}</p>
+              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
             </a>
-            {entry.data.links?.length ? (
+            {links.length ? (
               <div class="mt-2 flex items-center gap-2">
-                {entry.data.links.map((l) => {
-                  const fav = faviconFor(l.url);
-                  const src = l.icon ?? fav.src;
-                  const onerr = l.icon ? undefined : (fav.fallback ? `this.onerror=null;this.src='${fav.fallback}'` : undefined);
-                  return (
-                    <a href={l.url} rel="noopener noreferrer" target="_blank" aria-label={l.label ?? l.rel ?? l.url} class="inline-flex">
-                      {src ? (
-                        <img src={src} alt={fav.alt} width="16" height="16" loading="lazy" class="w-4 h-4 rounded-sm" onerror={onerr} />
-                      ) : null}
-                    </a>
-                  );
-                })}
+                {links.map((link) => (
+                  <a
+                    href={link.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    aria-label={link.ariaLabel}
+                    class="inline-flex"
+                    title={link.label}
+                  >
+                    <img
+                      src={link.icon.light}
+                      alt={link.icon.alt}
+                      width="16"
+                      height="16"
+                      loading="lazy"
+                      class="w-4 h-4 rounded-sm"
+                      data-theme-image
+                      data-theme-src-light={link.icon.light}
+                      data-theme-src-dark={link.icon.dark}
+                      onerror={link.icon.onError}
+                    />
+                  </a>
+                ))}
               </div>
             ) : null}
           </li>

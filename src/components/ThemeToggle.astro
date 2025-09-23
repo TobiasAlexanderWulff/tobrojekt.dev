@@ -1,0 +1,161 @@
+---
+import type { Locale } from '~/lib/i18n';
+import { getDictionary } from '~/lib/i18n';
+import { THEME_STORAGE_KEY } from '~/lib/theme';
+
+const props = Astro.props as {
+  locale: Locale;
+  class?: string;
+};
+
+const className = props.class ?? '';
+const dictionary = getDictionary(props.locale);
+const storageKey = THEME_STORAGE_KEY;
+---
+<button
+  type="button"
+  class={`flex h-10 w-10 items-center justify-center rounded border border-slate-300 text-slate-600 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-white dark:focus-visible:ring-slate-500 ${className}`.trim()}
+  aria-label={dictionary.site.themeToggle}
+  aria-pressed="false"
+  data-theme-toggle
+  data-storage-key={storageKey}
+>
+  <span class="sr-only">{dictionary.site.themeToggle}</span>
+  <svg
+    data-theme-icon="light"
+    class="h-5 w-5"
+    viewBox="0 0 20 20"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    aria-hidden="true"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M10 3.5v-2m0 17v-2m6.5-6.5h2m-17 0h2m11.01-4.51l1.42-1.42m-12.02 12.02l1.42-1.42m0-9.18L4.39 4.39m12.02 12.02l-1.42-1.42M10 6.5a3.5 3.5 0 110 7 3.5 3.5 0 010-7z"
+    />
+  </svg>
+  <svg
+    data-theme-icon="dark"
+    class="hidden h-5 w-5"
+    viewBox="0 0 20 20"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    aria-hidden="true"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M15.5 13.5A6.5 6.5 0 016.5 4.5 5 5 0 1015.5 13.5z"
+    />
+  </svg>
+</button>
+<script>
+  (function () {
+    const doc = document.documentElement;
+    if (!doc) {
+      return;
+    }
+
+    const buttons = Array.from(document.querySelectorAll('[data-theme-toggle]'));
+    if (buttons.length === 0) {
+      return;
+    }
+
+    const storageKey = doc.dataset.themeStorage || buttons[0].dataset.storageKey || 'preferred-theme';
+
+    const setIconState = (button, theme) => {
+      const lightIcon = button.querySelector('[data-theme-icon="light"]');
+      const darkIcon = button.querySelector('[data-theme-icon="dark"]');
+      if (lightIcon instanceof SVGElement && darkIcon instanceof SVGElement) {
+        lightIcon.classList.toggle('hidden', theme !== 'light');
+        darkIcon.classList.toggle('hidden', theme !== 'dark');
+      }
+    };
+
+    const updateThemeImages = (theme) => {
+      const images = document.querySelectorAll('[data-theme-image]');
+      images.forEach((node) => {
+        if (!(node instanceof HTMLImageElement)) return;
+        const lightSrc = node.dataset.themeSrcLight;
+        const darkSrc = node.dataset.themeSrcDark;
+        const next = theme === 'dark' ? darkSrc ?? lightSrc : lightSrc ?? darkSrc;
+        if (next && node.getAttribute('src') !== next) {
+          node.setAttribute('src', next);
+        }
+      });
+    };
+
+    const updateButtons = (theme) => {
+      const isDark = theme === 'dark';
+      buttons.forEach((button) => {
+        button.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+        setIconState(button, theme);
+      });
+      updateThemeImages(theme);
+    };
+
+    const applyTheme = (theme) => {
+      const isDark = theme === 'dark';
+      doc.classList.toggle('dark', isDark);
+      doc.dataset.theme = theme;
+      updateButtons(theme);
+    };
+
+    const readStoredTheme = () => {
+      if (!storageKey) return null;
+      try {
+        const stored = localStorage.getItem(storageKey);
+        if (stored === 'light' || stored === 'dark') {
+          return stored;
+        }
+      } catch (err) {
+        // Storage might be unavailable (e.g. private mode)
+      }
+      return null;
+    };
+
+    const persistTheme = (theme) => {
+      if (!storageKey) return;
+      try {
+        localStorage.setItem(storageKey, theme);
+      } catch (err) {
+        // Safe to ignore; persistence is best-effort
+      }
+    };
+
+    const resolvePreferredTheme = () => {
+      if (doc.dataset.theme === 'light' || doc.dataset.theme === 'dark') {
+        return doc.dataset.theme;
+      }
+      return typeof window !== 'undefined' && typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+    };
+
+    const initialTheme = readStoredTheme() ?? resolvePreferredTheme();
+    applyTheme(initialTheme);
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const nextTheme = doc.classList.contains('dark') ? 'light' : 'dark';
+        applyTheme(nextTheme);
+        persistTheme(nextTheme);
+      });
+    });
+
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', (event) => {
+        if (readStoredTheme()) {
+          return;
+        }
+        const autoTheme = event.matches ? 'dark' : 'light';
+        applyTheme(autoTheme);
+      });
+    }
+  })();
+</script>

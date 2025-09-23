@@ -23,6 +23,7 @@ export type Dictionary = {
     languageLabel: string;
     localeNames: Record<Locale, string>;
     toggleAria: string;
+    themeToggle: string;
   };
   nav: {
     home: string;
@@ -33,6 +34,7 @@ export type Dictionary = {
   footer: {
     rights: string;
   };
+  links: Record<'demo' | 'docs' | 'github' | 'source' | 'related' | 'other', string>;
   homepage: {
     heroTitle: string;
     heroIntro: string;
@@ -53,6 +55,11 @@ export type Dictionary = {
     updated: string;
     inlineDemoFallback: string;
     openDemo: string;
+    viewImage: string;
+    closeImage: string;
+    previousImage: string;
+    nextImage: string;
+    imageCounterTemplate: string;
     statusLabels: Record<'planned' | 'active' | 'completed' | 'archived', string>;
   };
   tagsIndex: {
@@ -81,6 +88,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         de: 'Deutsch',
       },
       toggleAria: 'Change language',
+      themeToggle: 'Toggle color theme',
     },
     nav: {
       home: 'Home',
@@ -90,6 +98,14 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     footer: {
       rights: 'All rights reserved.',
+    },
+    links: {
+      demo: 'Live demo',
+      docs: 'Documentation',
+      github: 'GitHub',
+      source: 'Source code',
+      related: 'Related link',
+      other: 'External link',
     },
     homepage: {
       heroTitle: 'Hello, I’m Tobias',
@@ -112,6 +128,11 @@ const dictionaries: Record<Locale, Dictionary> = {
       updated: 'Updated',
       inlineDemoFallback: 'If the demo fails to load in your browser, open it in a new tab:',
       openDemo: 'Open demo',
+      viewImage: 'View image',
+      closeImage: 'Close image preview',
+      previousImage: 'Previous image',
+      nextImage: 'Next image',
+      imageCounterTemplate: 'Image %current% of %total%',
       statusLabels: {
         planned: 'Planned',
         active: 'Active',
@@ -142,6 +163,7 @@ const dictionaries: Record<Locale, Dictionary> = {
         de: 'Deutsch',
       },
       toggleAria: 'Sprache ändern',
+      themeToggle: 'Farbschema umschalten',
     },
     nav: {
       home: 'Start',
@@ -151,6 +173,14 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     footer: {
       rights: 'Alle Rechte vorbehalten.',
+    },
+    links: {
+      demo: 'Live-Demo',
+      docs: 'Dokumentation',
+      github: 'GitHub',
+      source: 'Quellcode',
+      related: 'Verwandter Link',
+      other: 'Externer Link',
     },
     homepage: {
       heroTitle: 'Hallo, ich bin Tobias',
@@ -173,6 +203,11 @@ const dictionaries: Record<Locale, Dictionary> = {
       updated: 'Aktualisiert',
       inlineDemoFallback: 'Wenn die Demo in deinem Browser nicht geladen wird, öffne sie in einem neuen Tab:',
       openDemo: 'Demo öffnen',
+      viewImage: 'Bild anzeigen',
+      closeImage: 'Bildvorschau schließen',
+      previousImage: 'Vorheriges Bild',
+      nextImage: 'Nächstes Bild',
+      imageCounterTemplate: 'Bild %current% von %total%',
       statusLabels: {
         planned: 'Geplant',
         active: 'Aktiv',
@@ -231,12 +266,12 @@ export function resolveLocalizedValue<T>(value: LocalizedValue<T> | undefined, l
     return value as T;
   }
 
-  const localized = value[locale];
+  const localized = (value as Record<Locale, T | undefined>)[locale];
   if (localized !== undefined) {
     return localized;
   }
 
-  const fallback = value[defaultLocale];
+  const fallback = (value as Record<Locale, T | undefined>)[defaultLocale];
   if (fallback !== undefined) {
     return fallback;
   }
