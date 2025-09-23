@@ -55,6 +55,11 @@ export type Dictionary = {
     updated: string;
     inlineDemoFallback: string;
     openDemo: string;
+    viewImage: string;
+    closeImage: string;
+    previousImage: string;
+    nextImage: string;
+    imageCounterTemplate: string;
     statusLabels: Record<'planned' | 'active' | 'completed' | 'archived', string>;
   };
   tagsIndex: {
@@ -123,6 +128,11 @@ const dictionaries: Record<Locale, Dictionary> = {
       updated: 'Updated',
       inlineDemoFallback: 'If the demo fails to load in your browser, open it in a new tab:',
       openDemo: 'Open demo',
+      viewImage: 'View image',
+      closeImage: 'Close image preview',
+      previousImage: 'Previous image',
+      nextImage: 'Next image',
+      imageCounterTemplate: 'Image %current% of %total%',
       statusLabels: {
         planned: 'Planned',
         active: 'Active',
@@ -193,6 +203,11 @@ const dictionaries: Record<Locale, Dictionary> = {
       updated: 'Aktualisiert',
       inlineDemoFallback: 'Wenn die Demo in deinem Browser nicht geladen wird, öffne sie in einem neuen Tab:',
       openDemo: 'Demo öffnen',
+      viewImage: 'Bild anzeigen',
+      closeImage: 'Bildvorschau schließen',
+      previousImage: 'Vorheriges Bild',
+      nextImage: 'Nächstes Bild',
+      imageCounterTemplate: 'Bild %current% von %total%',
       statusLabels: {
         planned: 'Geplant',
         active: 'Aktiv',
@@ -251,12 +266,12 @@ export function resolveLocalizedValue<T>(value: LocalizedValue<T> | undefined, l
     return value as T;
   }
 
-  const localized = value[locale];
+  const localized = (value as Record<Locale, T | undefined>)[locale];
   if (localized !== undefined) {
     return localized;
   }
 
-  const fallback = value[defaultLocale];
+  const fallback = (value as Record<Locale, T | undefined>)[defaultLocale];
   if (fallback !== undefined) {
     return fallback;
   }
