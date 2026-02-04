@@ -108,9 +108,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       other: 'External link',
     },
     homepage: {
-      heroTitle: 'Hello, I’m Tobias',
+      heroTitle: 'Hey, I am Tobias',
       heroIntro:
-        'This is my evolving home for projects. Featured work appears below; explore the full list on the Projects page.',
+        `I enjoy developing software, especially when data and machine learning are involved. I love the challenge of understanding and mastering complex topics.\n\nOn this page, I collect my projects and experiments. Feel free to take a look around, it's (mostly) tidy.`,
       featuredHeading: 'Featured Projects',
       featuredEmpty: 'No featured projects yet.',
       recentHeading: 'Recently Added',
@@ -183,11 +183,11 @@ const dictionaries: Record<Locale, Dictionary> = {
       other: 'Externer Link',
     },
     homepage: {
-      heroTitle: 'Hallo, ich bin Tobias',
+      heroTitle: 'Hey, ich bin Tobias',
       heroIntro:
-        'Dies ist mein stetig wachsendes Zuhause für Projekte. Hervorgehobene Arbeiten findest du unten; die vollständige Liste steht auf der Projekte-Seite.',
-      featuredHeading: 'Ausgewählte Projekte',
-      featuredEmpty: 'Noch keine ausgewählten Projekte.',
+        'Ich entwickle gerne Software, besonders wenn Daten und Machine Learning dabei eine Rolle spielen. Ich liebe die Herausforderung darin, komplexe Themen zu durchdringen und zu meistern.\n\nAuf dieser Seite sammle ich meine Projekte und Experimente. Schau dich gerne um, es ist (meistens) aufgeräumt.',
+      featuredHeading: 'Hervorgehobene Projekte',
+      featuredEmpty: 'Keine Projekte hervorgehoben.',
       recentHeading: 'Kürzlich hinzugefügt',
       recentEmpty: 'Noch keine neuen Projekte.',
     },
