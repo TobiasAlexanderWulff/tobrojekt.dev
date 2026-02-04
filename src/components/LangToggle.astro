@@ -52,6 +52,7 @@ const storageKey = LOCALE_STORAGE_KEY;
   if (container instanceof HTMLElement) {
     const storageKey = container.dataset.storageKey;
     container.querySelectorAll('[data-lang-link]').forEach((link) => {
+      if (!(link instanceof HTMLElement)) return;
       link.addEventListener('click', () => {
         const locale = link.dataset.locale;
         try {

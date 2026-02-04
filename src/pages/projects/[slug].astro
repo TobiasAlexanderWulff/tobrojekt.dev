@@ -1,14 +1,24 @@
 ---
 import Base from "~/layouts/Base.astro";
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { getLatestCommitDate, formatYMD } from "~/lib/github";
 import { resolveProjectLink } from "~/lib/links";
+import type { ProjectLinkInput, ResolvedProjectLink } from "~/lib/links";
 import {
   getDictionary,
   resolveLocale,
   localizePath,
   resolveLocalizedValue,
 } from "~/lib/i18n";
+
+type ProjectEntry = CollectionEntry<'projects'>;
+type ProjectStatus = 'planned' | 'active' | 'completed' | 'archived';
+type ProjectImage = {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+};
 
 export async function getStaticPaths() {
   const entries = await getCollection('projects');
@@ -17,15 +27,16 @@ export async function getStaticPaths() {
     .map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
-const { entry } = Astro.props;
+const { entry } = Astro.props as { entry: ProjectEntry };
 const { Content } = await entry.render();
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const localizedTitle = resolveLocalizedValue(entry.data.title, locale) ?? '';
 const localizedSummary = resolveLocalizedValue(entry.data.summary, locale) ?? '';
-const statusLabel = entry.data.status
-  ? dictionary.projectDetail.statusLabels[entry.data.status] ?? entry.data.status
+const status = entry.data.status as ProjectStatus | undefined;
+const statusLabel = status
+  ? dictionary.projectDetail.statusLabels[status] ?? status
   : null;
 const startedLabel = entry.data.dates?.started
   ? dictionary.projectDetail.started
@@ -46,7 +57,7 @@ const updatedDate = externalUpdated ?? entry.data.dates?.updated;
 const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
 
 // Prefer an inline playable demo when available
-const demoLink = entry.data.links?.find((l) => l.rel === 'demo');
+const demoLink = entry.data.links?.find((l: ProjectLinkInput) => l.rel === 'demo');
 let inlineDemoUrl: string | null = null;
 if (demoLink?.url) {
   try {
@@ -60,7 +71,12 @@ if (demoLink?.url) {
 }
 const sc = entry.data.media?.social_card;
 const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}%` : '56.25%';
-const resolvedLinks = (entry.data.links ?? []).map((link) => resolveProjectLink(link, dictionary));
+const resolvedLinks: ResolvedProjectLink[] = (entry.data.links ?? []).map((link: ProjectLinkInput) =>
+  resolveProjectLink(link, dictionary),
+);
+const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
+  ? entry.data.media.images
+  : [];
 ---
 <Base title={pageTitle} description={pageDescription}>
   <article class="container py-10">
@@ -88,7 +104,7 @@ const resolvedLinks = (entry.data.links ?? []).map((link) => resolveProjectLink(
       ) : null}
       {entry.data.tags?.length ? (
         <div class="mt-2 flex flex-wrap gap-2">
-          {entry.data.tags.map((t) => (
+          {entry.data.tags.map((t: string) => (
             <a href={localizePath(`/tags/${t}`, locale)} class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-700 dark:bg-slate-800 dark:text-slate-200">{t}</a>
           ))}
         </div>
@@ -136,7 +152,7 @@ const resolvedLinks = (entry.data.links ?? []).map((link) => resolveProjectLink(
       ) : null}
       {resolvedLinks.length ? (
         <div class="mt-3 flex flex-wrap gap-3">
-          {resolvedLinks.map((link) => (
+          {resolvedLinks.map((link: ResolvedProjectLink) => (
             <a
               href={link.href}
               class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline dark:text-blue-400"
@@ -165,10 +181,10 @@ const resolvedLinks = (entry.data.links ?? []).map((link) => resolveProjectLink(
     <div class="prose max-w-none">
       <Content />
     </div>
-    {Array.isArray(entry.data.media?.images) && entry.data.media.images.length > 0 ? (
+    {galleryImages.length > 0 ? (
       <section class="mt-8">
         <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {entry.data.media.images.map((img, index) => (
+          {galleryImages.map((img: ProjectImage, index: number) => (
             <li class="border rounded overflow-hidden border-slate-200 dark:border-slate-700">
               <a
                 href={img.src}

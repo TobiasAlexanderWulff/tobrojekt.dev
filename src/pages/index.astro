@@ -1,7 +1,8 @@
 ---
 import Base from "~/layouts/Base.astro";
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { resolveProjectLink } from "~/lib/links";
+import type { ProjectLinkInput, ResolvedProjectLink } from "~/lib/links";
 import {
   getDictionary,
   resolveLocale,
@@ -13,6 +14,14 @@ import {
  * Home page highlights featured projects before a lightweight recent list.
  * Filtering happens server-side so static builds stay fast.
  */
+type ProjectEntry = CollectionEntry<'projects'>;
+type LocalizedProject = {
+  entry: ProjectEntry;
+  title: string;
+  summary: string;
+  links: ResolvedProjectLink[];
+};
+
 const all = await getCollection('projects');
 const featured = all
   .filter((p) => p.data.visibility !== 'private' && p.data.featured)
@@ -23,17 +32,21 @@ const recent = all
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
-const featuredLocalized = featured.map((entry) => ({
+const featuredLocalized: LocalizedProject[] = featured.map((entry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
-  links: (entry.data.links ?? []).map((link) => resolveProjectLink(link, dictionary)),
+  links: (entry.data.links ?? []).map((link: ProjectLinkInput) =>
+    resolveProjectLink(link, dictionary),
+  ),
 }));
-const recentLocalized = recent.map((entry) => ({
+const recentLocalized: LocalizedProject[] = recent.map((entry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
-  links: (entry.data.links ?? []).map((link) => resolveProjectLink(link, dictionary)),
+  links: (entry.data.links ?? []).map((link: ProjectLinkInput) =>
+    resolveProjectLink(link, dictionary),
+  ),
 }));
 ---
 <Base>

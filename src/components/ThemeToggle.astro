@@ -59,14 +59,17 @@ const storageKey = THEME_STORAGE_KEY;
       return;
     }
 
-    const buttons = Array.from(document.querySelectorAll('[data-theme-toggle]'));
+    type Theme = 'light' | 'dark';
+    const buttons = Array.from(document.querySelectorAll('[data-theme-toggle]')).filter(
+      (node): node is HTMLButtonElement => node instanceof HTMLButtonElement,
+    );
     if (buttons.length === 0) {
       return;
     }
 
     const storageKey = doc.dataset.themeStorage || buttons[0].dataset.storageKey || 'preferred-theme';
 
-    const setIconState = (button, theme) => {
+    const setIconState = (button: HTMLButtonElement, theme: Theme) => {
       const lightIcon = button.querySelector('[data-theme-icon="light"]');
       const darkIcon = button.querySelector('[data-theme-icon="dark"]');
       if (lightIcon instanceof SVGElement && darkIcon instanceof SVGElement) {
@@ -75,7 +78,7 @@ const storageKey = THEME_STORAGE_KEY;
       }
     };
 
-    const updateThemeImages = (theme) => {
+    const updateThemeImages = (theme: Theme) => {
       const images = document.querySelectorAll('[data-theme-image]');
       images.forEach((node) => {
         if (!(node instanceof HTMLImageElement)) return;
@@ -88,7 +91,7 @@ const storageKey = THEME_STORAGE_KEY;
       });
     };
 
-    const updateButtons = (theme) => {
+    const updateButtons = (theme: Theme) => {
       const isDark = theme === 'dark';
       buttons.forEach((button) => {
         button.setAttribute('aria-pressed', isDark ? 'true' : 'false');
@@ -97,14 +100,14 @@ const storageKey = THEME_STORAGE_KEY;
       updateThemeImages(theme);
     };
 
-    const applyTheme = (theme) => {
+    const applyTheme = (theme: Theme) => {
       const isDark = theme === 'dark';
       doc.classList.toggle('dark', isDark);
       doc.dataset.theme = theme;
       updateButtons(theme);
     };
 
-    const readStoredTheme = () => {
+    const readStoredTheme = (): Theme | null => {
       if (!storageKey) return null;
       try {
         const stored = localStorage.getItem(storageKey);
@@ -117,7 +120,7 @@ const storageKey = THEME_STORAGE_KEY;
       return null;
     };
 
-    const persistTheme = (theme) => {
+    const persistTheme = (theme: Theme) => {
       if (!storageKey) return;
       try {
         localStorage.setItem(storageKey, theme);
@@ -126,7 +129,7 @@ const storageKey = THEME_STORAGE_KEY;
       }
     };
 
-    const resolvePreferredTheme = () => {
+    const resolvePreferredTheme = (): Theme => {
       if (doc.dataset.theme === 'light' || doc.dataset.theme === 'dark') {
         return doc.dataset.theme;
       }
