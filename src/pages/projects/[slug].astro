@@ -81,7 +81,7 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
 <Base title={pageTitle} description={pageDescription}>
   <article class="container py-10">
     <header class="mb-6">
-      <h1 class="text-3xl font-bold">{localizedTitle}</h1>
+      <h1 class="text-3xl font-bold mb-3">{localizedTitle}</h1>
       <p class="text-slate-700 dark:text-slate-300">{localizedSummary}</p>
       {(statusLabel || entry.data.dates) ? (
         <p class="text-sm text-slate-600 mt-1 dark:text-slate-400">
@@ -178,8 +178,11 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
         </div>
       ) : null}
     </header>
-    <div class="prose max-w-none">
-      <Content />
+    <div class="prose prose-slate max-w-none dark:prose-invert 
+                prose-headings:font-bold 
+                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                prose-img:rounded-xl prose-img:shadow-lg prose-img:mx-auto
+                prose-img:max-h-[500px] prose-img:w-auto"> <Content />
     </div>
     {galleryImages.length > 0 ? (
       <section class="mt-8">

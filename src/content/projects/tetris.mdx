@@ -4,8 +4,8 @@ title:
   en: "Tetris"
   de: "Tetris"
 summary:
-  en: "A modern Tetris built in TypeScript with a tidy monorepo: lean core engine plus a fast Vite + React web client featuring custom controls, audio, and local highscores."
-  de: "Ein modernes Tetris in TypeScript – organisiert in einer aufgeräumten Monorepo: leichte Core-Engine plus schneller Vite + React Web-Client mit anpassbaren Controls, Audio und lokalen Highscores."
+  de: "Dieses Projekt ist ein Experiment mit OpenAIs Coding Agent (Codex). Ich wollte herausfinden, wie gut KI inzwischen wirklich coden kann, und habe gemeinsam mit dem Agenten eine moderne Web-Version von Tetris gebaut."
+  en: "This project is an experiment with OpenAI's coding agent (Codex). I wanted to see how well AI can actually code, so I built a modern web version of Tetris together with the agent."
 status: active
 tags: 
   - typescript
@@ -27,6 +27,7 @@ skills:
   - Web Audio API
   - State management
   - Unit testing (Vitest)
+  - AI Prompting
 links:
   - rel: "demo"
     label: "Play Online"
@@ -68,50 +69,53 @@ external:
     branch: "main"
 ---
 
-Dieses Projekt ist eine modulare **Tetris-Implementierung** in einer Monorepo-Struktur mit zwei Packages:  
-- `@tetris/core` – Engine-Scaffolding  
-- `@tetris/web` – spielbarer Web-Client auf Basis von HTML5 Canvas (60 FPS)  
+## Hintergrund & Motivation
 
-# Tetris Monorepo
+Die Motivation hinter diesem Projekt war meine Neugier. Ich wollte wissen, wie weit und wie gut ich vorankomme, wenn ich einen **KI-Coding-Agenten** (in diesem Fall OpenAI Codex) nicht nur für Snippets, sondern für eine komplette App-Architektur nutze.
 
-Dieses Projekt ist eine pragmatische **Tetris-Implementierung** und wird in einer **zwei-Package-Monorepo** organisiert:
+Ich habe mich entschieden, **Tetris** zu bauen, damit ein klares Ziel ohne lange Konzeptionsphase vor Augen ist und ich den Fortschritt anhand der bekannten Spielmechanik gut verfolgen kann.
 
-- `@tetris/core` – Engine-Scaffolding, das grundlegende Spiellogik und Datenstrukturen bereitstellt  
-- `@tetris/web` – der spielbare Web-Client, der über ein HTML5-Canvas rendert und auf eine flüssige 60 FPS Erfahrung ausgelegt ist  
+## Programmieren durch Delegieren
 
----
+Normalerweise initialisiere ich ein Projekt selbst, lege die Ordnerstruktur an und mache mir Pläne, wie ich vorgehe. Ich mache mich mit dem Tech Stack vertraut und verbringe viel Zeit in Dokumentationen und Foren.
 
-## Features
+Bei diesem Projekt war das anders. Ich habe angefangen, indem ich dem Agenten im Planungsmodus einfach geschrieben habe: *"Ich will Tetris programmieren"*. Darauf folgte eine Planungsphase, in welcher sich durch ein Hin und Her mit dem Agenten ein Plan herauskristallisierte. Diesen ließ ich dann vom Agenten in einer Markdown-Datei festhalten. Es wurden Ziel und Scope, der Tech Stack, ein Architekturüberblick, Spielmechaniken sowie Meilensteine und Abschlusskriterien festgelegt. All das hat super funktioniert, ohne dass viel Input von meiner Seite aus notwendig war.
 
-- **Gameplay & Regeln**  
-  - Guideline-inspirierte Mechaniken: SRS, 7-Bag-Randomizer, klassisches Scoring  
-  - Unterstützt Ghost Piece, Hold-Funktion und Next-Queue  
-  - Einstellbare Parameter wie DAS, ARR und 180°-Rotation  
-  - Lokale Highscores mit Export-, Import- und Clear-Optionen  
+Um den Agenten besser kontrollieren zu können und um zu verhindern, dass Features implementiert werden, die nicht geplant waren, ist mir klar geworden, dass der Agent Regeln braucht. Diese habe ich ihm in Form einer `AGENTS.md`-Datei gegeben und im Laufe des Projektes immer wieder ergänzt.
 
-- **UI & UX**  
-  - Schlanke, klare Oberfläche  
-  - Konfigurierbare Themes  
-  - Optionale Animationen und Maussteuerung  
+> **Aus meiner AGENTS.md:**
+> 1. Only do one task at a time.
+> 2. If a task is too big, don't implement it. Instead break it down...
+> 3. Always try to implement a modular- and component-based structure.
+> 4. If files are too big, split them into multiple files...
 
-- **Audio**  
-  - Abstrakte Audio-Service-Schicht mit Web-Audio-Adapter  
-  - Engine-Events wie Line Clear, Tetris und Level Up werden in SFX und Musik gemappt  
-  - Zukunftssicher erweiterbar für Musik und individuelle Soundsets  
+Meine Arbeit bestand zu 90 % aus Reviewen und "Prompt Engineering" – also dem Versuch, mich so präzise wie möglich auszudrücken, damit das Ergebnis auch das Gewünschte ist. Wenn der Agent vom Weg abkam, habe ich ihn nicht durch Code-Korrekturen, sondern durch präzisere Anweisungen zurückgeholt.
 
----
+## Architektur & Tech Stack
 
-## Technologie & Projektpflege
+Das Spannende war zu sehen, ob der Agent abstrakte Anweisungen wie "modular structure" (Regel 5) wirklich umsetzen kann.
 
-- **TypeScript** als durchgehende Sprache  
-- **Vite** für schnelle Entwicklungs- und Build-Zyklen  
-- **Vitest** und **Testing Library** für Unit- und UI-Tests  
-- **ESLint** und **Prettier** für Codequalität und Konsistenz  
+Und wie sich herausgestellt hat, konnte er dies. Ohne dass ich die Ordnerstruktur vorgegeben habe, hat der Agent (auf Basis meiner Prompts) ein sauberes **Monorepo** mit **pnpm** kreiert:
 
-Darüber hinaus sorgt die Monorepo-Struktur für klare Abgrenzungen und Wiederverwendbarkeit. Projekt­hygiene steht im Vordergrund – mit gemeinsamen Workspace-Skripten, CI-Hooks und einer dokumentierten Roadmap für künftige Features wie Maussteuerung und erweiterte Audiofunktionen.  
+* **`@tetris/core`**: Die reine Logik. Getrennt, testbar, ohne UI-Abhängigkeiten.
+* **`@tetris/web`**: Der Visual Layer. Nutzt Canvas und React und konsumiert nur den Core.
 
----
+Der Code ist erstaunlich "hygienisch". Die Regel 7 ("split files if too big") wurde konsequent befolgt. Statt einer riesigen `Game.ts` gibt es dedizierte Module für `Piece`, `Board`, `Scoring` und `Audio`.
 
-## Zielsetzung
+## Ergebnis
 
-Dieses MVP bietet ein solides Fundament für eine guideline-orientierte Tetris-Variante. Es kombiniert eine moderne technische Basis mit klarer Architektur und schafft so Raum für zukünftige Erweiterungen, ohne Kompromisse bei Lesbarkeit, Testbarkeit und Performance.
+Das Ziel war kein einfaches "Hello World", sondern ein Spiel, das sich *echt* anfühlt. Durch die strikte Einhaltung von Regel 2 ("Add Tests") konnte ich sicherstellen, dass komplexe Mechaniken wie das **Super Rotation System (SRS)** oder der **7-Bag-Randomizer** korrekt funktionieren, bevor überhaupt ein Pixel auf den Bildschirm gezeichnet wurde.
+
+Ein besonderes Highlight sind die **Assets**. Ich wollte keine Standard-Sounds herunterladen, sondern habe den Agenten beauftragt, **8-bit-Sounds per Skript** zu generieren. Er lieferte prompt ein Shell-Skript, das mittels `ffmpeg` mathematische Wellenformen zu einem stimmigen Chiptune-Soundtrack mischt. Das Ergebnis passte ohne nennenswerte Iterationen sofort perfekt zum Vibe.
+
+Auch technisch ist das Audio-System sauber gelöst, indem eine Abstraktionsschicht die Engine-Events (wie *Line Clear*) auf die **Web Audio API** mappt. Das macht das System extrem reaktionsschnell und vermeidet Latenzen.
+
+Dazu kommen Features wie **Local Storage Highscores**, anpassbare Steuerungen (DAS, ARR) und ein Ghost-Piece, die das Spielgefühl abrunden.
+
+## Fazit
+
+Das Projekt hat mir gezeigt, dass KI ein extrem mächtiger **Co-Pilot** ist, welcher allerdings möglichst präzise Anweisungen, einen Plan sowie Regeln braucht. Je besser diese sind, desto besser ist auch das Ergebnis. Die persönlichen Anforderungen an so ein Projekt sind daher andere als bei einem herkömmlichen Softwareprojekt. Es geht mehr um Planungsfähigkeit, klare Ausdrucksweise und darum, zu wissen, was man will. Das Praktische ist, dass der Agent einen auch bei diesen Sachen unterstützt, wenn man ihn denn damit beauftragt.
+
+Ich konnte aus dem Projekt sehr viel über das Prompten und Managen von Projekten aus einer abstrakteren Ebene heraus lernen und war überwältigt von dem Ergebnis und dem relativ geringen zeitlichen Aufwand.
+
+Das Spiel ist voll funktionsfähig und ich liebe es, hin und wieder in ihm und vor allem der stimmigen 8-bit-Musik zu versinken. Ich habe noch ein paar Ideen für Extras und Ergänzungen, die in Zukunft hoffentlich bald implementiert sein werden.

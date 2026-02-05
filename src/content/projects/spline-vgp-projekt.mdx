@@ -1,11 +1,11 @@
 ---
 id: "gh:TobiasAlexanderWulff/spline-vgp-project"
 title:
-  en: "Spline VGP Project"
-  de: "Spline-VGP-Projekt"
+  de: "Sigmoid-Spline-Experiment"
+  en: "Sigmoid Spline Experiment"
 summary:
-  en: "Investigating a spline-based sigmoid activation to mitigate the vanishing-gradient problem in deep MLPs, with reproducible experiments and auto-generated comparisons against ReLU and Sigmoid."
-  de: "Untersuchung einer Spline-basierten Sigmoid-Aktivierung zur Abschwächung des Vanishing-Gradient-Problems in tiefen MLPs; reproduzierbare Experimente mit Auto-Plots im Vergleich zu ReLU und Sigmoid."
+  de: "Im Rahmen meines Studiums habe ich an einer Alternative zu ReLU geforscht. Die Frage: Kann die klassische Sigmoid-Funktion in tiefen Netzen noch ihren Nutzen haben, wenn man sie mithilfe von Splines modifiziert? Genau dieser Frage bin ich in diesem Experiment nachgegangen."
+  en: "As part of my studies, I researched an alternative to ReLU. The question: Can the classic sigmoid function still be useful in deep networks if modified with splines? I investigated this exact question in this experiment."
 status: active
 tags: 
   - python
@@ -37,38 +37,6 @@ links:
     rel: source
     label: GitHub
     url: "https://github.com/TobiasAlexanderWulff/spline-vgp-project"
-media: 
-  social_card: 
-    src: "/projects/spline-vgp-projekt/cover.png"
-    alt: Sigmoid vs. Spline Aktivierung und Ableitungen
-    width: 3000
-    height: 1500
-  images: 
-    - 
-      src: "/projects/spline-vgp-projekt/sigmoid_fashionmnist_overall_gradient_heatmap.png"
-      alt: "Zusammengefasste Gradienten Heatmap (Sigmoid, FashionMNIST)"
-      width: 3600
-      height: 2295
-    - 
-      src: "/projects/spline-vgp-projekt/spline_fashionmnist_overall_gradient_heatmap.png"
-      alt: "Zusammengefasste Gradienten Heatmap (Spline, FashionMNIST)"
-      width: 3600
-      height: 2295
-    - 
-      src: "/projects/spline-vgp-projekt/fashionmnist_combined_accuracy.png"
-      alt: Kombinierte Genauigkeiten (FashionMNIST)
-      width: 3000
-      height: 1500
-    - 
-      src: "/projects/spline-vgp-projekt/fashionmnist_combined_log10loss.png"
-      alt: "Kombinierte Log10-Verluste (FashionMNIST)"
-      width: 3000
-      height: 1500
-    - 
-      src: "/projects/spline-vgp-projekt/train_times.png"
-      alt: Trainingszeiten über Experimente (Balkendiagramm)
-      width: 2400
-      height: 1500
 dates: 
   created: "2025-07-08"
   updated: "2025-08-24"
@@ -82,33 +50,85 @@ external:
     branch: "main"
 ---
 
-In diesem Projekt wird eine **Spline-basierte Variante der Sigmoid-Aktivierung** untersucht.  
-Die Funktion verhält sich im Zentrum ähnlich wie die klassische Sigmoid, läuft an den Rändern jedoch linear aus.  
-Das Ziel ist es, in tiefen MLPs stabilere Gradienten zu erreichen und das Vanishing-Gradient-Problem zu reduzieren.  
+## Hintergrund & Motivation
 
----
+Im Jahr 2025 wollte ich im Rahmen meines Studiums tiefer in die mathematischen Grundlagen neuronaler Netze eintauchen. Mein Fokus lag auf dem klassischen **Vanishing Gradient Problem (VGP)**. Während moderne Netze standardmäßig auf ReLU setzen, um dieses Problem zu umgehen, wollte ich untersuchen, ob die theoretisch "veraltete" Sigmoid-Funktion durch eine mathematische Modifikation rehabilitiert werden kann.
 
-### Ziele und Vorgehen
-- Reproduzierbare Experimente über YAML-Konfigurationen (Einzelläufe, Batch-Tests, Smoke-Tests)  
-- Datensätze: FashionMNIST und CIFAR-10, optional Tiny ImageNet  
-- Konsistente Logs pro Epoche mit Loss, Accuracy und Gradientenmetriken  
-- Automatisch generierte Plots für Lernkurven, Gradienten-Heatmaps und Trainingszeiten  
-- Fairer Vergleich zwischen ReLU, klassischer Sigmoid und Spline-Sigmoid  
+Die Idee basierte auf Inhalten meiner Mathematik-Vorlesung: Die Verwendung von **kubischen hermiteschen Splines**, um das Sättigungsverhalten der Sigmoid-Funktion zu verändern. Ziel war es, den Gradientenfluss auch in sehr tiefen Netzen "künstlich" am Leben zu erhalten.
 
----
+## Methodik: Das "Worst-Case-Szenario"
 
-### Technischer Rahmen
-Die Aktivierungsfunktion wird mithilfe **kubischer Hermite-Splines** umgesetzt, mit konfigurierbarer Segmentanzahl und anpassbaren x-Grenzen.  
-Trainiert wird mit **PyTorch**, **Adam** und **CrossEntropy**, unter Einsatz deterministischer Seeds sowie geeigneter CUDNN- und TF32-Einstellungen.  
+Um das VGP isoliert betrachten und die Effekte der Aktivierungsfunktionen sauber messen zu können, habe ich ein Szenario konstruiert, das das Verschwinden von Gradienten provoziert:
 
-Die Codebasis ist modular aufgebaut:  
-- `models/activations.py` (Basisaktivierungen)  
-- `models/sigmoid_spline_activation.py` (Spline-Implementierung)  
-- `training/trainer.py` (Trainingslogik)  
-- `training/utils.py` (Hilfsfunktionen)  
+* **Modellarchitektur:** Ein tiefes Feedforward MLP mit **16 Hidden Layers** (à 512 Neuronen).
+* **Isolierung:** Ich habe bewusst auf moderne Hilfsmittel wie Residual Connections, Batch Normalization und Dropout verzichtet. Das Netz ist somit vollständig auf die Aktivierungsfunktion angewiesen, um den Signalfluss aufrechtzuerhalten.
+* **Training:** 250 Epochen mit dem Adam Optimizer auf einer NVIDIA RTX 4070 Ti Super.
 
----
+Verglichen wurden **ReLU** (Standard), **Sigmoid** (Baseline) und mein **Optimized-Sigmoid-Spline**.
 
-### Erwartetes Ergebnis
-Das Projekt soll nachvollziehbare und wiederholbare Vergleiche ermöglichen,  
-schnelle Explorationszyklen unterstützen und klare Artefakte wie Logs und Plots liefern.  
+### Die Spline-Modifikation
+Mein Ansatz ("Optimized-Sigmoid-Spline") approximiert im Kernbereich die Sigmoid-Kurve durch Splines. Im äußeren Bereich wird die Funktion jedoch linear fortgesetzt. Dies verhindert, dass die Ableitung gegen 0 strebt, was bei der klassischen Sigmoid-Funktion der Hauptgrund für sterbende Gradienten ist.
+
+<figure class="mx-auto w-full md:w-1/2 my-8">
+  <img src="/projects/spline-vgp-projekt/optimized_sigmoid_spline_visualization.png" alt="Optimized Sigmoid Spline" class="rounded-lg shadow-md w-full" />
+  <figcaption class="text-center text-sm text-gray-500 mt-2 italic">
+    Abb 1: Funktionsverlauf (links) und Ableitung (rechts). Die lineare Fortsetzung an den Rändern verhindert, dass die Ableitung gesättigt wird (rechts, orange Linie), und hält so die Gradienten am Leben.
+  </figcaption>
+</figure>
+
+## Ergebnisse
+
+Die Experimente auf FashionMNIST, CIFAR-10 und Tiny ImageNet-200 lieferten spannende Einblicke in die Trainingsdynamik.
+
+<figure class="mx-auto w-full md:w-3/4 my-8">
+  <img src="/projects/spline-vgp-projekt/fashionmnist_combined_accuracy.png" alt="Kombinierte Genauigkeiten auf FashionMNIST" class="rounded-lg shadow-md w-full" />
+  <figcaption class="text-center text-sm text-gray-500 mt-2 italic">
+    Abb 2: Vergleich der Validierungs-Genauigkeit. Man sieht deutlich, wie die Spline-Variante (orange) nach einer Einschwingphase fast zu ReLU (blau) aufschließt, während Sigmoid (grün) am Boden bleibt.
+  </figcaption>
+</figure>
+
+| Datensatz | ReLU (Standard) | Sigmoid (Baseline) | Spline (Mein Ansatz) |
+| :--- | :--- | :--- | :--- |
+| **FashionMNIST** | 90.1 % | 10.0 % (Lernstopp) | 86.9 % |
+| **CIFAR-10** | 53.9 % | 10.0 % | 13.1 % |
+| **Tiny ImageNet** | 8.4 % | 0.5 % | **8.9 %** |
+
+### Analyse der Gradienten
+
+Hier zeigt sich der eigentliche Effekt der Arbeit.
+
+**1. Sigmoid scheitert:**
+Wie theoretisch erwartet, führte die klassische Sigmoid-Funktion in diesem tiefen Netz zum Totalausfall. Die Gradienten fielen auf $10^{-11}$, das Netz lernte nichts mehr und verharrte auf Zufallsniveau.
+
+<figure class="mx-auto w-full md:w-2/3 my-8">
+  <img src="/projects/spline-vgp-projekt/sigmoid_fashionmnist_overall_gradient_heatmap.png" alt="Heatmap Sigmoid" class="rounded-lg shadow-md w-full" />
+  <figcaption class="text-center text-sm text-gray-500 mt-2 italic">
+    Abb 3: Sigmoid Heatmap. Alles ist "kalt" (dunkelblau/türkis), die Gradienten sind tot.
+  </figcaption>
+</figure>
+
+**2. Spline reaktiviert den Fluss:**
+Mein Ansatz konnte das VGP erfolgreich verhindern. Die Heatmaps der Gradienten zeigten, dass der Spline-Ansatz auch in frühen Schichten stabile Gradienten lieferte.
+
+<figure class="mx-auto w-full md:w-2/3 my-8">
+  <img src="/projects/spline-vgp-projekt/spline_fashionmnist_overall_gradient_heatmap.png" alt="Heatmap Spline" class="rounded-lg shadow-md w-full" />
+  <figcaption class="text-center text-sm text-gray-500 mt-2 italic">
+    Abb 4: Spline Heatmap. Hier sieht man deutlich "wärmere" Farben (Gelb/Grün) und vertikale Bänder, die zeigen, dass Signale durch das tiefe Netz propagiert werden.
+  </figcaption>
+</figure>
+
+**3. Grenzen der Architektur:**
+Auf den komplexeren Datensätzen (CIFAR-10, Tiny ImageNet) war das einfache MLP-Modell generell überfordert. Während ReLU hier starkes Overfitting zeigte (hohe Trainings-, niedrige Validierungs-Accuracy), verhielt sich der Spline-Ansatz zwar stabil, konnte aber aufgrund der limitierten Modellarchitektur keine Wunder bewirken.
+
+## Fazit & Performance
+
+Das Projekt hat gezeigt, dass man das Vanishing Gradient Problem mathematisch rein über die Aktivierungsfunktion lösen kann.
+
+<figure class="mx-auto w-full md:w-1/2 my-8">
+  <img src="/projects/spline-vgp-projekt/train_times.png" alt="Trainingszeiten" class="rounded-lg shadow-md w-full" />
+  <figcaption class="text-center text-sm text-gray-500 mt-2 italic">
+    Abb 5: Trainingszeiten im Vergleich. Der Spline-Ansatz (grün) ist rechenintensiver als ReLU, was der Preis für die komplexere Mathematik ist.
+  </figcaption>
+</figure>
+
+Zwar erkauft man sich die Stabilität mit einer höheren Rechenzeit und erreicht nicht ganz die "Aggressivität" von ReLU beim Lernen, aber für Szenarien, in denen saturierende Funktionen benötigt werden, stellt der Spline-Ansatz eine funktionierende Alternative dar, die ein "totes" Netz wieder zum Lernen bringen kann.
