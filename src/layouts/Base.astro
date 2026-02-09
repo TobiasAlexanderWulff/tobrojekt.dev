@@ -31,7 +31,6 @@ const navLinks = [
   },
 ];
 
-const searchHref = localizePath('/search', locale);
 const pathname = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
 ---
@@ -145,12 +144,6 @@ const currentYear = new Date().getFullYear();
                 </a>
               ))
             }
-            <a
-              href={searchHref}
-              class="transition hover:text-slate-900 dark:hover:text-white sm:ml-auto"
-            >
-              {dictionary.nav.search}
-            </a>
           </div>
           <div
             class="mt-2 border-t border-slate-200 pt-2 dark:border-slate-700 sm:ml-3 sm:mt-0 sm:border-0 sm:p-0"

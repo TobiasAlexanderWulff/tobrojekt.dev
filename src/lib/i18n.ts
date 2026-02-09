@@ -29,7 +29,6 @@ export type Dictionary = {
     home: string;
     projects: string;
     blogs: string;
-    search: string;
   };
   footer: {
     rights: string;
@@ -76,10 +75,6 @@ export type Dictionary = {
     allHeading: string;
     allEmpty: string;
   };
-  search: {
-    heading: string;
-    metaDescription: string;
-  };
 };
 
 // In-memory dictionaries kept small so they can be treeshaken by Astro.
@@ -100,7 +95,6 @@ const dictionaries: Record<Locale, Dictionary> = {
       home: 'Home',
       projects: 'Projects',
       blogs: 'Blogs',
-      search: 'Search',
     },
     footer: {
       rights: 'All rights reserved.',
@@ -160,10 +154,6 @@ const dictionaries: Record<Locale, Dictionary> = {
       allHeading: 'All Blogs',
       allEmpty: 'No blogs found.',
     },
-    search: {
-      heading: 'Search',
-      metaDescription: 'Search projects and pages',
-    },
   },
   de: {
     site: {
@@ -181,7 +171,6 @@ const dictionaries: Record<Locale, Dictionary> = {
       home: 'Start',
       projects: 'Projekte',
       blogs: 'Blogs',
-      search: 'Suche',
     },
     footer: {
       rights: 'Alle Rechte vorbehalten.',
@@ -242,10 +231,6 @@ const dictionaries: Record<Locale, Dictionary> = {
       recentEmpty: 'Keine kürzlich hinzugefügten Blogs gefunden.',
       allHeading: 'Alle Blogs',
       allEmpty: 'Keine Blogs gefunden.',
-    },
-    search: {
-      heading: 'Suche',
-      metaDescription: 'Projekte und Seiten durchsuchen',
     },
   },
 };
