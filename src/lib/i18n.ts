@@ -40,6 +40,8 @@ export type Dictionary = {
     heroIntro: string;
     featuredProjectsHeading: string;
     featuredProjectsEmpty: string;
+    featuredBlogsHeading: string;
+    featuredBlogsEmpty: string;
   };
   projectsIndex: {
     heading: string;
@@ -69,6 +71,10 @@ export type Dictionary = {
     heading: string;
     metaDescription: string;
     description: string;
+    recentHeading: string;
+    recentEmpty: string;
+    allHeading: string;
+    allEmpty: string;
   };
   search: {
     heading: string;
@@ -113,6 +119,8 @@ const dictionaries: Record<Locale, Dictionary> = {
         `I enjoy developing software, especially when data and machine learning are involved. I love the challenge of understanding and mastering complex topics.\n\nOn this page, I collect my projects and experiments. Feel free to take a look around, it's (mostly) tidy.`,
       featuredProjectsHeading: 'Featured Projects',
       featuredProjectsEmpty: 'No featured projects yet.',
+      featuredBlogsHeading: 'Featured Blogs',
+      featuredBlogsEmpty: 'No featured blogs yet.',
     },
     projectsIndex: {
       heading: 'Projects',
@@ -147,6 +155,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       heading: 'Blogs',
       metaDescription: 'My blogs all around programming',
       description: 'Here I share my blogs on various programming-related topics.\n\nYou might find something interesting.',
+      recentHeading: 'Recently Added',
+      recentEmpty: 'No recent blogs found.',
+      allHeading: 'All Blogs',
+      allEmpty: 'No blogs found.',
     },
     search: {
       heading: 'Search',
@@ -187,7 +199,9 @@ const dictionaries: Record<Locale, Dictionary> = {
       heroIntro:
         'Ich entwickle gerne Software, besonders wenn Daten und Machine Learning dabei eine Rolle spielen. Ich liebe die Herausforderung darin, komplexe Themen zu durchdringen und zu meistern.\n\nAuf dieser Seite sammle ich meine Projekte und Experimente. Schau dich gerne um, es ist (meistens) aufgeräumt.',
       featuredProjectsHeading: 'Hervorgehobene Projekte',
-      featuredProjectsEmpty: 'Keine Projekte hervorgehoben.',
+      featuredProjectsEmpty: 'Keine hervorgehobenen Projekte.',
+      featuredBlogsHeading: 'Hervorgehobene Blogs',
+      featuredBlogsEmpty: 'Keine hervorgehobenen Blogs.',
     },
     projectsIndex: {
       heading: 'Projekte',
@@ -222,6 +236,10 @@ const dictionaries: Record<Locale, Dictionary> = {
       heading: 'Blogs',
       metaDescription: 'Hier poste ich meine Blogs',
       description: 'Hier poste ich meine Blogs zu verschiedenen Themen rund ums Programmieren. Vielleicht findest du etwas, das dich interessiert. ',
+      recentHeading: 'Kürzlich hinzugefügt',
+      recentEmpty: 'Keine kürzlich hinzugefügten Blogs gefunden.',
+      allHeading: 'Alle Blogs',
+      allEmpty: 'Keine Blogs gefunden.',
     },
     search: {
       heading: 'Suche',

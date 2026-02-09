@@ -157,6 +157,69 @@ export function resolveProjectLink(
   };
 }
 
+export type BlogLinkInput = {
+  rel?: string | null;
+  label?: string | null;
+  url: string;
+  icon?: string | null;
+  iconDark?: string | null;
+};
+
+export type ResolvedBlogLink = {
+  href: string;
+  rel: LinkType;
+  label: string;
+  ariaLabel: string;
+  icon: {
+    light: string;
+    dark: string;
+    alt: string;
+    fallback?: string;
+    onError?: string;
+  };
+};
+
+export function resolveBlogLink(
+  link: BlogLinkInput,
+  dictionary: Dictionary
+): ResolvedBlogLink {
+  const rel = normalizeRel(link.rel);
+  const config = resolveLinkTypeConfig(rel);
+  const fallback = faviconFor(link.url);
+
+  const lightFromConfig = config.icon?.light;
+  const darkFromConfig = config.icon?.dark ?? lightFromConfig;
+
+  const iconLight = link.icon ?? lightFromConfig ?? fallback.src;
+  const iconDark = link.iconDark ?? darkFromConfig ?? iconLight;
+
+  const label = link.label ?? dictionary.links[rel] ?? dictionary.links[defaultLinkType] ?? link.url;
+  const ariaLabel = label;
+
+  let fallbackSrc: string | undefined;
+  if (!link.icon && !link.iconDark && !config.icon?.light && fallback.fallback) {
+    fallbackSrc = fallback.fallback;
+  }
+
+  const onError = fallbackSrc
+    ? `this.onerror=null;this.dataset.themeSrcLight='${fallbackSrc}';this.dataset.themeSrcDark='${fallbackSrc}';this.src='${fallbackSrc}'`
+    : undefined;
+
+  return {
+    href: link.url,
+    rel,
+    label,
+    ariaLabel,
+    icon: {
+      light: iconLight,
+      dark: iconDark,
+      alt: label,
+      fallback: fallbackSrc,
+      onError,
+    },
+  };
+}
+
 function normalizeRel(rel: string | null | undefined): LinkType {
   if (!rel) {
     return defaultLinkType;

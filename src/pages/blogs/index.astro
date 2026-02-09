@@ -1,6 +1,8 @@
 ---
 import Base from "~/layouts/Base.astro";
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { resolveBlogLink } from "~/lib/links";
+import type { BlogLinkInput, ResolvedBlogLink } from "~/lib/links";
 import {
   getDictionary,
   resolveLocale,
@@ -8,18 +10,133 @@ import {
   resolveLocalizedValue,
 } from "~/lib/i18n";
 
+type BlogEntry = CollectionEntry<'blogs'>;
+type LocalizedBlog = {
+    entry: BlogEntry;
+    title: string;
+    summary: string;
+    links: ResolvedBlogLink[],
+};
+
+const all = await getCollection('blogs');
+const recent = all
+    .filter((p) => p.data.visibility !== 'private')
+    .slice(0, 6);
+const blogs = all
+    .filter((p) => p.data.visibility !== 'private')
+    .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
+
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const pageTitle = `${dictionary.blogIndex.heading} – ${dictionary.site.name}`;
-const pageDescription = `${dictionary.blogIndex.metaDescription}`;
-
+const localizedBlogs: LocalizedBlog[] = blogs.map((entry) => ({
+    entry,
+    title: resolveLocalizedValue(entry.data.title, locale) ?? '',
+    summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
+    links: (entry.data.links ?? []).map((link: BlogLinkInput) =>
+        resolveBlogLink(link, dictionary),
+    ),
+}));
+const recentLocalized: LocalizedBlog[] = recent.map((entry) => ({
+    entry,
+    title: resolveLocalizedValue(entry.data.title, locale) ?? '',
+    summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
+    links: (entry.data.links ?? []).map((link: BlogLinkInput) =>
+        resolveBlogLink(link, dictionary),
+    ),
+}));
 ---
-<Base title={pageTitle} description={pageDescription}>
+<Base title={pageTitle} description={dictionary.blogIndex.metaDescription}>
     <section class="container py-10">
         <h1 class="text-3xl font-bold mb-6">{dictionary.blogIndex.heading}</h1>
         <p class="text-slate-700 max-w-prose dark:text-slate-300 whitespace-pre-line">{dictionary.blogIndex.description}</p>
-        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-
-        </ul>
+        <section class="container py-6">
+            <h2 class="text-2xl font-semibold mb-4">{dictionary.blogIndex.recentHeading}</h2>
+            {recentLocalized.length === 0 ? (
+                <p class="text-slate-600 dark:text-slate-400">{dictionary.blogIndex.recentEmpty}</p>
+            ) : (
+                <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {recentLocalized.map(({ entry, title, summary, links }) => (
+                        <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+                            <a href={localizePath(`/blogs/${entry.slug}`, locale)} class="blog">
+                                <h3 class="font-semibold">{title}</h3>
+                                <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
+                            </a>
+                            {links.length ? (
+                                <div class="mt-2 flex items-center gap-2">
+                                    {links.map((link) => (
+                                        <a
+                                            href={link.href}
+                                            rel="noopener norefferer"
+                                            target="_blank"
+                                            aria-label={link.ariaLabel}
+                                            class="inline-flex"
+                                            title={link.label}
+                                        >
+                                            <img
+                                                src={link.icon.light}
+                                                alt={link.icon.alt}
+                                                width="16"
+                                                height="16"
+                                                loading="lazy"
+                                                class="w-4 h-4 rounded-sm"
+                                                data-theme-image
+                                                data-theme-src-light={link.icon.light}
+                                                data-theme-src-dark={link.icon.dark}
+                                                onerror={link.icon.onError}
+                                            />
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : null}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </section>
+        <section class="container py-6">
+            <h2 class="text-2xl font-semibold mb-4">{dictionary.blogIndex.allHeading}</h2>
+            {localizedBlogs.length === 0 ? (
+                <p class="text-slate-600 dark:text-slate-400">{dictionary.blogIndex.allEmpty}</p>
+            ) : (
+                <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {localizedBlogs.map(({ entry, title, summary, links }) => (
+                        <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+                            <a href={localizePath(`/blogs/${entry.slug}`, locale)} class="blog">
+                                <h3 class="font-semibold">{title}</h3>
+                                <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
+                            </a>
+                            {links.length ? (
+                                <div class="mt-2 flex items-center gap-2">
+                                    {links.map((link) => (
+                                        <a
+                                            href={link.href}
+                                            rel="noopener norefferer"
+                                            target="_blank"
+                                            aria-label={link.ariaLabel}
+                                            class="inline-flex"
+                                            title={link.label}
+                                        >
+                                            <img
+                                                src={link.icon.light}
+                                                alt={link.icon.alt}
+                                                width="16"
+                                                height="16"
+                                                loading="lazy"
+                                                class="w-4 h-4 rounded-sm"
+                                                data-theme-image
+                                                data-theme-src-light={link.icon.light}
+                                                data-theme-src-dark={link.icon.dark}
+                                                onerror={link.icon.onError}
+                                            />
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : null}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </section>
     </section>
 </Base>
