@@ -15,6 +15,10 @@ type ProjectImage = {
   width?: number;
   height?: number;
 };
+type HeaderMetaItem = {
+  label: string;
+  value: string;
+};
 
 export async function getStaticPaths() {
   const entries: ProjectEntry[] = await getCollection('projects');
@@ -34,11 +38,23 @@ const status = entry.data.status as ProjectStatus | undefined;
 const statusLabel = status
   ? dictionary.projectDetail.statusLabels[status] ?? status
   : null;
+const statusToneByValue: Record<ProjectStatus, string> = {
+  planned:
+    'border-amber-300/70 bg-amber-100/80 text-amber-900 dark:border-amber-700/70 dark:bg-amber-950/40 dark:text-amber-200',
+  active:
+    'border-emerald-300/70 bg-emerald-100/80 text-emerald-900 dark:border-emerald-700/70 dark:bg-emerald-950/40 dark:text-emerald-200',
+  completed:
+    'border-blue-300/70 bg-blue-100/80 text-blue-900 dark:border-blue-700/70 dark:bg-blue-950/40 dark:text-blue-200',
+  archived:
+    'border-slate-300/70 bg-slate-100/80 text-slate-800 dark:border-slate-600/70 dark:bg-slate-800/70 dark:text-slate-200',
+};
 const startedLabel = entry.data.dates?.started
   ? dictionary.projectDetail.started
   : dictionary.projectDetail.created;
 const startedValue = entry.data.dates?.started ?? entry.data.dates?.created ?? null;
+const displayStarted = startedValue ? formatYMD(startedValue) : null;
 const completedValue = entry.data.dates?.completed ?? null;
+const displayCompleted = completedValue ? formatYMD(completedValue) : null;
 
 const pageTitle = `${localizedTitle} – ${dictionary.site.name}`;
 const pageDescription = localizedSummary;
@@ -70,35 +86,129 @@ const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}
 const resolvedLinks: ResolvedProjectLink[] = (entry.data.links ?? []).map((link: ProjectLinkInput) =>
   resolveProjectLink(link, dictionary),
 );
+const primaryActionRels = new Set(['demo', 'source', 'github']);
+let primaryActions = resolvedLinks.filter((link: ResolvedProjectLink) =>
+  primaryActionRels.has(link.rel),
+);
+let secondaryActions = resolvedLinks.filter(
+  (link: ResolvedProjectLink) => !primaryActionRels.has(link.rel),
+);
+if (primaryActions.length === 0 && resolvedLinks.length > 0) {
+  primaryActions = [resolvedLinks[0]];
+  secondaryActions = resolvedLinks.slice(1);
+}
+
+const headerMeta: HeaderMetaItem[] = [];
+if (displayStarted) {
+  headerMeta.push({ label: startedLabel, value: displayStarted });
+}
+if (displayCompleted) {
+  headerMeta.push({ label: dictionary.projectDetail.completed, value: displayCompleted });
+}
+if (!displayCompleted && displayUpdated) {
+  headerMeta.push({ label: dictionary.projectDetail.updated, value: displayUpdated });
+}
+
 const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
   ? entry.data.media.images
   : [];
 ---
 <Base title={pageTitle} description={pageDescription}>
   <article class="container py-10">
-    <header class="mb-6">
-      <h1 class="text-3xl font-bold mb-3">{localizedTitle}</h1>
-      <p class="text-slate-700 dark:text-slate-300">{localizedSummary}</p>
-      <TagList tags={entry.data.tags} className="mt-2" />
-      {(statusLabel || entry.data.dates) ? (
-        <p class="text-sm text-slate-600 mt-1 dark:text-slate-400">
-          {statusLabel ? (
-            <>
-              {dictionary.projectDetail.status}:{' '}
-              <span class="capitalize">{statusLabel}</span>
-            </>
+    <header class="mb-8">
+      <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm dark:border-slate-800 dark:from-slate-900/80 dark:to-slate-950/70 sm:p-8">
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <h1 class="max-w-4xl text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">
+              {localizedTitle}
+            </h1>
+            {statusLabel && status ? (
+              <span
+                class:list={[
+                  'inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider',
+                  statusToneByValue[status],
+                ]}
+              >
+                {statusLabel}
+              </span>
+            ) : null}
+          </div>
+
+          <p class="max-w-4xl text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+            {localizedSummary}
+          </p>
+
+          {(headerMeta.length > 0 || primaryActions.length > 0 || secondaryActions.length > 0 || entry.data.tags?.length) ? (
+            <div class="border-t border-slate-200/80 pt-4 dark:border-slate-700/70">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                {headerMeta.length > 0 ? (
+                  <dl class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+                    {headerMeta.map((item) => (
+                      <div class="inline-flex items-baseline gap-2">
+                        <dt class="font-medium text-slate-500 dark:text-slate-400">{item.label}</dt>
+                        <dd class="font-semibold text-slate-800 dark:text-slate-100">{item.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+
+                {(primaryActions.length > 0 || secondaryActions.length > 0) ? (
+                  <div class="flex flex-wrap gap-2">
+                    {primaryActions.map((link: ResolvedProjectLink) => (
+                      <a
+                        href={link.href}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        title={link.label}
+                        class="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:border-blue-500 hover:bg-blue-500"
+                      >
+                        <img
+                          src={link.icon.light}
+                          alt={link.icon.alt}
+                          width="16"
+                          height="16"
+                          loading="lazy"
+                          class="h-4 w-4 rounded-sm bg-white/95"
+                          data-theme-image
+                          data-theme-src-light={link.icon.light}
+                          data-theme-src-dark={link.icon.dark}
+                          onerror={link.icon.onError}
+                        />
+                        <span>{link.label}</span>
+                      </a>
+                    ))}
+                    {secondaryActions.map((link: ResolvedProjectLink) => (
+                      <a
+                        href={link.href}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        title={link.label}
+                        class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white"
+                      >
+                        <img
+                          src={link.icon.light}
+                          alt={link.icon.alt}
+                          width="16"
+                          height="16"
+                          loading="lazy"
+                          class="h-4 w-4 rounded-sm"
+                          data-theme-image
+                          data-theme-src-light={link.icon.light}
+                          data-theme-src-dark={link.icon.dark}
+                          onerror={link.icon.onError}
+                        />
+                        <span>{link.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              <TagList tags={entry.data.tags} max={6} className="mt-3" />
+            </div>
           ) : null}
-          {startedValue ? (
-            <span class="ml-3">{startedLabel}: {startedValue}</span>
-          ) : null}
-          {completedValue ? (
-            <span class="ml-3">{dictionary.projectDetail.completed}: {completedValue}</span>
-          ) : null}
-          {!entry.data.dates?.completed && displayUpdated ? (
-            <span class="ml-3">{dictionary.projectDetail.updated}: {displayUpdated}</span>
-          ) : null}
-        </p>
-      ) : null}
+        </div>
+      </div>
+
       {inlineDemoUrl ? (
         <section class="mt-4 max-w-4xl">
           <div class="rounded border border-slate-200 overflow-hidden dark:border-slate-700">
@@ -139,33 +249,6 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
             onerror="this.style.display='none'"
           />
         </figure>
-      ) : null}
-      {resolvedLinks.length ? (
-        <div class="mt-3 flex flex-wrap gap-3">
-          {resolvedLinks.map((link: ResolvedProjectLink) => (
-            <a
-              href={link.href}
-              class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline dark:text-blue-400"
-              rel="noopener noreferrer"
-              target="_blank"
-              title={link.label}
-            >
-              <img
-                src={link.icon.light}
-                alt={link.icon.alt}
-                width="16"
-                height="16"
-                loading="lazy"
-                class="w-4 h-4 rounded-sm"
-                data-theme-image
-                data-theme-src-light={link.icon.light}
-                data-theme-src-dark={link.icon.dark}
-                onerror={link.icon.onError}
-              />
-              <span>{link.label}</span>
-            </a>
-          ))}
-        </div>
       ) : null}
     </header>
     <div class="prose prose-slate max-w-none dark:prose-invert 

@@ -2,6 +2,7 @@
 import Base from "~/layouts/Base.astro";
 import TagList from "~/components/TagList.astro";
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { formatYMD } from "~/lib/github";
 import { resolveBlogLink } from "~/lib/links";
 import type { BlogLinkInput, ResolvedBlogLink } from "~/lib/links";
 import {
@@ -16,6 +17,10 @@ type BlogImage = {
   alt: string;
   width?: number;
   height?: number;
+};
+type HeaderMetaItem = {
+  label: string;
+  value: string;
 };
 
 export async function getStaticPaths() {
@@ -38,16 +43,113 @@ const pageDescription = localizedSummary;
 const resolvedLinks: ResolvedBlogLink[] = (entry.data.links ?? []).map((link: BlogLinkInput) =>
   resolveBlogLink(link, dictionary),
 );
+const primaryActionRels = new Set(['source', 'github', 'demo', 'docs']);
+let primaryActions = resolvedLinks.filter((link: ResolvedBlogLink) =>
+  primaryActionRels.has(link.rel),
+);
+let secondaryActions = resolvedLinks.filter(
+  (link: ResolvedBlogLink) => !primaryActionRels.has(link.rel),
+);
+if (primaryActions.length === 0 && resolvedLinks.length > 0) {
+  primaryActions = [resolvedLinks[0]];
+  secondaryActions = resolvedLinks.slice(1);
+}
+
+const displayCreated = entry.data.dates?.created ? formatYMD(entry.data.dates.created) : null;
+const displayUpdated = entry.data.dates?.updated ? formatYMD(entry.data.dates.updated) : null;
+const headerMeta: HeaderMetaItem[] = [];
+if (displayCreated) {
+  headerMeta.push({ label: dictionary.projectDetail.created, value: displayCreated });
+}
+if (displayUpdated && displayUpdated !== displayCreated) {
+  headerMeta.push({ label: dictionary.projectDetail.updated, value: displayUpdated });
+}
+
 const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
   ? entry.data.media.images
   : [];
 ---
 <Base title={pageTitle} description={pageDescription}>
   <article class="container py-10">
-    <header class="mb-6">
-      <h1 class="text-3xl font-bold mb-3">{localizedTitle}</h1>
-      <p class="text-slate-700 dark:text-slate-300">{localizedSummary}</p>
-      <TagList tags={entry.data.tags} className="mt-2" />
+    <header class="mb-8">
+      <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm dark:border-slate-800 dark:from-slate-900/80 dark:to-slate-950/70 sm:p-8">
+        <div class="flex flex-col gap-5">
+          <h1 class="max-w-4xl text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">
+            {localizedTitle}
+          </h1>
+          <p class="max-w-4xl text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+            {localizedSummary}
+          </p>
+          {(headerMeta.length > 0 || primaryActions.length > 0 || secondaryActions.length > 0 || entry.data.tags?.length) ? (
+            <div class="border-t border-slate-200/80 pt-4 dark:border-slate-700/70">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                {headerMeta.length > 0 ? (
+                  <dl class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+                    {headerMeta.map((item) => (
+                      <div class="inline-flex items-baseline gap-2">
+                        <dt class="font-medium text-slate-500 dark:text-slate-400">{item.label}</dt>
+                        <dd class="font-semibold text-slate-800 dark:text-slate-100">{item.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+                {(primaryActions.length > 0 || secondaryActions.length > 0) ? (
+                  <div class="flex flex-wrap gap-2">
+                    {primaryActions.map((link: ResolvedBlogLink) => (
+                      <a
+                        href={link.href}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        title={link.label}
+                        class="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:border-blue-500 hover:bg-blue-500"
+                      >
+                        <img
+                          src={link.icon.light}
+                          alt={link.icon.alt}
+                          width="16"
+                          height="16"
+                          loading="lazy"
+                          class="h-4 w-4 rounded-sm bg-white/95"
+                          data-theme-image
+                          data-theme-src-light={link.icon.light}
+                          data-theme-src-dark={link.icon.dark}
+                          onerror={link.icon.onError}
+                        />
+                        <span>{link.label}</span>
+                      </a>
+                    ))}
+                    {secondaryActions.map((link: ResolvedBlogLink) => (
+                      <a
+                        href={link.href}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        title={link.label}
+                        class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white"
+                      >
+                        <img
+                          src={link.icon.light}
+                          alt={link.icon.alt}
+                          width="16"
+                          height="16"
+                          loading="lazy"
+                          class="h-4 w-4 rounded-sm"
+                          data-theme-image
+                          data-theme-src-light={link.icon.light}
+                          data-theme-src-dark={link.icon.dark}
+                          onerror={link.icon.onError}
+                        />
+                        <span>{link.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              <TagList tags={entry.data.tags} max={6} className="mt-3" />
+            </div>
+          ) : null}
+        </div>
+      </div>
+
       {entry.data.media?.social_card?.src ? (
         <figure class="mt-4 max-w-4xl mx-auto inline-flex">
           <img
@@ -61,33 +163,6 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
             onerror="this.style.display='none'"
           />
         </figure>
-      ) : null}
-      {resolvedLinks.length ? (
-        <div class="mt-3 flex flex-wrap gap-3">
-          {resolvedLinks.map((link: ResolvedBlogLink) => (
-            <a
-              href={link.href}
-              class="inline-flex items-center gap-2 text-sm text-blue-700 hover:underline dark:text-blue-400"
-              rel="noopener noreferrer"
-              target="_blank"
-              title={link.label}
-            >
-              <img
-                src={link.icon.light}
-                alt={link.icon.alt}
-                width="16"
-                height="16"
-                loading="lazy"
-                class="w-4 h-4 rounded-sm"
-                data-theme-image
-                data-theme-src-light={link.icon.light}
-                data-theme-src-dark={link.icon.dark}
-                onerror={link.icon.onError}
-              />
-              <span>{link.label}</span>
-            </a>
-          ))}
-        </div>
       ) : null}
     </header>
     <div class="prose prose-slate max-w-none dark:prose-invert 
