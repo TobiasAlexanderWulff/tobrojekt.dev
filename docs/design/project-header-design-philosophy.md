@@ -1,6 +1,7 @@
 # Project Header Design Philosophy
 
 ## Goal
+
 The project header should help visitors answer three questions in under a few seconds:
 
 1. What is this project?
@@ -10,9 +11,11 @@ The project header should help visitors answer three questions in under a few se
 ## Core Principles
 
 ### 1) Hierarchy over density
+
 The title and summary carry narrative value and always come first. Metadata and links support that narrative and are visually secondary.
 
 ### 2) Information lanes
+
 The header is structured in lanes to reduce scanning cost:
 
 1. `Identity lane`: title + status badge.
@@ -21,6 +24,7 @@ The header is structured in lanes to reduce scanning cost:
 4. `Taxonomy lane`: lightweight tags.
 
 ### 3) Action clarity
+
 Actions are split by intent:
 
 1. Primary actions (for example demo/source) use filled buttons.
@@ -29,12 +33,15 @@ Actions are split by intent:
 This keeps the main CTA obvious without hiding additional links.
 
 ### 4) Quiet taxonomy
+
 Tags are intentionally non-clickable metadata chips in the current stage. They provide classification context without implying navigation that does not exist yet.
 
 ### 5) Framing and separation
+
 A subtle bordered/gradient surface around the header separates project metadata from the long-form body. This improves rhythm and prevents visual blending with article content.
 
 ### 6) Responsive by default
+
 Desktop: metadata and actions sit side by side.  
 Mobile: they stack in reading order (context first, actions after).
 

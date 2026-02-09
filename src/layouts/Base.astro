@@ -224,7 +224,9 @@ const currentYear = new Date().getFullYear();
             if (targets.length > 0) {
               const activate = (id: string) => {
                 tocLinks.forEach((link) => {
-                  const hash = link.hash?.startsWith('#') ? decodeURIComponent(link.hash.slice(1)) : '';
+                  const hash = link.hash?.startsWith('#')
+                    ? decodeURIComponent(link.hash.slice(1))
+                    : '';
                   const isActive = hash === id;
                   link.classList.toggle('is-active', isActive);
                   if (isActive) {
@@ -251,7 +253,9 @@ const currentYear = new Date().getFullYear();
 
               tocLinks.forEach((link) => {
                 link.addEventListener('click', () => {
-                  const hash = link.hash?.startsWith('#') ? decodeURIComponent(link.hash.slice(1)) : '';
+                  const hash = link.hash?.startsWith('#')
+                    ? decodeURIComponent(link.hash.slice(1))
+                    : '';
                   if (hash) {
                     activate(hash);
                   }

@@ -27,9 +27,7 @@ const recent = all
   .slice(0, 6);
 const projects = all
   .filter((p: ProjectEntry) => p.data.visibility !== 'private')
-  .sort(
-    (a: ProjectEntry, b: ProjectEntry) => (a.data.priority ?? 999) - (b.data.priority ?? 999),
-  );
+  .sort((a: ProjectEntry, b: ProjectEntry) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);

@@ -6,7 +6,9 @@ type Props = {
 };
 
 const props = Astro.props as Props;
-const tags = Array.isArray(props.tags) ? props.tags.filter((tag) => tag && tag.trim().length > 0) : [];
+const tags = Array.isArray(props.tags)
+  ? props.tags.filter((tag) => tag && tag.trim().length > 0)
+  : [];
 const max = typeof props.max === 'number' ? props.max : 6;
 const visibleTags = tags.slice(0, max);
 const hiddenTags = tags.slice(max);
