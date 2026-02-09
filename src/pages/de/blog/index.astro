@@ -1,0 +1,22 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getCollection, type CollectionEntry } from 'astro:content';
+import {
+  getDictionary,
+  resolveLocale,
+  localizePath,
+  resolveLocalizedValue,
+} from "~/lib/i18n";
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const pageTitle = `${dictionary.blogIndex.heading} – ${dictionary.site.name}`;
+const pageDescription = `${dictionary.blogIndex.metaDescription}`;
+
+---
+<Base title={pageTitle} description={pageDescription}>
+    <section class="container py-10">
+        <h1 class="text-3xl font-bold mb-6">{dictionary.blogIndex.heading}</h1>
+        <p class="text-slate-700 max-w-prose dark:text-slate-300 whitespace-pre-line">{dictionary.blogIndex.description}</p
+    </section>
+</Base>

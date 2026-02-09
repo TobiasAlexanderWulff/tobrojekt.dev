@@ -28,7 +28,7 @@ export type Dictionary = {
   nav: {
     home: string;
     projects: string;
-    tags: string;
+    blog: string;
     search: string;
   };
   footer: {
@@ -62,13 +62,10 @@ export type Dictionary = {
     imageCounterTemplate: string;
     statusLabels: Record<'planned' | 'active' | 'completed' | 'archived', string>;
   };
-  tagsIndex: {
+  blogIndex: {
     heading: string;
     metaDescription: string;
-    detailTitle: (label: string) => string;
-    detailMetaTitle: (label: string) => string;
-    detailMetaDescription: (label: string) => string;
-    empty: string;
+    description: string;
   };
   search: {
     heading: string;
@@ -93,7 +90,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     nav: {
       home: 'Home',
       projects: 'Projects',
-      tags: 'Tags',
+      blog: 'Blogs',
       search: 'Search',
     },
     footer: {
@@ -140,13 +137,10 @@ const dictionaries: Record<Locale, Dictionary> = {
         archived: 'Archived',
       },
     },
-    tagsIndex: {
-      heading: 'Tags',
-      metaDescription: 'Browse projects by tag',
-      detailTitle: (label: string) => `Tag: ${label}`,
-      detailMetaTitle: (label: string) => `${label} – Tags`,
-      detailMetaDescription: (label: string) => `Projects tagged ${label}`,
-      empty: 'No projects with this tag yet.',
+    blogIndex: {
+      heading: 'Blogs',
+      metaDescription: 'My blogs all around programming',
+      description: 'Here I share my blogs on various programming-related topics.\n\nYou might find something interesting.',
     },
     search: {
       heading: 'Search',
@@ -168,7 +162,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     nav: {
       home: 'Start',
       projects: 'Projekte',
-      tags: 'Tags',
+      blog: 'Blogs',
       search: 'Suche',
     },
     footer: {
@@ -215,13 +209,10 @@ const dictionaries: Record<Locale, Dictionary> = {
         archived: 'Archiviert',
       },
     },
-    tagsIndex: {
-      heading: 'Tags',
-      metaDescription: 'Projekte nach Tags durchsuchen',
-      detailTitle: (label: string) => `Schlagwort: ${label}`,
-      detailMetaTitle: (label: string) => `${label} – Tags`,
-      detailMetaDescription: (label: string) => `Projekte mit dem Schlagwort ${label}`,
-      empty: 'Noch keine Projekte mit diesem Schlagwort.',
+    blogIndex: {
+      heading: 'Blogs',
+      metaDescription: 'Hier poste ich meine Blogs',
+      description: 'Hier poste ich meine Blogs zu verschiedenen Themen rund ums Programmieren. Vielleicht findest du etwas, das dich interessiert. ',
     },
     search: {
       heading: 'Suche',
