@@ -1,26 +1,26 @@
 ---
-id: "gh:TobiasAlexanderWulff/tetris"
+id: 'gh:TobiasAlexanderWulff/tetris'
 title:
-  en: "Tetris"
-  de: "Tetris"
+  en: 'Tetris'
+  de: 'Tetris'
 summary:
-  de: "Dieses Projekt ist ein Experiment mit OpenAIs Coding Agent (Codex). Ich wollte herausfinden, wie gut KI inzwischen wirklich coden kann, und habe gemeinsam mit dem Agenten eine moderne Web-Version von Tetris gebaut."
+  de: 'Dieses Projekt ist ein Experiment mit OpenAIs Coding Agent (Codex). Ich wollte herausfinden, wie gut KI inzwischen wirklich coden kann, und habe gemeinsam mit dem Agenten eine moderne Web-Version von Tetris gebaut.'
   en: "This project is an experiment with OpenAI's coding agent (Codex). I wanted to see how well AI can actually code, so I built a modern web version of Tetris together with the agent."
 status: active
-tags: 
+tags:
   - typescript
   - react
   - vite
-  - "web-audio"
+  - 'web-audio'
   - pnpm
   - game
   - monorepo
-categories: 
+categories:
   - game
-  - "web-app"
-roles: 
+  - 'web-app'
+roles:
   - engineering
-skills: 
+skills:
   - TypeScript
   - React
   - Vite
@@ -29,44 +29,41 @@ skills:
   - Unit testing (Vitest)
   - AI Prompting
 links:
-  - rel: "demo"
-    label: "Play Online"
-    url: "https://tetris.tobrojekt.dev"
-    icon: "/icons/tetris.svg"
-  - rel: "source"
-    label: "GitHub"
-    url: "https://github.com/TobiasAlexanderWulff/tetris"
-media: 
-  social_card: 
-    src: "/projects/tetris/cover.png"
-    alt: "Gameplay view with playfield, next queue, and HUD."
+  - rel: 'demo'
+    label: 'Play Online'
+    url: 'https://tetris.tobrojekt.dev'
+    icon: '/icons/tetris.svg'
+  - rel: 'source'
+    label: 'GitHub'
+    url: 'https://github.com/TobiasAlexanderWulff/tetris'
+media:
+  social_card:
+    src: '/projects/tetris/cover.png'
+    alt: 'Gameplay view with playfield, next queue, and HUD.'
     width: 3000
     height: 1500
-  images: 
-    - 
-      src: "/projects/tetris/screenshot-gameplay.png"
-      alt: "In-game action at high level with colorful tetromino stack."
+  images:
+    - src: '/projects/tetris/screenshot-gameplay.png'
+      alt: 'In-game action at high level with colorful tetromino stack.'
       width: 1908
       height: 1022
-    - 
-      src: "/projects/tetris/screenshot-settings.png"
-      alt: "Settings modal with controls, DAS/ARR, theme, audio, and highscores actions."
+    - src: '/projects/tetris/screenshot-settings.png'
+      alt: 'Settings modal with controls, DAS/ARR, theme, audio, and highscores actions.'
       width: 606
       height: 853
-    - 
-      src: "/projects/tetris/screenshot-gameover.png"
-      alt: "Game Over dialog showing score table with new #1 score."
+    - src: '/projects/tetris/screenshot-gameover.png'
+      alt: 'Game Over dialog showing score table with new #1 score.'
       width: 963
       height: 971
-dates: 
-  created: "2025-09-09"
+dates:
+  created: '2025-09-09'
 featured: true
 priority: 999
 visibility: public
-external: 
-  github: 
-    repo: "TobiasAlexanderWulff/tetris"
-    branch: "main"
+external:
+  github:
+    repo: 'TobiasAlexanderWulff/tetris'
+    branch: 'main'
 ---
 
 ## Hintergrund & Motivation
@@ -79,11 +76,12 @@ Ich habe mich entschieden, **Tetris** zu bauen, damit ein klares Ziel ohne lange
 
 Normalerweise initialisiere ich ein Projekt selbst, lege die Ordnerstruktur an und mache mir Pläne, wie ich vorgehe. Ich mache mich mit dem Tech Stack vertraut und verbringe viel Zeit in Dokumentationen und Foren.
 
-Bei diesem Projekt war das anders. Ich habe angefangen, indem ich dem Agenten im Planungsmodus einfach geschrieben habe: *"Ich will Tetris programmieren"*. Darauf folgte eine Planungsphase, in welcher sich durch ein Hin und Her mit dem Agenten ein Plan herauskristallisierte. Diesen ließ ich dann vom Agenten in einer Markdown-Datei festhalten. Es wurden Ziel und Scope, der Tech Stack, ein Architekturüberblick, Spielmechaniken sowie Meilensteine und Abschlusskriterien festgelegt. All das hat super funktioniert, ohne dass viel Input von meiner Seite aus notwendig war.
+Bei diesem Projekt war das anders. Ich habe angefangen, indem ich dem Agenten im Planungsmodus einfach geschrieben habe: _"Ich will Tetris programmieren"_. Darauf folgte eine Planungsphase, in welcher sich durch ein Hin und Her mit dem Agenten ein Plan herauskristallisierte. Diesen ließ ich dann vom Agenten in einer Markdown-Datei festhalten. Es wurden Ziel und Scope, der Tech Stack, ein Architekturüberblick, Spielmechaniken sowie Meilensteine und Abschlusskriterien festgelegt. All das hat super funktioniert, ohne dass viel Input von meiner Seite aus notwendig war.
 
 Um den Agenten besser kontrollieren zu können und um zu verhindern, dass Features implementiert werden, die nicht geplant waren, ist mir klar geworden, dass der Agent Regeln braucht. Diese habe ich ihm in Form einer `AGENTS.md`-Datei gegeben und im Laufe des Projektes immer wieder ergänzt.
 
 > **Aus meiner AGENTS.md:**
+>
 > 1. Only do one task at a time.
 > 2. If a task is too big, don't implement it. Instead break it down...
 > 3. Always try to implement a modular- and component-based structure.
@@ -97,18 +95,18 @@ Das Spannende war zu sehen, ob der Agent abstrakte Anweisungen wie "modular stru
 
 Und wie sich herausgestellt hat, konnte er dies. Ohne dass ich die Ordnerstruktur vorgegeben habe, hat der Agent (auf Basis meiner Prompts) ein sauberes **Monorepo** mit **pnpm** kreiert:
 
-* **`@tetris/core`**: Die reine Logik. Getrennt, testbar, ohne UI-Abhängigkeiten.
-* **`@tetris/web`**: Der Visual Layer. Nutzt Canvas und React und konsumiert nur den Core.
+- **`@tetris/core`**: Die reine Logik. Getrennt, testbar, ohne UI-Abhängigkeiten.
+- **`@tetris/web`**: Der Visual Layer. Nutzt Canvas und React und konsumiert nur den Core.
 
 Der Code ist erstaunlich "hygienisch". Die Regel 7 ("split files if too big") wurde konsequent befolgt. Statt einer riesigen `Game.ts` gibt es dedizierte Module für `Piece`, `Board`, `Scoring` und `Audio`.
 
 ## Ergebnis
 
-Das Ziel war kein einfaches "Hello World", sondern ein Spiel, das sich *echt* anfühlt. Durch die strikte Einhaltung von Regel 2 ("Add Tests") konnte ich sicherstellen, dass komplexe Mechaniken wie das **Super Rotation System (SRS)** oder der **7-Bag-Randomizer** korrekt funktionieren, bevor überhaupt ein Pixel auf den Bildschirm gezeichnet wurde.
+Das Ziel war kein einfaches "Hello World", sondern ein Spiel, das sich _echt_ anfühlt. Durch die strikte Einhaltung von Regel 2 ("Add Tests") konnte ich sicherstellen, dass komplexe Mechaniken wie das **Super Rotation System (SRS)** oder der **7-Bag-Randomizer** korrekt funktionieren, bevor überhaupt ein Pixel auf den Bildschirm gezeichnet wurde.
 
 Ein besonderes Highlight sind die **Assets**. Ich wollte keine Standard-Sounds herunterladen, sondern habe den Agenten beauftragt, **8-bit-Sounds per Skript** zu generieren. Er lieferte prompt ein Shell-Skript, das mittels `ffmpeg` mathematische Wellenformen zu einem stimmigen Chiptune-Soundtrack mischt. Das Ergebnis passte ohne nennenswerte Iterationen sofort perfekt zum Vibe.
 
-Auch technisch ist das Audio-System sauber gelöst, indem eine Abstraktionsschicht die Engine-Events (wie *Line Clear*) auf die **Web Audio API** mappt. Das macht das System extrem reaktionsschnell und vermeidet Latenzen.
+Auch technisch ist das Audio-System sauber gelöst, indem eine Abstraktionsschicht die Engine-Events (wie _Line Clear_) auf die **Web Audio API** mappt. Das macht das System extrem reaktionsschnell und vermeidet Latenzen.
 
 Dazu kommen Features wie **Local Storage Highscores**, anpassbare Steuerungen (DAS, ARR) und ein Ghost-Piece, die das Spielgefühl abrunden.
 

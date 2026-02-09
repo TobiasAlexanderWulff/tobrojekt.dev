@@ -1,14 +1,14 @@
 ---
-import Base from "~/layouts/Base.astro";
+import Base from '~/layouts/Base.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { resolveProjectLink, resolveBlogLink } from "~/lib/links";
-import type { ProjectLinkInput, ResolvedProjectLink, BlogLinkInput, ResolvedBlogLink } from "~/lib/links";
-import {
-  getDictionary,
-  resolveLocale,
-  localizePath,
-  resolveLocalizedValue,
-} from "~/lib/i18n";
+import { resolveProjectLink, resolveBlogLink } from '~/lib/links';
+import type {
+  ProjectLinkInput,
+  ResolvedProjectLink,
+  BlogLinkInput,
+  ResolvedBlogLink,
+} from '~/lib/links';
+import { getDictionary, resolveLocale, localizePath, resolveLocalizedValue } from '~/lib/i18n';
 
 /**
  * Home page highlights featured projects before a lightweight recent list.
@@ -24,11 +24,11 @@ type LocalizedProject = {
 
 type BlogEntry = CollectionEntry<'blogs'>;
 type LocalizedBlog = {
-  entry:BlogEntry;
+  entry: BlogEntry;
   title: string;
   summary: string;
   links: ResolvedBlogLink[];
-}
+};
 
 const allProjects = await getCollection('projects');
 const featuredProjects = allProjects
@@ -54,104 +54,111 @@ const featuredBlogsLocalized: LocalizedBlog[] = featuredBlogs.map((entry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
-  links: (entry.data.links ?? []).map((link: BlogLinkInput) =>
-    resolveBlogLink(link, dictionary),
-  ),
+  links: (entry.data.links ?? []).map((link: BlogLinkInput) => resolveBlogLink(link, dictionary)),
 }));
 ---
+
 <Base>
   <section class="container py-12">
-    <h1 class="text-3xl font-bold mb-3">{dictionary.homepage.heroTitle}</h1>
-    <p class="text-slate-700 max-w-prose dark:text-slate-300 whitespace-pre-line">{dictionary.homepage.heroIntro}</p>
+    <h1 class="mb-3 text-3xl font-bold">{dictionary.homepage.heroTitle}</h1>
+    <p class="max-w-prose whitespace-pre-line text-slate-700 dark:text-slate-300">
+      {dictionary.homepage.heroIntro}
+    </p>
   </section>
 
   <section class="container py-6">
-    <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.featuredProjectsHeading}</h2>
-    {featuredProjectsLocalized.length === 0 ? (
-      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.featuredProjectsEmpty}</p>
-    ) : (
-      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredProjectsLocalized.map(({ entry, title, summary, links }) => (
-          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
-            <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
-              <h3 class="font-semibold">{title}</h3>
-              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
-            </a>
-            {links.length ? (
-              <div class="mt-2 flex items-center gap-2">
-                {links.map((link) => (
-                  <a
-                    href={link.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    aria-label={link.ariaLabel}
-                    class="inline-flex"
-                    title={link.label}
-                  >
-                    <img
-                      src={link.icon.light}
-                      alt={link.icon.alt}
-                      width="16"
-                      height="16"
-                      loading="lazy"
-                      class="w-4 h-4 rounded-sm"
-                      data-theme-image
-                      data-theme-src-light={link.icon.light}
-                      data-theme-src-dark={link.icon.dark}
-                      onerror={link.icon.onError}
-                    />
-                  </a>
-                ))}
-              </div>
-            ) : null}
-          </li>
-        ))}
-      </ul>
-    )}
+    <h2 class="mb-4 text-2xl font-semibold">{dictionary.homepage.featuredProjectsHeading}</h2>
+    {
+      featuredProjectsLocalized.length === 0 ? (
+        <p class="text-slate-600 dark:text-slate-400">
+          {dictionary.homepage.featuredProjectsEmpty}
+        </p>
+      ) : (
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredProjectsLocalized.map(({ entry, title, summary, links }) => (
+            <li class="rounded border bg-white p-4 transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+              <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
+                <h3 class="font-semibold">{title}</h3>
+                <p class="text-sm text-slate-700 dark:text-slate-300">{summary}</p>
+              </a>
+              {links.length ? (
+                <div class="mt-2 flex items-center gap-2">
+                  {links.map((link) => (
+                    <a
+                      href={link.href}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      aria-label={link.ariaLabel}
+                      class="inline-flex"
+                      title={link.label}
+                    >
+                      <img
+                        src={link.icon.light}
+                        alt={link.icon.alt}
+                        width="16"
+                        height="16"
+                        loading="lazy"
+                        class="h-4 w-4 rounded-sm"
+                        data-theme-image
+                        data-theme-src-light={link.icon.light}
+                        data-theme-src-dark={link.icon.dark}
+                        onerror={link.icon.onError}
+                      />
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </section>
 
   <section class="container py-6">
-    <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.featuredBlogsHeading}</h2>
-    {featuredBlogsLocalized.length === 0 ? (
-      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.featuredBlogsEmpty}</p>
-    ) : (
-      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredBlogsLocalized.map(({ entry, title, summary, links }) => (
-          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
-            <a href={localizePath(`/blogs/${entry.slug}`, locale)} class="block">
-              <h3 class="font-semibold">{title}</h3>
-              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
-            </a>
-            {links.length ? (
-              <div class="mt-2 flex items-center gap-2">
-                {links.map((link) => (
-                  <a
-                    href={link.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    aria-label={link.ariaLabel}
-                    class="inline-flex"
-                    title={link.label}
-                  >
-                    <img
-                      src={link.icon.light}
-                      alt={link.icon.alt}
-                      width="16"
-                      height="16"
-                      loading="lazy"
-                      class="w-4 h-4 rounded-sm"
-                      data-theme-image
-                      data-theme-src-light={link.icon.light}
-                      data-theme-src-dark={link.icon.dark}
-                      onerror={link.icon.onError}
-                    />
-                  </a>
-                ))}
-              </div>
-            ) : null}
-          </li>
-        ))}
-      </ul>
-    )}
+    <h2 class="mb-4 text-2xl font-semibold">{dictionary.homepage.featuredBlogsHeading}</h2>
+    {
+      featuredBlogsLocalized.length === 0 ? (
+        <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.featuredBlogsEmpty}</p>
+      ) : (
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredBlogsLocalized.map(({ entry, title, summary, links }) => (
+            <li class="rounded border bg-white p-4 transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+              <a href={localizePath(`/blogs/${entry.slug}`, locale)} class="block">
+                <h3 class="font-semibold">{title}</h3>
+                <p class="text-sm text-slate-700 dark:text-slate-300">{summary}</p>
+              </a>
+              {links.length ? (
+                <div class="mt-2 flex items-center gap-2">
+                  {links.map((link) => (
+                    <a
+                      href={link.href}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      aria-label={link.ariaLabel}
+                      class="inline-flex"
+                      title={link.label}
+                    >
+                      <img
+                        src={link.icon.light}
+                        alt={link.icon.alt}
+                        width="16"
+                        height="16"
+                        loading="lazy"
+                        class="h-4 w-4 rounded-sm"
+                        data-theme-image
+                        data-theme-src-light={link.icon.light}
+                        data-theme-src-dark={link.icon.dark}
+                        onerror={link.icon.onError}
+                      />
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </section>
 </Base>

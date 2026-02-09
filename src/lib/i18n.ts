@@ -115,8 +115,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     homepage: {
       heroTitle: 'Hey, I am Tobias',
-      heroIntro:
-        `I enjoy developing software, especially when data and machine learning are involved. I love the challenge of understanding and mastering complex topics.\n\nOn this page, I collect my projects and experiments. Feel free to take a look around, it's (mostly) tidy.`,
+      heroIntro: `I enjoy developing software, especially when data and machine learning are involved. I love the challenge of understanding and mastering complex topics.\n\nOn this page, I collect my projects and experiments. Feel free to take a look around, it's (mostly) tidy.`,
       featuredProjectsHeading: 'Featured Projects',
       featuredProjectsEmpty: 'No featured projects yet.',
       featuredBlogsHeading: 'Featured Blogs',
@@ -154,7 +153,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     blogIndex: {
       heading: 'Blogs',
       metaDescription: 'My blogs all around programming',
-      description: 'Here I share my blogs on various programming-related topics.\n\nYou might find something interesting.',
+      description:
+        'Here I share my blogs on various programming-related topics.\n\nYou might find something interesting.',
       recentHeading: 'Recently Added',
       recentEmpty: 'No recent blogs found.',
       allHeading: 'All Blogs',
@@ -218,7 +218,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       created: 'Erstellt',
       completed: 'Abgeschlossen',
       updated: 'Aktualisiert',
-      inlineDemoFallback: 'Wenn die Demo in deinem Browser nicht geladen wird, öffne sie in einem neuen Tab:',
+      inlineDemoFallback:
+        'Wenn die Demo in deinem Browser nicht geladen wird, öffne sie in einem neuen Tab:',
       openDemo: 'Demo öffnen',
       viewImage: 'Bild anzeigen',
       closeImage: 'Bildvorschau schließen',
@@ -235,7 +236,8 @@ const dictionaries: Record<Locale, Dictionary> = {
     blogIndex: {
       heading: 'Blogs',
       metaDescription: 'Hier poste ich meine Blogs',
-      description: 'Hier poste ich meine Blogs zu verschiedenen Themen rund ums Programmieren. Vielleicht findest du etwas, das dich interessiert. ',
+      description:
+        'Hier poste ich meine Blogs zu verschiedenen Themen rund ums Programmieren. Vielleicht findest du etwas, das dich interessiert. ',
       recentHeading: 'Kürzlich hinzugefügt',
       recentEmpty: 'Keine kürzlich hinzugefügten Blogs gefunden.',
       allHeading: 'Alle Blogs',
@@ -276,7 +278,10 @@ export function resolveLocale(locale: string | undefined): Locale {
  * Expand localized content down to a single value using an explicit locale,
  * falling back to the default language and finally the first available entry.
  */
-export function resolveLocalizedValue<T>(value: LocalizedValue<T> | undefined, locale: Locale): T | undefined {
+export function resolveLocalizedValue<T>(
+  value: LocalizedValue<T> | undefined,
+  locale: Locale,
+): T | undefined {
   if (value === undefined || value === null) {
     return undefined;
   }

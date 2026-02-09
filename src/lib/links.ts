@@ -4,14 +4,7 @@ import type { Dictionary } from '~/lib/i18n';
  * Known link relations exposed in project content. Keep this list small and
  * opinionated – it drives schema validation, localization, and icon defaults.
  */
-export const linkTypeList = [
-  'demo',
-  'docs',
-  'github',
-  'source',
-  'related',
-  'other',
-] as const;
+export const linkTypeList = ['demo', 'docs', 'github', 'source', 'related', 'other'] as const;
 
 export type LinkType = (typeof linkTypeList)[number];
 
@@ -118,7 +111,7 @@ export type ResolvedProjectLink = {
 
 export function resolveProjectLink(
   link: ProjectLinkInput,
-  dictionary: Dictionary
+  dictionary: Dictionary,
 ): ResolvedProjectLink {
   const rel = normalizeRel(link.rel);
   const config = resolveLinkTypeConfig(rel);
@@ -130,7 +123,8 @@ export function resolveProjectLink(
   const iconLight = link.icon ?? lightFromConfig ?? fallback.src;
   const iconDark = link.iconDark ?? darkFromConfig ?? iconLight;
 
-  const label = link.label ?? dictionary.links[rel] ?? dictionary.links[defaultLinkType] ?? link.url;
+  const label =
+    link.label ?? dictionary.links[rel] ?? dictionary.links[defaultLinkType] ?? link.url;
   const ariaLabel = label;
 
   let fallbackSrc: string | undefined;
@@ -179,10 +173,7 @@ export type ResolvedBlogLink = {
   };
 };
 
-export function resolveBlogLink(
-  link: BlogLinkInput,
-  dictionary: Dictionary
-): ResolvedBlogLink {
+export function resolveBlogLink(link: BlogLinkInput, dictionary: Dictionary): ResolvedBlogLink {
   const rel = normalizeRel(link.rel);
   const config = resolveLinkTypeConfig(rel);
   const fallback = faviconFor(link.url);
@@ -193,7 +184,8 @@ export function resolveBlogLink(
   const iconLight = link.icon ?? lightFromConfig ?? fallback.src;
   const iconDark = link.iconDark ?? darkFromConfig ?? iconLight;
 
-  const label = link.label ?? dictionary.links[rel] ?? dictionary.links[defaultLinkType] ?? link.url;
+  const label =
+    link.label ?? dictionary.links[rel] ?? dictionary.links[defaultLinkType] ?? link.url;
   const ariaLabel = label;
 
   let fallbackSrc: string | undefined;

@@ -105,7 +105,7 @@ const blogs = defineCollection({
     priority: z.number().int().nonnegative().optional(),
     visibility: z.enum(['public', 'private']).default('public').optional(),
   }),
-})
+});
 
 /** Lightweight taxonomy entries for tag/category landing pages. */
 const tags = defineCollection({

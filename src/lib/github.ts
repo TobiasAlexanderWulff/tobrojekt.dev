@@ -5,12 +5,14 @@
  */
 export async function getLatestCommitDate(
   repo: string,
-  branch: string = 'main'
+  branch: string = 'main',
 ): Promise<string | null> {
   try {
-    const url = new URL(`https://api.github.com/repos/${repo}/commits/${encodeURIComponent(branch)}`);
+    const url = new URL(
+      `https://api.github.com/repos/${repo}/commits/${encodeURIComponent(branch)}`,
+    );
     const headers: Record<string, string> = {
-      'Accept': 'application/vnd.github+json',
+      Accept: 'application/vnd.github+json',
       'User-Agent': 'tobrojekt.dev-build',
     };
     const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;

@@ -1,5 +1,5 @@
 ---
-import * as page from "../../projects/[slug].astro";
+import * as page from '../../projects/[slug].astro';
 
 export const getStaticPaths = page.getStaticPaths;
 const Component = page.default;
@@ -7,4 +7,3 @@ const props = Astro.props;
 ---
 
 <Component {...props} />
-

@@ -6,14 +6,36 @@
   "additionalProperties": false,
   "required": ["id", "slug", "title", "summary", "visibility"],
   "properties": {
-    "id": { "type": "string", "minLength": 1, "description": "Stable unique identifier (do not reuse)." },
-    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "description": "Lowercase, hyphenated ASCII; stable and unique." },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable unique identifier (do not reuse)."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Lowercase, hyphenated ASCII; stable and unique."
+    },
     "title": { "type": "string", "minLength": 1 },
     "summary": { "type": "string", "minLength": 1 },
     "description": { "type": "string" },
-    "status": { "type": "string", "enum": ["planned", "active", "completed", "archived"], "default": "active" },
-    "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }, "uniqueItems": true, "default": [] },
-    "categories": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }, "uniqueItems": true, "default": [] },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "active", "completed", "archived"],
+      "default": "active"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "uniqueItems": true,
+      "default": []
+    },
+    "categories": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "uniqueItems": true,
+      "default": []
+    },
     "roles": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
     "skills": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
     "links": { "type": "array", "items": { "$ref": "#/definitions/link" }, "default": [] },
@@ -38,7 +60,11 @@
       "additionalProperties": false,
       "required": ["url"],
       "properties": {
-        "rel": { "type": "string", "enum": ["source", "demo", "docs", "related", "other"], "default": "other" },
+        "rel": {
+          "type": "string",
+          "enum": ["source", "demo", "docs", "related", "other"],
+          "default": "other"
+        },
         "label": { "type": "string" },
         "url": { "type": "string", "format": "uri" }
       }

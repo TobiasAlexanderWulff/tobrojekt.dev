@@ -149,9 +149,10 @@ async function importOne(slug, force = false) {
   const mediaOut = await copyMedia(slug, data.media);
   const frontmatter = buildFrontmatter(data, links, mediaOut);
 
-  const body = (data.description && String(data.description).trim())
-    ? String(data.description).trim() + '\n'
-    : `${data.title} — imported via portfolio export.\n`;
+  const body =
+    data.description && String(data.description).trim()
+      ? String(data.description).trim() + '\n'
+      : `${data.title} — imported via portfolio export.\n`;
 
   const yaml = '---\n' + toYaml(frontmatter).trimStart() + '\n---\n\n' + body;
 
@@ -201,4 +202,3 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-

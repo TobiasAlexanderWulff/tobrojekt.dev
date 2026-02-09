@@ -5,16 +5,11 @@
   "owner": {
     "name": "Tobias Wulff",
     "url": "https://tobrojekt.dev",
-    "social": [
-      { "platform": "GitHub", "url": "https://github.com/tobiasalexanderwulff" }
-    ]
+    "social": [{ "platform": "GitHub", "url": "https://github.com/tobiasalexanderwulff" }]
   },
   "primaryNavigation": [
     { "label": "Home", "href": "/" },
     { "label": "Projects", "href": "/projects" }
   ],
-  "socialLinks": [
-    { "platform": "GitHub", "url": "https://github.com/tobiasalexanderwulff" }
-  ]
+  "socialLinks": [{ "platform": "GitHub", "url": "https://github.com/tobiasalexanderwulff" }]
 }
-

@@ -1,5 +1,5 @@
 {
-    "id": "pytorch",
-    "label": "PyTorch",
-    "description": "Projects using PyTorch."
+  "id": "pytorch",
+  "label": "PyTorch",
+  "description": "Projects using PyTorch."
 }

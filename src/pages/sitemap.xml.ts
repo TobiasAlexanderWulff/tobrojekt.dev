@@ -1,6 +1,6 @@
 import { getCollection } from 'astro:content';
-import { getLatestCommitDate } from "~/lib/github";
-import { defaultLocale, localizePath, locales } from "~/lib/i18n";
+import { getLatestCommitDate } from '~/lib/github';
+import { defaultLocale, localizePath, locales } from '~/lib/i18n';
 
 type SitemapEntry = {
   path: string;
@@ -24,7 +24,7 @@ export async function GET({ site }: { site: URL }) {
         const dt = await getLatestCommitDate(gh.repo, gh.branch ?? 'main');
         if (dt) externalUpdated.set(p.slug, dt);
       }
-    })
+    }),
   );
 
   const projectLastmod = (p: (typeof projects)[number]) =>
@@ -68,15 +68,15 @@ export async function GET({ site }: { site: URL }) {
         localized
           .map(
             (item) =>
-              `<xhtml:link rel="alternate" hreflang="${item.locale}" href="${item.href}" />`
+              `<xhtml:link rel="alternate" hreflang="${item.locale}" href="${item.href}" />`,
           )
-          .join('') +
-        `<xhtml:link rel="alternate" hreflang="x-default" href="${defaultHref}" />`;
+          .join('') + `<xhtml:link rel="alternate" hreflang="x-default" href="${defaultHref}" />`;
       return `<url><loc>${defaultHref}</loc>${lastmodTag}${alternateLinks}</url>`;
     })
     .join('');
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
+  const xml =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${xmlItems}</urlset>`;
 
   return new Response(xml, {
