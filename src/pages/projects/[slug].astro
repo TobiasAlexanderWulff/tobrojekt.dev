@@ -1,15 +1,11 @@
 ---
 import Base from "~/layouts/Base.astro";
+import TagList from "~/components/TagList.astro";
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { getLatestCommitDate, formatYMD } from "~/lib/github";
 import { resolveProjectLink } from "~/lib/links";
 import type { ProjectLinkInput, ResolvedProjectLink } from "~/lib/links";
-import {
-  getDictionary,
-  resolveLocale,
-  localizePath,
-  resolveLocalizedValue,
-} from "~/lib/i18n";
+import { getDictionary, resolveLocale, resolveLocalizedValue } from "~/lib/i18n";
 
 type ProjectEntry = CollectionEntry<'projects'>;
 type ProjectStatus = 'planned' | 'active' | 'completed' | 'archived';
@@ -83,6 +79,7 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
     <header class="mb-6">
       <h1 class="text-3xl font-bold mb-3">{localizedTitle}</h1>
       <p class="text-slate-700 dark:text-slate-300">{localizedSummary}</p>
+      <TagList tags={entry.data.tags} className="mt-2" />
       {(statusLabel || entry.data.dates) ? (
         <p class="text-sm text-slate-600 mt-1 dark:text-slate-400">
           {statusLabel ? (
@@ -101,13 +98,6 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
             <span class="ml-3">{dictionary.projectDetail.updated}: {displayUpdated}</span>
           ) : null}
         </p>
-      ) : null}
-      {entry.data.tags?.length ? (
-        <div class="mt-2 flex flex-wrap gap-2">
-          {entry.data.tags.map((t: string) => (
-            <a href={localizePath(`/tags/${t}`, locale)} class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-700 dark:bg-slate-800 dark:text-slate-200">{t}</a>
-          ))}
-        </div>
       ) : null}
       {inlineDemoUrl ? (
         <section class="mt-4 max-w-4xl">

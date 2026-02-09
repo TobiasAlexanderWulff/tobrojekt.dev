@@ -20,7 +20,6 @@ type SitemapEntry = {
  */
 export async function GET({ site }: { site: URL }) {
   const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
-  const tags: CollectionEntry<'tags'>[] = await getCollection('tags');
   const blogs: CollectionEntry<'blogs'>[] = await getCollection('blogs');
 
   // Pre-fetch external updated dates for projects with GitHub metadata
@@ -58,12 +57,13 @@ export async function GET({ site }: { site: URL }) {
     });
   }
 
-  for (const t of tags) {
-    entries.push({ path: `/tags/${t.data.id}` });
-  }
-
   for (const b of blogs) {
-    entries.push({ path: `/blogs/${b.data.id}`})
+    if (b.data.visibility === 'private') continue;
+    const lastmod = b.data.dates?.updated ?? b.data.dates?.created;
+    entries.push({
+      path: `/blogs/${b.slug}`,
+      lastmod: lastmod ? new Date(lastmod).toISOString() : undefined,
+    });
   }
 
   const xmlItems = entries

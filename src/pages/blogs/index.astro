@@ -1,5 +1,6 @@
 ---
 import Base from '~/layouts/Base.astro';
+import TagList from '~/components/TagList.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { resolveBlogLink } from '~/lib/links';
 import type { BlogLinkInput, ResolvedBlogLink } from '~/lib/links';
@@ -14,7 +15,16 @@ type LocalizedBlog = {
 };
 
 const all: BlogEntry[] = await getCollection('blogs');
-const recent = all.filter((p: BlogEntry) => p.data.visibility !== 'private').slice(0, 6);
+const recent = all
+  .filter((p: BlogEntry) => p.data.visibility !== 'private')
+  .sort((a: BlogEntry, b: BlogEntry) => {
+    const aUpdated = Date.parse(a.data.dates?.updated ?? a.data.dates?.created ?? '');
+    const bUpdated = Date.parse(b.data.dates?.updated ?? b.data.dates?.created ?? '');
+    const aTs = Number.isNaN(aUpdated) ? 0 : aUpdated;
+    const bTs = Number.isNaN(bUpdated) ? 0 : bUpdated;
+    return bTs - aTs;
+  })
+  .slice(0, 6);
 const blogs = all
   .filter((p: BlogEntry) => p.data.visibility !== 'private')
   .sort((a: BlogEntry, b: BlogEntry) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
@@ -54,13 +64,14 @@ const recentLocalized: LocalizedBlog[] = recent.map((entry: BlogEntry) => ({
                 <a href={localizePath(`/blogs/${entry.slug}`, locale)} class="blog">
                   <h3 class="font-semibold">{title}</h3>
                   <p class="text-sm text-slate-700 dark:text-slate-300">{summary}</p>
+                  <TagList tags={entry.data.tags} max={4} className="mt-2" />
                 </a>
                 {links.length ? (
                   <div class="mt-2 flex items-center gap-2">
                     {links.map((link) => (
                       <a
                         href={link.href}
-                        rel="noopener norefferer"
+                        rel="noopener noreferrer"
                         target="_blank"
                         aria-label={link.ariaLabel}
                         class="inline-flex"
@@ -100,13 +111,14 @@ const recentLocalized: LocalizedBlog[] = recent.map((entry: BlogEntry) => ({
                 <a href={localizePath(`/blogs/${entry.slug}`, locale)} class="blog">
                   <h3 class="font-semibold">{title}</h3>
                   <p class="text-sm text-slate-700 dark:text-slate-300">{summary}</p>
+                  <TagList tags={entry.data.tags} max={5} className="mt-2" />
                 </a>
                 {links.length ? (
                   <div class="mt-2 flex items-center gap-2">
                     {links.map((link) => (
                       <a
                         href={link.href}
-                        rel="noopener norefferer"
+                        rel="noopener noreferrer"
                         target="_blank"
                         aria-label={link.ariaLabel}
                         class="inline-flex"

@@ -1,0 +1,30 @@
+---
+type Props = {
+  tags?: string[];
+  max?: number;
+  className?: string;
+};
+
+const props = Astro.props as Props;
+const tags = Array.isArray(props.tags) ? props.tags.filter((tag) => tag && tag.trim().length > 0) : [];
+const max = typeof props.max === 'number' ? props.max : 6;
+const visibleTags = tags.slice(0, max);
+const remainingCount = tags.length - visibleTags.length;
+---
+
+{
+  visibleTags.length > 0 ? (
+    <div class={`flex flex-wrap gap-2 ${props.className ?? ''}`}>
+      {visibleTags.map((tag) => (
+        <span class="rounded bg-slate-100 px-2 py-1 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          {tag}
+        </span>
+      ))}
+      {remainingCount > 0 ? (
+        <span class="rounded bg-slate-200 px-2 py-1 text-xs text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+          +{remainingCount}
+        </span>
+      ) : null}
+    </div>
+  ) : null
+}

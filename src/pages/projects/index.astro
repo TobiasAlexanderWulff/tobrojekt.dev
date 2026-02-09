@@ -1,5 +1,6 @@
 ---
 import Base from '~/layouts/Base.astro';
+import TagList from '~/components/TagList.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { resolveProjectLink } from '~/lib/links';
 import type { ProjectLinkInput, ResolvedProjectLink } from '~/lib/links';
@@ -14,7 +15,16 @@ type LocalizedProject = {
 };
 
 const all: ProjectEntry[] = await getCollection('projects');
-const recent = all.filter((p: ProjectEntry) => p.data.visibility !== 'private').slice(0, 6);
+const recent = all
+  .filter((p: ProjectEntry) => p.data.visibility !== 'private')
+  .sort((a: ProjectEntry, b: ProjectEntry) => {
+    const aUpdated = Date.parse(a.data.dates?.updated ?? a.data.dates?.created ?? '');
+    const bUpdated = Date.parse(b.data.dates?.updated ?? b.data.dates?.created ?? '');
+    const aTs = Number.isNaN(aUpdated) ? 0 : aUpdated;
+    const bTs = Number.isNaN(bUpdated) ? 0 : bUpdated;
+    return bTs - aTs;
+  })
+  .slice(0, 6);
 const projects = all
   .filter((p: ProjectEntry) => p.data.visibility !== 'private')
   .sort(
@@ -60,6 +70,7 @@ const recentLocalized: LocalizedProject[] = recent.map((entry: ProjectEntry) => 
                 <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
                   <h3 class="font-semibold">{title}</h3>
                   <p class="text-sm text-slate-700 dark:text-slate-300">{summary}</p>
+                  <TagList tags={entry.data.tags} max={4} className="mt-2" />
                 </a>
                 {links.length ? (
                   <div class="mt-2 flex items-center gap-2">
@@ -103,18 +114,7 @@ const recentLocalized: LocalizedProject[] = recent.map((entry: ProjectEntry) => 
               <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
                 <h3 class="font-semibold">{title}</h3>
                 <p class="text-sm text-slate-700 dark:text-slate-300">{summary}</p>
-                {entry.data.tags?.length ? (
-                  <div class="mt-2 flex flex-wrap gap-2">
-                    {entry.data.tags.map((t: string) => (
-                      <a
-                        href={localizePath(`/tags/${t}`, locale)}
-                        class="rounded bg-slate-100 px-2 py-1 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                      >
-                        {t}
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
+                <TagList tags={entry.data.tags} max={5} className="mt-2" />
               </a>
               {links.length ? (
                 <div class="mt-2 flex items-center gap-2">
