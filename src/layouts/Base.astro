@@ -72,7 +72,7 @@ const currentYear = new Date().getFullYear();
             setTheme(stored);
             return;
           }
-        } catch (err) {
+        } catch {
           // Ignore storage access issues and fall back to system preference.
         }
         setTheme(prefersDark() ? 'dark' : 'light');

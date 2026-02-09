@@ -57,7 +57,7 @@ const storageKey = LOCALE_STORAGE_KEY;
           if (locale && storageKey) {
             localStorage.setItem(storageKey, locale);
           }
-        } catch (err) {
+        } catch {
           // Local storage might be unavailable (e.g. disabled cookies)
         }
       });

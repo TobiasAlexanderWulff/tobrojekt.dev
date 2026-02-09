@@ -13,22 +13,22 @@ type LocalizedBlog = {
   links: ResolvedBlogLink[];
 };
 
-const all = await getCollection('blogs');
-const recent = all.filter((p) => p.data.visibility !== 'private').slice(0, 6);
+const all: BlogEntry[] = await getCollection('blogs');
+const recent = all.filter((p: BlogEntry) => p.data.visibility !== 'private').slice(0, 6);
 const blogs = all
-  .filter((p) => p.data.visibility !== 'private')
-  .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
+  .filter((p: BlogEntry) => p.data.visibility !== 'private')
+  .sort((a: BlogEntry, b: BlogEntry) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const pageTitle = `${dictionary.blogIndex.heading} – ${dictionary.site.name}`;
-const localizedBlogs: LocalizedBlog[] = blogs.map((entry) => ({
+const localizedBlogs: LocalizedBlog[] = blogs.map((entry: BlogEntry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
   links: (entry.data.links ?? []).map((link: BlogLinkInput) => resolveBlogLink(link, dictionary)),
 }));
-const recentLocalized: LocalizedBlog[] = recent.map((entry) => ({
+const recentLocalized: LocalizedBlog[] = recent.map((entry: BlogEntry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',

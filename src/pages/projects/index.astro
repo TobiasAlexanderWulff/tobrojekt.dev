@@ -13,16 +13,18 @@ type LocalizedProject = {
   links: ResolvedProjectLink[];
 };
 
-const all = await getCollection('projects');
-const recent = all.filter((p) => p.data.visibility !== 'private').slice(0, 6);
+const all: ProjectEntry[] = await getCollection('projects');
+const recent = all.filter((p: ProjectEntry) => p.data.visibility !== 'private').slice(0, 6);
 const projects = all
-  .filter((p) => p.data.visibility !== 'private')
-  .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
+  .filter((p: ProjectEntry) => p.data.visibility !== 'private')
+  .sort(
+    (a: ProjectEntry, b: ProjectEntry) => (a.data.priority ?? 999) - (b.data.priority ?? 999),
+  );
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const pageTitle = `${dictionary.projectsIndex.heading} – ${dictionary.site.name}`;
-const localizedProjects: LocalizedProject[] = projects.map((entry) => ({
+const localizedProjects: LocalizedProject[] = projects.map((entry: ProjectEntry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
@@ -30,7 +32,7 @@ const localizedProjects: LocalizedProject[] = projects.map((entry) => ({
     resolveProjectLink(link, dictionary),
   ),
 }));
-const recentLocalized: LocalizedProject[] = recent.map((entry) => ({
+const recentLocalized: LocalizedProject[] = recent.map((entry: ProjectEntry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',

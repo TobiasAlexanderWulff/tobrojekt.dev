@@ -1,6 +1,13 @@
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { getLatestCommitDate } from '~/lib/github';
 import { defaultLocale, localizePath, locales } from '~/lib/i18n';
+
+type GitHubExternal = {
+  github?: {
+    repo?: string;
+    branch?: string;
+  };
+};
 
 type SitemapEntry = {
   path: string;
@@ -12,14 +19,15 @@ type SitemapEntry = {
  * commit timestamps when available. Astro calls this handler at build time.
  */
 export async function GET({ site }: { site: URL }) {
-  const projects = await getCollection('projects');
-  const tags = await getCollection('tags');
+  const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
+  const tags: CollectionEntry<'tags'>[] = await getCollection('tags');
+  const blogs: CollectionEntry<'blogs'>[] = await getCollection('blogs');
 
   // Pre-fetch external updated dates for projects with GitHub metadata
   const externalUpdated = new Map<string, string>();
   await Promise.all(
-    projects.map(async (p) => {
-      const gh = (p.data as any).external?.github as { repo?: string; branch?: string } | undefined;
+    projects.map(async (p: CollectionEntry<'projects'>) => {
+      const gh = (p.data.external as GitHubExternal | undefined)?.github;
       if (gh?.repo) {
         const dt = await getLatestCommitDate(gh.repo, gh.branch ?? 'main');
         if (dt) externalUpdated.set(p.slug, dt);
@@ -27,7 +35,7 @@ export async function GET({ site }: { site: URL }) {
     }),
   );
 
-  const projectLastmod = (p: (typeof projects)[number]) =>
+  const projectLastmod = (p: CollectionEntry<'projects'>) =>
     externalUpdated.get(p.slug) ??
     p.data.dates?.updated ??
     p.data.dates?.completed ??
@@ -36,7 +44,7 @@ export async function GET({ site }: { site: URL }) {
 
   const entries: SitemapEntry[] = [];
 
-  const staticPaths = ['/', '/projects', '/tags', '/search'];
+  const staticPaths = ['/', '/projects', '/blogs'];
   for (const path of staticPaths) {
     entries.push({ path });
   }
@@ -52,6 +60,10 @@ export async function GET({ site }: { site: URL }) {
 
   for (const t of tags) {
     entries.push({ path: `/tags/${t.data.id}` });
+  }
+
+  for (const b of blogs) {
+    entries.push({ path: `/blogs/${b.data.id}`})
   }
 
   const xmlItems = entries

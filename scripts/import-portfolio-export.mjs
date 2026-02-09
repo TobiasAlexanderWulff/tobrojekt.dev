@@ -29,7 +29,12 @@ function toYaml(value, indent = 0) {
   if (value === null || value === undefined) return 'null';
   if (typeof value === 'string') {
     // Quote strings that contain special characters
-    if (/[:\-\[\]{}#&,>*!|>'"%@`]/.test(value) || value.trim() !== value) {
+    if (
+      /[:\-{}#&,>*!|>'"%@`]/.test(value) ||
+      value.includes('[') ||
+      value.includes(']') ||
+      value.trim() !== value
+    ) {
       return JSON.stringify(value);
     }
     return value;
@@ -74,7 +79,7 @@ async function copyMedia(slug, media) {
     const destPath = path.join(destDir, filename);
     try {
       await fs.copyFile(srcPath, destPath);
-    } catch (err) {
+    } catch {
       console.warn(`[warn] Media not copied (missing?): ${srcPath}`);
     }
     return { ...entry, src: `/projects/${slug}/${filename}` };

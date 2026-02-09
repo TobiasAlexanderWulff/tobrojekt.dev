@@ -1,7 +1,6 @@
 ---
 import Base from "~/layouts/Base.astro";
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { formatYMD } from "~/lib/github";
 import { resolveBlogLink } from "~/lib/links";
 import type { BlogLinkInput, ResolvedBlogLink } from "~/lib/links";
 import {
@@ -20,10 +19,10 @@ type BlogImage = {
 };
 
 export async function getStaticPaths() {
-  const entries = await getCollection('blogs');
+  const entries: BlogEntry[] = await getCollection('blogs');
   return entries
-    .filter((e) => e.data.visibility !== 'private')
-    .map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+    .filter((e: BlogEntry) => e.data.visibility !== 'private')
+    .map((entry: BlogEntry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
 const { entry } = Astro.props as { entry: BlogEntry };
@@ -33,19 +32,9 @@ const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const localizedTitle = resolveLocalizedValue(entry.data.title, locale) ?? '';
 const localizedSummary = resolveLocalizedValue(entry.data.summary, locale) ?? '';
-const startedLabel = entry.data.dates?.started
-  ? dictionary.projectDetail.started
-  : dictionary.projectDetail.created;
-const startedValue = entry.data.dates?.started ?? entry.data.dates?.created ?? null;
 
 const pageTitle = `${localizedTitle} – ${dictionary.site.name}`;
 const pageDescription = localizedSummary;
-
-const updatedDate = entry.data.dates?.updated;
-const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
-
-const sc = entry.data.media?.social_card;
-const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}%` : '56.25%';
 const resolvedLinks: ResolvedBlogLink[] = (entry.data.links ?? []).map((link: BlogLinkInput) =>
   resolveBlogLink(link, dictionary),
 );
@@ -75,7 +64,7 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
             class="w-full h-auto rounded border border-slate-200 dark:border-slate-700"
             loading="eager"
             decoding="async"
-            onerror="this.onerror=null;this.style.display='none'"
+            onerror="this.style.display='none'"
           />
         </figure>
       ) : null}

@@ -20,7 +20,13 @@ export async function getLatestCommitDate(
 
     const res = await fetch(url, { headers });
     if (!res.ok) return null;
-    const json: any = await res.json();
+    type CommitResponse = {
+      commit?: {
+        committer?: { date?: string };
+        author?: { date?: string };
+      };
+    };
+    const json = (await res.json()) as CommitResponse;
     const date: string | undefined = json?.commit?.committer?.date || json?.commit?.author?.date;
     return date ?? null;
   } catch {

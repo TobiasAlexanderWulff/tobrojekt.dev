@@ -30,19 +30,21 @@ type LocalizedBlog = {
   links: ResolvedBlogLink[];
 };
 
-const allProjects = await getCollection('projects');
+const allProjects: ProjectEntry[] = await getCollection('projects');
 const featuredProjects = allProjects
-  .filter((p) => p.data.visibility !== 'private' && p.data.featured)
-  .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
+  .filter((p: ProjectEntry) => p.data.visibility !== 'private' && p.data.featured)
+  .sort(
+    (a: ProjectEntry, b: ProjectEntry) => (a.data.priority ?? 999) - (b.data.priority ?? 999),
+  );
 
-const allBlogs = await getCollection('blogs');
+const allBlogs: BlogEntry[] = await getCollection('blogs');
 const featuredBlogs = allBlogs
-  .filter((p) => p.data.visibility !== 'private' && p.data.featured)
-  .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
+  .filter((p: BlogEntry) => p.data.visibility !== 'private' && p.data.featured)
+  .sort((a: BlogEntry, b: BlogEntry) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
-const featuredProjectsLocalized: LocalizedProject[] = featuredProjects.map((entry) => ({
+const featuredProjectsLocalized: LocalizedProject[] = featuredProjects.map((entry: ProjectEntry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
@@ -50,7 +52,7 @@ const featuredProjectsLocalized: LocalizedProject[] = featuredProjects.map((entr
     resolveProjectLink(link, dictionary),
   ),
 }));
-const featuredBlogsLocalized: LocalizedBlog[] = featuredBlogs.map((entry) => ({
+const featuredBlogsLocalized: LocalizedBlog[] = featuredBlogs.map((entry: BlogEntry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',

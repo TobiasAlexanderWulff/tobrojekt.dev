@@ -21,10 +21,10 @@ type ProjectImage = {
 };
 
 export async function getStaticPaths() {
-  const entries = await getCollection('projects');
+  const entries: ProjectEntry[] = await getCollection('projects');
   return entries
-    .filter((e) => e.data.visibility !== 'private')
-    .map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+    .filter((e: ProjectEntry) => e.data.visibility !== 'private')
+    .map((entry: ProjectEntry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
 const { entry } = Astro.props as { entry: ProjectEntry };
@@ -146,7 +146,7 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
             class="w-full h-auto rounded border border-slate-200 dark:border-slate-700"
             loading="eager"
             decoding="async"
-            onerror="this.onerror=null;this.style.display='none'"
+            onerror="this.style.display='none'"
           />
         </figure>
       ) : null}

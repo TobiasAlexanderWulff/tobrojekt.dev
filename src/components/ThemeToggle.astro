@@ -115,7 +115,7 @@ const storageKey = THEME_STORAGE_KEY;
         if (stored === 'light' || stored === 'dark') {
           return stored;
         }
-      } catch (err) {
+      } catch {
         // Storage might be unavailable (e.g. private mode)
       }
       return null;
@@ -125,7 +125,7 @@ const storageKey = THEME_STORAGE_KEY;
       if (!storageKey) return;
       try {
         localStorage.setItem(storageKey, theme);
-      } catch (err) {
+      } catch {
         // Safe to ignore; persistence is best-effort
       }
     };
