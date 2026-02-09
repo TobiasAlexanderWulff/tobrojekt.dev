@@ -22,6 +22,11 @@ type HeaderMetaItem = {
   label: string;
   value: string;
 };
+type TocHeading = {
+  depth: number;
+  slug: string;
+  text: string;
+};
 
 export async function getStaticPaths() {
   const entries: BlogEntry[] = await getCollection('blogs');
@@ -31,10 +36,13 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props as { entry: BlogEntry };
-const { Content } = await entry.render();
+const { Content, headings } = await entry.render();
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
+const tocTitle = locale === 'de' ? 'Auf dieser Seite' : 'On this page';
+const detailsTitle = locale === 'de' ? 'Überblick' : 'Overview';
+const linksTitle = locale === 'de' ? 'Links' : 'Links';
 const localizedTitle = resolveLocalizedValue(entry.data.title, locale) ?? '';
 const localizedSummary = resolveLocalizedValue(entry.data.summary, locale) ?? '';
 
@@ -64,6 +72,9 @@ if (displayCreated) {
 if (displayUpdated && displayUpdated !== displayCreated) {
   headerMeta.push({ label: dictionary.projectDetail.updated, value: displayUpdated });
 }
+const tocHeadings: TocHeading[] = (headings ?? []).filter(
+  (heading: TocHeading) => (heading.depth === 2 || heading.depth === 3) && Boolean(heading.slug),
+);
 
 const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
   ? entry.data.media.images
@@ -104,15 +115,12 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
                         class="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:border-blue-500 hover:bg-blue-500"
                       >
                         <img
-                          src={link.icon.light}
+                          src={link.icon.dark || link.icon.light}
                           alt={link.icon.alt}
                           width="16"
                           height="16"
                           loading="lazy"
-                          class="h-4 w-4 rounded-sm bg-white/95"
-                          data-theme-image
-                          data-theme-src-light={link.icon.light}
-                          data-theme-src-dark={link.icon.dark}
+                          class="h-4 w-4 rounded-sm"
                           onerror={link.icon.onError}
                         />
                         <span>{link.label}</span>
@@ -165,43 +173,42 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
         </figure>
       ) : null}
     </header>
-    <div class="prose prose-slate max-w-none dark:prose-invert 
-                prose-headings:font-bold 
-                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
-                prose-img:rounded-xl prose-img:shadow-lg prose-img:mx-auto
-                prose-img:max-h-[500px] prose-img:w-auto"> <Content />
-    </div>
-    {galleryImages.length > 0 ? (
-      <section class="mt-8">
-        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {galleryImages.map((img: BlogImage, index: number) => (
-            <li class="border rounded overflow-hidden border-slate-200 dark:border-slate-700">
-              <a
-                href={img.src}
-                class="group relative flex h-64 w-full items-center justify-center bg-slate-50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900 dark:focus-visible:ring-offset-slate-950"
-                data-gallery-open
-                data-gallery-src={img.src}
-                data-gallery-alt={img.alt ?? ''}
-                data-gallery-width={typeof img.width === 'number' ? String(img.width) : undefined}
-                data-gallery-height={typeof img.height === 'number' ? String(img.height) : undefined}
-                data-gallery-index={String(index)}
-                aria-label={img.alt && img.alt.length > 0 ? img.alt : dictionary.projectDetail.viewImage}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  width={img.width}
-                  height={img.height}
-                  loading="lazy"
-                  decoding="async"
-                  class="max-h-full max-w-full object-contain transition duration-200 group-hover:scale-105"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
+    <div class="content-shell">
+      <div class="content-main">
+        <div class="prose prose-slate content-prose max-w-none dark:prose-invert prose-headings:font-bold prose-h1:text-3xl prose-img:rounded-xl prose-img:shadow-lg prose-img:mx-auto prose-img:max-h-[500px] prose-img:w-auto">
+          <Content />
+        </div>
+        {galleryImages.length > 0 ? (
+          <section class="mt-8">
+            <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {galleryImages.map((img: BlogImage, index: number) => (
+                <li class="border rounded overflow-hidden border-slate-200 dark:border-slate-700">
+                  <a
+                    href={img.src}
+                    class="group relative flex h-64 w-full items-center justify-center bg-slate-50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900 dark:focus-visible:ring-offset-slate-950"
+                    data-gallery-open
+                    data-gallery-src={img.src}
+                    data-gallery-alt={img.alt ?? ''}
+                    data-gallery-width={typeof img.width === 'number' ? String(img.width) : undefined}
+                    data-gallery-height={typeof img.height === 'number' ? String(img.height) : undefined}
+                    data-gallery-index={String(index)}
+                    aria-label={img.alt && img.alt.length > 0 ? img.alt : dictionary.projectDetail.viewImage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      width={img.width}
+                      height={img.height}
+                      loading="lazy"
+                      decoding="async"
+                      class="max-h-full max-w-full object-contain transition duration-200 group-hover:scale-105"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ul>
         <dialog
           data-gallery-dialog
           class="gallery-lightbox"
@@ -826,7 +833,66 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
             }
           }
         </style>
-      </section>
-    ) : null}
+          </section>
+        ) : null}
+      </div>
+      {(tocHeadings.length > 0 || headerMeta.length > 0 || resolvedLinks.length > 0) ? (
+        <aside class="content-aside">
+          {tocHeadings.length > 0 ? (
+            <section class="surface-card">
+              <h2 class="rail-title">{tocTitle}</h2>
+              <nav aria-label={tocTitle}>
+                <ul class="toc-list">
+                  {tocHeadings.map((heading: TocHeading) => (
+                    <li>
+                      <a
+                        href={`#${heading.slug}`}
+                        class="toc-link"
+                        data-toc-link
+                        data-depth={String(heading.depth)}
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </section>
+          ) : null}
+          {headerMeta.length > 0 ? (
+            <section class="surface-card">
+              <h2 class="rail-title">{detailsTitle}</h2>
+              <dl class="meta-list">
+                {headerMeta.map((item) => (
+                  <div class="meta-row">
+                    <dt class="meta-key">{item.label}</dt>
+                    <dd class="meta-value">{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
+          {resolvedLinks.length > 0 ? (
+            <section class="surface-card">
+              <h2 class="rail-title">{linksTitle}</h2>
+              <ul class="toc-list">
+                {resolvedLinks.map((link: ResolvedBlogLink) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      class="toc-link"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </aside>
+      ) : null}
+    </div>
   </article>
 </Base>

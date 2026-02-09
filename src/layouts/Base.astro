@@ -200,6 +200,69 @@ const currentYear = new Date().getFullYear();
               setState(shouldOpen);
             });
           }
+
+          const tocLinks = Array.from(document.querySelectorAll('[data-toc-link]')).filter(
+            (node): node is HTMLAnchorElement => node instanceof HTMLAnchorElement,
+          );
+          if (tocLinks.length > 0) {
+            const targets = tocLinks
+              .map((link) => {
+                const hash = link.hash?.startsWith('#') ? link.hash.slice(1) : '';
+                const id = hash ? decodeURIComponent(hash) : '';
+                const element = id ? document.getElementById(id) : null;
+                return element ? { id, element } : null;
+              })
+              .filter(
+                (
+                  entry,
+                ): entry is {
+                  id: string;
+                  element: HTMLElement;
+                } => Boolean(entry),
+              );
+
+            if (targets.length > 0) {
+              const activate = (id: string) => {
+                tocLinks.forEach((link) => {
+                  const hash = link.hash?.startsWith('#') ? decodeURIComponent(link.hash.slice(1)) : '';
+                  const isActive = hash === id;
+                  link.classList.toggle('is-active', isActive);
+                  if (isActive) {
+                    link.setAttribute('aria-current', 'location');
+                  } else {
+                    link.removeAttribute('aria-current');
+                  }
+                });
+              };
+
+              const updateActiveFromScroll = () => {
+                const offset = 148;
+                let activeId = targets[0].id;
+                for (const target of targets) {
+                  const top = target.element.getBoundingClientRect().top;
+                  if (top - offset <= 0) {
+                    activeId = target.id;
+                  } else {
+                    break;
+                  }
+                }
+                activate(activeId);
+              };
+
+              tocLinks.forEach((link) => {
+                link.addEventListener('click', () => {
+                  const hash = link.hash?.startsWith('#') ? decodeURIComponent(link.hash.slice(1)) : '';
+                  if (hash) {
+                    activate(hash);
+                  }
+                });
+              });
+
+              window.addEventListener('scroll', updateActiveFromScroll, { passive: true });
+              window.addEventListener('resize', updateActiveFromScroll);
+              updateActiveFromScroll();
+            }
+          }
         }
       </script>
     </header>
