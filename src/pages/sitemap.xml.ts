@@ -14,6 +14,13 @@ type SitemapEntry = {
   lastmod?: string;
 };
 
+function toIsoOrUndefined(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return undefined;
+  return parsed.toISOString();
+}
+
 /**
  * Generate a localized sitemap that favors project metadata and external GitHub
  * commit timestamps when available. Astro calls this handler at build time.
@@ -53,7 +60,7 @@ export async function GET({ site }: { site: URL }) {
     const lastmod = projectLastmod(p);
     entries.push({
       path: `/projects/${p.slug}`,
-      lastmod: lastmod ? new Date(lastmod).toISOString() : undefined,
+      lastmod: toIsoOrUndefined(lastmod),
     });
   }
 
@@ -62,7 +69,7 @@ export async function GET({ site }: { site: URL }) {
     const lastmod = b.data.dates?.updated ?? b.data.dates?.created;
     entries.push({
       path: `/blogs/${b.slug}`,
-      lastmod: lastmod ? new Date(lastmod).toISOString() : undefined,
+      lastmod: toIsoOrUndefined(lastmod),
     });
   }
 

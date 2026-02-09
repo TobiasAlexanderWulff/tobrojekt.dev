@@ -16,7 +16,7 @@ This repo is intentionally tech‑agnostic at this stage. For overarching goals,
 - `content/tags/` — tag/category metadata placeholders
 - `public/` — public static assets (e.g., favicons, social images)
 - `assets/` — raw media to prepare/optimize for `public/`
-- `config/` — site metadata, navigation, and redirects map (schema-validated)
+- `config/` — site metadata and redirects map
 - `docs/` — documentation, ADRs, design notes (see `docs/adr/`)
 - `tests/` — automated checks (structure depends on chosen stack)
 
@@ -28,11 +28,13 @@ This repo is intentionally tech‑agnostic at this stage. For overarching goals,
 - Format code: `npm run format`
 - Start dev server: `npm run dev`
 - Build: `npm run build` (generates `dist/`)
+- Validate content/config: `npm run test`
 
 Notes
 
-- Site-wide metadata, primary navigation, and redirects are managed in `config/site.json` and `config/redirects.json`.
-- Search uses Pagefind. The `pagefind` index is generated in `postbuild`; search UI assets are only available after `npm run build`.
+- Site-wide metadata and primary navigation are loaded from `config/site.json`.
+- Redirect rules are defined in `config/redirects.json` (reserved for runtime mapping).
+- Pagefind indexing runs in `postbuild` and generates `dist/pagefind` for full-text indexing.
 - Content is managed via Astro Content Collections in `src/content/`. See schemas in `src/content/config.ts`.
 - Optional external metadata: You can add `external.github` to a project entry to fetch the latest commit date at build time. Set `GITHUB_TOKEN` to raise rate limits; builds gracefully fall back if the API is unavailable.
 - Favicons: The UI attempts `https://{host}/favicon.ico` with a fallback to DuckDuckGo's icon service. For hosts that don't expose a fetchable favicon, you can override per link by adding `icon: "/icons/<name>.svg"` (or any URL) in the project's `links` array. Place local icons under `public/icons/`.

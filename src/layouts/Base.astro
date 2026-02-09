@@ -4,6 +4,7 @@ import LangToggle from '~/components/LangToggle.astro';
 import ThemeToggle from '~/components/ThemeToggle.astro';
 import type { Locale, LocalizedValue } from '~/lib/i18n';
 import { getDictionary, localizePath, resolveLocale, resolveLocalizedValue } from '~/lib/i18n';
+import { getPrimaryNavigation, siteConfig } from '~/lib/site-config';
 import { THEME_STORAGE_KEY } from '~/lib/theme';
 
 type BaseProps = {
@@ -15,21 +16,18 @@ type BaseProps = {
 const props = Astro.props as BaseProps;
 const locale: Locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
+const siteName = siteConfig.siteName || dictionary.site.name;
 
-const resolvedTitle = resolveLocalizedValue(props.title, locale) ?? `${dictionary.site.name}`;
+const resolvedTitle = resolveLocalizedValue(props.title, locale) ?? `${siteName}`;
 const resolvedDescription =
-  resolveLocalizedValue(props.description, locale) ?? dictionary.site.description;
+  resolveLocalizedValue(props.description, locale) ?? siteConfig.description ?? dictionary.site.description;
 
-const navLinks = [
-  {
-    href: localizePath('/projects', locale),
-    label: dictionary.nav.projects,
-  },
-  {
-    href: localizePath('/blogs', locale),
-    label: dictionary.nav.blogs,
-  },
-];
+const navLinks = getPrimaryNavigation()
+  .filter((item) => item.href !== '/')
+  .map((item) => ({
+    href: localizePath(item.href, locale),
+    label: item.label,
+  }));
 
 const pathname = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
@@ -108,7 +106,7 @@ const currentYear = new Date().getFullYear();
                 aria-hidden="true"
               />
             </span>
-            <span>{dictionary.site.name}</span>
+            <span>{siteName}</span>
           </a>
           <button
             type="button"
@@ -275,7 +273,7 @@ const currentYear = new Date().getFullYear();
     </main>
     <footer class="border-t border-slate-200 dark:border-slate-800">
       <div class="container py-6 text-sm text-slate-600 dark:text-slate-400">
-        © {currentYear} Tobias Wulff. {dictionary.footer.rights}
+        © {currentYear} {siteConfig.owner.name}. {dictionary.footer.rights}
       </div>
     </footer>
   </body>

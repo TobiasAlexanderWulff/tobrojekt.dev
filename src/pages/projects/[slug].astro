@@ -1,20 +1,15 @@
 ---
-import Base from "~/layouts/Base.astro";
-import TagList from "~/components/TagList.astro";
+import Base from '~/layouts/Base.astro';
+import TagList from '~/components/TagList.astro';
+import GalleryLightbox from '~/components/GalleryLightbox.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { getLatestCommitDate, formatYMD } from "~/lib/github";
-import { resolveProjectLink } from "~/lib/links";
-import type { ProjectLinkInput, ResolvedProjectLink } from "~/lib/links";
-import { getDictionary, resolveLocale, resolveLocalizedValue } from "~/lib/i18n";
+import { getLatestCommitDate, formatYMD } from '~/lib/github';
+import { resolveProjectLink } from '~/lib/links';
+import type { ProjectLinkInput, ResolvedProjectLink } from '~/lib/links';
+import { getDictionary, resolveLocale, resolveLocalizedValue } from '~/lib/i18n';
 
 type ProjectEntry = CollectionEntry<'projects'>;
 type ProjectStatus = 'planned' | 'active' | 'completed' | 'archived';
-type ProjectImage = {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-};
 type HeaderMetaItem = {
   label: string;
   value: string;
@@ -43,9 +38,7 @@ const linksTitle = locale === 'de' ? 'Links' : 'Links';
 const localizedTitle = resolveLocalizedValue(entry.data.title, locale) ?? '';
 const localizedSummary = resolveLocalizedValue(entry.data.summary, locale) ?? '';
 const status = entry.data.status as ProjectStatus | undefined;
-const statusLabel = status
-  ? dictionary.projectDetail.statusLabels[status] ?? status
-  : null;
+const statusLabel = status ? dictionary.projectDetail.statusLabels[status] ?? status : null;
 const statusToneByValue: Record<ProjectStatus, string> = {
   planned:
     'border-amber-300/70 bg-amber-100/80 text-amber-900 dark:border-amber-700/70 dark:bg-amber-950/40 dark:text-amber-200',
@@ -125,10 +118,9 @@ const tocHeadings: TocHeading[] = (headings ?? []).filter(
   (heading: TocHeading) => (heading.depth === 2 || heading.depth === 3) && Boolean(heading.slug),
 );
 
-const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
-  ? entry.data.media.images
-  : [];
+const galleryImages = Array.isArray(entry.data.media?.images) ? entry.data.media.images : [];
 ---
+
 <Base title={pageTitle} description={pageDescription}>
   <article class="container py-10">
     <header class="mb-8">
@@ -154,7 +146,10 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
             {localizedSummary}
           </p>
 
-          {(headerMeta.length > 0 || primaryActions.length > 0 || secondaryActions.length > 0 || entry.data.tags?.length) ? (
+          {(headerMeta.length > 0 ||
+            primaryActions.length > 0 ||
+            secondaryActions.length > 0 ||
+            entry.data.tags?.length) ? (
             <div class="border-t border-slate-200/80 pt-4 dark:border-slate-700/70">
               <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 {headerMeta.length > 0 ? (
@@ -267,45 +262,24 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
         </figure>
       ) : null}
     </header>
+
     <div class="content-shell">
       <div class="content-main">
         <div class="prose prose-slate content-prose max-w-none dark:prose-invert prose-headings:font-bold prose-h1:text-3xl prose-img:rounded-xl prose-img:shadow-lg prose-img:mx-auto prose-img:max-h-[500px] prose-img:w-auto">
           <Content />
         </div>
-        {galleryImages.length > 0 ? (
-          <section class="mt-8">
-            <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {galleryImages.map((img: ProjectImage, index: number) => (
-                <li class="border rounded overflow-hidden border-slate-200 dark:border-slate-700">
-                  <a
-                    href={img.src}
-                    class="group relative flex h-64 w-full items-center justify-center bg-slate-50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-slate-900 dark:focus-visible:ring-offset-slate-950"
-                    data-gallery-open
-                    data-gallery-src={img.src}
-                    data-gallery-alt={img.alt ?? ''}
-                    data-gallery-width={typeof img.width === 'number' ? String(img.width) : undefined}
-                    data-gallery-height={typeof img.height === 'number' ? String(img.height) : undefined}
-                    data-gallery-index={String(index)}
-                    aria-label={img.alt && img.alt.length > 0 ? img.alt : dictionary.projectDetail.viewImage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <img
-                      src={img.src}
-                      alt={img.alt}
-                      width={img.width}
-                      height={img.height}
-                      loading="lazy"
-                      decoding="async"
-                      class="max-h-full max-w-full object-contain transition duration-200 group-hover:scale-105"
-                    />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+        <GalleryLightbox
+          images={galleryImages}
+          labels={{
+            viewImage: dictionary.projectDetail.viewImage,
+            closeImage: dictionary.projectDetail.closeImage,
+            previousImage: dictionary.projectDetail.previousImage,
+            nextImage: dictionary.projectDetail.nextImage,
+            imageCounterTemplate: dictionary.projectDetail.imageCounterTemplate,
+          }}
+        />
       </div>
+
       {(tocHeadings.length > 0 || sidebarFacts.length > 0 || resolvedLinks.length > 0) ? (
         <aside class="content-aside">
           {tocHeadings.length > 0 ? (
@@ -348,12 +322,7 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
               <ul class="toc-list">
                 {resolvedLinks.map((link: ResolvedProjectLink) => (
                   <li>
-                    <a
-                      href={link.href}
-                      class="toc-link"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
+                    <a href={link.href} class="toc-link" rel="noopener noreferrer" target="_blank">
                       {link.label}
                     </a>
                   </li>
@@ -364,633 +333,5 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
         </aside>
       ) : null}
     </div>
-    {galleryImages.length > 0 ? (
-      <>
-        <dialog
-          data-gallery-dialog
-          class="gallery-lightbox"
-          aria-label={dictionary.projectDetail.viewImage}
-          data-gallery-counter-template={dictionary.projectDetail.imageCounterTemplate}
-        >
-          <div class="gallery-lightbox__body">
-            <header class="gallery-lightbox__header">
-              <button
-                type="button"
-                class="gallery-lightbox__close"
-                data-gallery-close
-                aria-label={dictionary.projectDetail.closeImage}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </header>
-            <div class="gallery-lightbox__stage">
-              <button
-                type="button"
-                class="gallery-lightbox__nav gallery-lightbox__nav--prev"
-                data-gallery-prev
-                aria-label={dictionary.projectDetail.previousImage}
-              >
-                <span aria-hidden="true">&#10094;</span>
-              </button>
-              <figure class="gallery-lightbox__figure">
-                <img data-gallery-image alt="" class="gallery-lightbox__image" loading="lazy" />
-              </figure>
-              <button
-                type="button"
-                class="gallery-lightbox__nav gallery-lightbox__nav--next"
-                data-gallery-next
-                aria-label={dictionary.projectDetail.nextImage}
-              >
-                <span aria-hidden="true">&#10095;</span>
-              </button>
-            </div>
-            <footer class="gallery-lightbox__footer">
-              <div data-gallery-counter class="gallery-lightbox__counter" hidden></div>
-              <p data-gallery-caption class="gallery-lightbox__caption" hidden></p>
-            </footer>
-          </div>
-        </dialog>
-        <script>
-          (function () {
-            const dialog = document.querySelector('[data-gallery-dialog]');
-            if (!(dialog instanceof HTMLDialogElement)) {
-              return;
-            }
-
-            const image = dialog.querySelector('[data-gallery-image]');
-            const caption = dialog.querySelector('[data-gallery-caption]');
-            const closeButton = dialog.querySelector('[data-gallery-close]');
-            const prevButton = dialog.querySelector('[data-gallery-prev]');
-            const nextButton = dialog.querySelector('[data-gallery-next]');
-            const counter = dialog.querySelector('[data-gallery-counter]');
-            if (!(image instanceof HTMLImageElement)) {
-              return;
-            }
-
-            const triggers = Array.from(document.querySelectorAll('[data-gallery-open]')).filter(
-              (node): node is HTMLElement => node instanceof HTMLElement,
-            );
-
-            if (triggers.length === 0) {
-              return;
-            }
-
-            const total = triggers.length;
-            const body = document.body;
-            let activeIndex = -1;
-            let activeTrigger: HTMLElement | null = null;
-            let originTrigger: HTMLElement | null = null;
-            let previousOverflow: string | null = null;
-
-            const setScrollLock = (locked: boolean) => {
-              if (!(body instanceof HTMLBodyElement)) {
-                return;
-              }
-              if (locked) {
-                if (previousOverflow === null) {
-                  previousOverflow = body.style.overflow || '';
-                  body.style.overflow = 'hidden';
-                }
-              } else if (previousOverflow !== null) {
-                body.style.overflow = previousOverflow;
-                previousOverflow = null;
-              }
-            };
-
-            const setOpenState = (isOpen: boolean) => {
-              if (isOpen) {
-                dialog.setAttribute('data-state', 'open');
-              } else {
-                dialog.removeAttribute('data-state');
-              }
-              setScrollLock(isOpen);
-            };
-
-            setOpenState(false);
-
-            const counterTemplate = dialog.dataset.galleryCounterTemplate ?? '';
-            const formatCounter = (current: number, totalCount: number): string => {
-              if (!counterTemplate) {
-                return `${current} / ${totalCount}`;
-              }
-              return counterTemplate
-                .replace('%current%', String(current))
-                .replace('%total%', String(totalCount));
-            };
-
-            const resetContent = () => {
-              image.removeAttribute('src');
-              image.removeAttribute('width');
-              image.removeAttribute('height');
-              image.alt = '';
-              if (caption instanceof HTMLElement) {
-                caption.textContent = '';
-                caption.hidden = true;
-              }
-              if (counter instanceof HTMLElement) {
-                counter.textContent = '';
-                counter.hidden = true;
-              }
-            };
-
-            const updateNavigation = () => {
-              const hasMultiple = total > 1;
-              const prev = prevButton instanceof HTMLButtonElement ? prevButton : null;
-              const next = nextButton instanceof HTMLButtonElement ? nextButton : null;
-              if (prev) {
-                prev.disabled = !hasMultiple;
-                prev.hidden = !hasMultiple;
-              }
-              if (next) {
-                next.disabled = !hasMultiple;
-                next.hidden = !hasMultiple;
-              }
-              if (counter instanceof HTMLElement) {
-                if (activeIndex >= 0) {
-                  counter.textContent = formatCounter(activeIndex + 1, total);
-                  counter.hidden = false;
-                } else {
-                  counter.textContent = '';
-                  counter.hidden = true;
-                }
-              }
-            };
-
-            const showAt = (index: number) => {
-              const normalized = ((index % total) + total) % total;
-              const trigger = triggers[normalized];
-              if (!trigger) {
-                return;
-              }
-
-              const src = trigger.dataset.gallerySrc;
-              if (!src) {
-                return;
-              }
-
-              if (typeof dialog.showModal !== 'function') {
-                window.open(src, '_blank', 'noopener');
-                return;
-              }
-
-              const alt = trigger.dataset.galleryAlt ?? '';
-              const width = trigger.dataset.galleryWidth ?? '';
-              const height = trigger.dataset.galleryHeight ?? '';
-
-              image.src = src;
-              image.alt = alt;
-
-              if (width) {
-                image.setAttribute('width', width);
-              } else {
-                image.removeAttribute('width');
-              }
-
-              if (height) {
-                image.setAttribute('height', height);
-              } else {
-                image.removeAttribute('height');
-              }
-
-              if (caption instanceof HTMLElement) {
-                caption.textContent = alt;
-                caption.hidden = alt.trim().length === 0;
-              }
-
-              activeIndex = normalized;
-              activeTrigger = trigger;
-              updateNavigation();
-            };
-
-            const openDialog = (trigger: HTMLElement) => {
-              const src = trigger.dataset.gallerySrc;
-              if (!src) {
-                return;
-              }
-
-              if (typeof dialog.showModal !== 'function') {
-                window.open(src, '_blank', 'noopener');
-                return;
-              }
-
-              const indexAttr = trigger.dataset.galleryIndex;
-              const index = indexAttr ? Number.parseInt(indexAttr, 10) : triggers.indexOf(trigger);
-              originTrigger = trigger;
-
-              if (!dialog.open) {
-                dialog.showModal();
-              }
-              setOpenState(true);
-
-              showAt(Number.isNaN(index) ? 0 : index);
-
-              if (closeButton instanceof HTMLElement) {
-                closeButton.focus();
-              }
-            };
-
-            const step = (offset: number) => {
-              if (total <= 1) {
-                return;
-              }
-              showAt(activeIndex + offset);
-            };
-
-            triggers.forEach((trigger) => {
-              trigger.addEventListener('click', (event: MouseEvent) => {
-                event.preventDefault();
-                openDialog(trigger);
-              });
-            });
-
-            if (closeButton instanceof HTMLElement) {
-              closeButton.addEventListener('click', () => {
-                if (dialog.open) {
-                  dialog.close();
-                }
-              });
-            }
-
-            if (prevButton instanceof HTMLButtonElement) {
-              prevButton.addEventListener('click', (event: MouseEvent) => {
-                event.preventDefault();
-                step(-1);
-              });
-            }
-
-            if (nextButton instanceof HTMLButtonElement) {
-              nextButton.addEventListener('click', (event: MouseEvent) => {
-                event.preventDefault();
-                step(1);
-              });
-            }
-
-            dialog.addEventListener('keydown', (event: KeyboardEvent) => {
-              if (event.key === 'ArrowLeft') {
-                event.preventDefault();
-                step(-1);
-              } else if (event.key === 'ArrowRight') {
-                event.preventDefault();
-                step(1);
-              }
-            });
-
-            dialog.addEventListener('cancel', (event: Event) => {
-              event.preventDefault();
-              if (dialog.open) {
-                dialog.close();
-              }
-            });
-
-            dialog.addEventListener('click', (event: MouseEvent) => {
-              const target = event.target;
-              if (target instanceof HTMLDialogElement && target === dialog) {
-                if (dialog.open) {
-                  dialog.close();
-                }
-              }
-            });
-
-            dialog.addEventListener('close', () => {
-              setOpenState(false);
-              resetContent();
-              if (originTrigger instanceof HTMLElement) {
-                originTrigger.focus();
-              } else if (activeTrigger instanceof HTMLElement) {
-                activeTrigger.focus();
-              }
-              activeIndex = -1;
-              activeTrigger = null;
-              originTrigger = null;
-            });
-
-            let swipeStartX: number | null = null;
-            dialog.addEventListener('pointerdown', (event: PointerEvent) => {
-              if (!dialog.open || total <= 1) {
-                swipeStartX = null;
-                return;
-              }
-              const target = event.target;
-              if (target instanceof HTMLButtonElement) {
-                swipeStartX = null;
-                return;
-              }
-              swipeStartX = event.clientX;
-            });
-
-            dialog.addEventListener('pointerup', (event: PointerEvent) => {
-              if (swipeStartX === null) {
-                return;
-              }
-              const delta = event.clientX - swipeStartX;
-              swipeStartX = null;
-              if (Math.abs(delta) < 40) {
-                return;
-              }
-              if (delta > 0) {
-                step(-1);
-              } else {
-                step(1);
-              }
-            });
-
-            dialog.addEventListener('pointercancel', () => {
-              swipeStartX = null;
-            });
-
-            updateNavigation();
-          })();
-        </script>
-        <style is:global>
-          dialog[data-gallery-dialog] {
-            position: fixed;
-            inset: 0;
-            margin: auto;
-            border: none;
-            padding: 0;
-            background: transparent;
-            width: clamp(320px, 48vw, 680px);
-            max-width: 92vw;
-            max-height: 85vh;
-            touch-action: pan-y;
-            box-sizing: border-box;
-            --gallery-bg: linear-gradient(160deg, rgba(248, 250, 252, 0.98), rgba(226, 232, 240, 0.96));
-            --gallery-border: rgba(148, 163, 184, 0.3);
-            --gallery-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
-            --gallery-image-shadow: 0 18px 32px rgba(15, 23, 42, 0.08);
-            --gallery-nav-bg: rgba(226, 232, 240, 0.85);
-            --gallery-nav-hover-bg: rgba(148, 163, 192, 0.45);
-            --gallery-nav-color: #0f172a;
-            --gallery-close-bg: rgba(226, 232, 240, 0.9);
-            --gallery-close-hover-bg: rgba(148, 163, 184, 0.35);
-            --gallery-close-color: #0f172a;
-            --gallery-counter-bg: rgba(226, 232, 240, 0.85);
-            --gallery-counter-color: #1f2937;
-            --gallery-caption-color: #1e293b;
-            --gallery-image-bg: rgba(148, 163, 184, 0.15);
-            color: #0f172a;
-          }
-
-          dialog[data-gallery-dialog]:not([open]) {
-            display: none;
-          }
-
-          dialog[data-gallery-dialog][open] {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: clamp(0.35rem, 1.8vw, 1rem);
-            overflow: hidden;
-          }
-
-          dialog[data-gallery-dialog]::backdrop {
-            background: rgba(5, 7, 18, 0.88);
-            backdrop-filter: blur(18px);
-            animation: gallery-backdrop-fade 200ms ease;
-          }
-
-          dialog[data-gallery-dialog][data-state='open'] .gallery-lightbox__body {
-            animation: gallery-body-enter 190ms ease;
-          }
-
-          .dark dialog[data-gallery-dialog] {
-            --gallery-bg: linear-gradient(160deg, rgba(14, 17, 30, 0.97), rgba(24, 31, 48, 0.92));
-            --gallery-border: rgba(148, 163, 184, 0.2);
-            --gallery-shadow: 0 28px 65px rgba(6, 8, 18, 0.6);
-            --gallery-nav-bg: rgba(13, 18, 32, 0.65);
-            --gallery-nav-hover-bg: rgba(28, 36, 56, 0.9);
-            --gallery-nav-color: #f8fafc;
-            --gallery-close-bg: rgba(12, 18, 30, 0.75);
-            --gallery-close-hover-bg: rgba(24, 32, 54, 0.88);
-            --gallery-close-color: #e2e8f0;
-            --gallery-counter-bg: rgba(12, 18, 32, 0.55);
-            --gallery-counter-color: #cbd5f5;
-            --gallery-caption-color: #e2e8f0;
-            --gallery-image-bg: rgba(2, 6, 16, 0.35);
-            --gallery-image-shadow: 0 20px 36px rgba(8, 10, 22, 0.45);
-            color: #e2e8f0;
-          }
-
-          .gallery-lightbox__body {
-            box-sizing: border-box;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: min(100vh - 1.5rem, 720px);
-            max-height: min(100vh - 1.5rem, 720px);
-            background: var(--gallery-bg);
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: var(--gallery-shadow);
-          }
-
-          .gallery-lightbox__header {
-            display: flex;
-            justify-content: flex-end;
-            padding: clamp(0.8rem, 2vw, 1.3rem) clamp(1rem, 3vw, 1.8rem);
-            border-bottom: 1px solid var(--gallery-border);
-          }
-
-          .gallery-lightbox__stage {
-            position: relative;
-            flex: 1;
-            min-height: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: clamp(1.4rem, 4vw, 2.5rem);
-            overflow: hidden;
-          }
-
-          .gallery-lightbox__figure {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-
-          .gallery-lightbox__image {
-            width: 100%;
-            max-width: min(100%, 36rem);
-            max-height: 100%;
-            border-radius: 1rem;
-            border: 1px solid var(--gallery-border);
-            object-fit: contain;
-            box-shadow: var(--gallery-image-shadow);
-            background: var(--gallery-image-bg);
-          }
-
-          .gallery-lightbox__nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 2.4rem;
-            width: 2.4rem;
-            border-radius: 9999px;
-            border: 1px solid var(--gallery-border);
-            background: var(--gallery-nav-bg);
-            color: var(--gallery-nav-color);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.2s ease, border-color 0.2s ease;
-          }
-
-          .gallery-lightbox__nav span {
-            font-size: 1.1rem;
-            line-height: 1;
-          }
-
-          .gallery-lightbox__nav:hover {
-            background: var(--gallery-nav-hover-bg);
-            border-color: var(--gallery-border);
-          }
-
-          .gallery-lightbox__nav:focus-visible {
-            outline: 2px solid #38bdf8;
-            outline-offset: 2px;
-          }
-
-          .gallery-lightbox__nav--prev {
-            left: clamp(0.75rem, 2.5vw, 1.5rem);
-          }
-
-          .gallery-lightbox__nav--next {
-            right: clamp(0.75rem, 2.5vw, 1.5rem);
-          }
-
-          .gallery-lightbox__close {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: 2rem;
-            width: 2rem;
-            border-radius: 9999px;
-            border: 1px solid var(--gallery-border);
-            background: var(--gallery-close-bg);
-            color: var(--gallery-close-color);
-            font-size: 1.15rem;
-            line-height: 1;
-            cursor: pointer;
-            transition: background 0.2s ease, border-color 0.2s ease;
-          }
-
-          .gallery-lightbox__close:hover {
-            background: var(--gallery-close-hover-bg);
-            border-color: var(--gallery-border);
-          }
-
-          .gallery-lightbox__close:focus-visible {
-            outline: 2px solid #38bdf8;
-            outline-offset: 2px;
-          }
-
-          .gallery-lightbox__footer {
-            padding: clamp(0.8rem, 2vw, 1.4rem) clamp(1.25rem, 3vw, 2.25rem) clamp(1rem, 3vw, 1.75rem);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.45rem;
-            text-align: center;
-            border-top: 1px solid var(--gallery-border);
-          }
-
-          .gallery-lightbox__counter {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.35rem 0.85rem;
-            border-radius: 9999px;
-            background: var(--gallery-counter-bg);
-            color: var(--gallery-counter-color);
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            box-shadow: 0 14px 24px rgba(8, 12, 26, 0.34);
-          }
-
-          .gallery-lightbox__caption {
-            margin: 0;
-            font-size: 0.95rem;
-            color: var(--gallery-caption-color);
-            max-width: min(32rem, 85vw);
-          }
-
-          @keyframes gallery-body-enter {
-            from {
-              opacity: 0;
-              transform: translateY(18px) scale(0.96);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0) scale(1);
-            }
-          }
-
-          @keyframes gallery-backdrop-fade {
-            from {
-              opacity: 0;
-            }
-            to {
-              opacity: 1;
-            }
-          }
-
-          @media (max-width: 640px) {
-            dialog[data-gallery-dialog][open] {
-              width: 100vw;
-              height: 100vh;
-              align-items: center;
-              justify-content: center;
-            }
-
-            .gallery-lightbox__body {
-              border-radius: 0.75rem;
-              width: min(100vw, 520px);
-              height: min(100vh - 1.25rem, 640px);
-              max-height: min(100vh - 1.25rem, 640px);
-              margin: 0 auto;
-            }
-
-            .gallery-lightbox__header {
-              padding: clamp(0.65rem, 5vw, 1.2rem) clamp(0.9rem, 6vw, 1.6rem);
-            }
-
-            .gallery-lightbox__stage {
-              padding: clamp(0.9rem, 5vw, 1.6rem) clamp(1.1rem, 8vw, 2.2rem);
-            }
-
-            .gallery-lightbox__image {
-              max-height: calc(100vh - 9.5rem);
-            }
-
-            .gallery-lightbox__nav {
-              height: 2.2rem;
-              width: 2.2rem;
-              font-size: 0.95rem;
-            }
-
-            .gallery-lightbox__footer {
-              padding: clamp(0.75rem, 5vw, 1.3rem);
-            }
-
-            .gallery-lightbox__counter {
-              font-size: 0.72rem;
-              padding: 0.3rem 0.7rem;
-            }
-
-            .gallery-lightbox__caption {
-              font-size: clamp(0.78rem, 3.4vw, 0.9rem);
-            }
-          }
-        </style>
-      </>
-    ) : null}
   </article>
 </Base>
