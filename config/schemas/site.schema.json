@@ -17,11 +17,23 @@
         "name": { "type": "string" },
         "url": { "type": "string", "format": "uri" },
         "email": { "type": "string", "format": "email" },
-        "social": { "type": "array", "items": { "$ref": "#/definitions/socialLink" }, "default": [] }
+        "social": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/socialLink" },
+          "default": []
+        }
       }
     },
-    "primaryNavigation": { "type": "array", "items": { "$ref": "#/definitions/navItem" }, "default": [] },
-    "socialLinks": { "type": "array", "items": { "$ref": "#/definitions/socialLink" }, "default": [] }
+    "primaryNavigation": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/navItem" },
+      "default": []
+    },
+    "socialLinks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/socialLink" },
+      "default": []
+    }
   },
   "definitions": {
     "navItem": {

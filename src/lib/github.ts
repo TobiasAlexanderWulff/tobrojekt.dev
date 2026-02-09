@@ -5,12 +5,14 @@
  */
 export async function getLatestCommitDate(
   repo: string,
-  branch: string = 'main'
+  branch: string = 'main',
 ): Promise<string | null> {
   try {
-    const url = new URL(`https://api.github.com/repos/${repo}/commits/${encodeURIComponent(branch)}`);
+    const url = new URL(
+      `https://api.github.com/repos/${repo}/commits/${encodeURIComponent(branch)}`,
+    );
     const headers: Record<string, string> = {
-      'Accept': 'application/vnd.github+json',
+      Accept: 'application/vnd.github+json',
       'User-Agent': 'tobrojekt.dev-build',
     };
     const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
@@ -18,7 +20,13 @@ export async function getLatestCommitDate(
 
     const res = await fetch(url, { headers });
     if (!res.ok) return null;
-    const json: any = await res.json();
+    type CommitResponse = {
+      commit?: {
+        committer?: { date?: string };
+        author?: { date?: string };
+      };
+    };
+    const json = (await res.json()) as CommitResponse;
     const date: string | undefined = json?.commit?.committer?.date || json?.commit?.author?.date;
     return date ?? null;
   } catch {

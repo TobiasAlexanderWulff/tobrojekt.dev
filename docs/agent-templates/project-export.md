@@ -3,17 +3,20 @@
 Dieses Template instruiert einen Coding‑Agenten in einem Fremd‑Repository, alle für tobrojekt.dev relevanten Projektdaten tech‑neutral zu erheben, zu validieren und als portables Export‑Artefakt bereitzustellen. Es richtet sich nach den Prinzipien und dem Content‑Modell aus `AGENTS.md`.
 
 ## 1) Ziel
+
 - Erzeuge einen vollständigen, prüfbaren Projekt‑Export ohne Geheimnisse oder PII.
 - Strukturiere den Export stabil, menschenlesbar und diff‑freundlich.
 - Halte dich an die Minimalfelder und Konventionen aus `AGENTS.md`.
 
 ## 2) Eingabeparameter (vom Auftraggeber/Runner übergeben)
+
 - `projectSource`: Repo‑URL oder lokaler Pfad.
 - `visibility`: `public` | `private` (Default: `public`).
 - `featured`: `true` | `false` (Default: `false`).
 - `priority`: Zahl, niedriger = prominenter (Default: `999`).
 
 ## 3) Datenquellen (nicht‑invasiv, read‑only)
+
 - README/Docs (H1, Intro, Features, Links), LICENSE, CHANGELOG/RELEASES.
 - Repo‑Metadaten: Remote‑URL, Default‑Branch, Topics/Labels.
 - Commit‑Historie: erster/letzter Commit für `dates`.
@@ -21,6 +24,7 @@ Dieses Template instruiert einen Coding‑Agenten in einem Fremd‑Repository, a
 - Demo/Docs‑URLs aus README. Optional Metriken (nur stabil & zulässig).
 
 ## 4) Arbeitsanweisungen (Felder erheben und formen)
+
 - `id`: Verwende `gh:<owner>/<repo>`; falls kein Remote, `local:<ordnername>`.
 - `slug`: Aus `title`; lowercase, ASCII, hyphenated; stabil und kollisionsfrei.
 - `title`: README‑H1 bevorzugen; sonst Repo‑Name in Title‑Case.
@@ -39,6 +43,7 @@ Dieses Template instruiert einen Coding‑Agenten in einem Fremd‑Repository, a
 - Sicherheit/Privatsphäre: Keine Secrets sammeln; keine PII; externe Abfragen nur, wenn erlaubt.
 
 ## 5) Ausgabe‑Struktur
+
 Lege Dateien relativ zum Arbeitsverzeichnis im folgenden Pfad an:
 
 ```
@@ -102,6 +107,7 @@ portfolio-export/<slug>/
 ```
 
 ## 7) Heuristiken (Ableitungsregeln)
+
 - Titel/Slug: README‑H1 bevorzugen; sonst Repo‑Name; Slug kollisionsfrei halten.
 - Status: `completed` bei getaggtem Release und längerer Inaktivität; `archived` bei Archive‑Flag oder >18 Monate ohne geplante Arbeit; sonst `active`.
 - Tags: Programmiersprachen, Frameworks, Domäne, Artefakt (CLI, Service, Website, Library).
@@ -109,6 +115,7 @@ portfolio-export/<slug>/
 - Links: `source` ist Pflicht; `demo`/`docs` nur wenn stabil und öffentlich zugänglich.
 
 ## 8) Validierung (Checkliste vor Übergabe)
+
 - Pflichtfelder gesetzt: `id`, `slug`, `title`, `summary`, `visibility`.
 - URLs absolut und plausibel; externe Erreichbarkeit nicht hart voraussetzen.
 - Alle `media.*.alt` nicht leer; Dimensionen, wenn eruierbar. `social_card` nach Möglichkeit 1200×630.
@@ -118,12 +125,14 @@ portfolio-export/<slug>/
 - Sichtbarkeit respektiert: `private` Projekte nicht in öffentlichen Flächen listen.
 
 ## 9) Antwortformat (für die Rückmeldung des Agents)
+
 - Kurze Projektzusammenfassung (3–5 Sätze, Outcome/Impact, Besonderheiten).
 - Export‑Pfade: `portfolio-export/<slug>/project.json` und ggf. erzeugte Media.
 - Validierungscheckliste mit Pass/Fail je Punkt (stichpunktartig).
 - Offene Fragen/Risiken mit 1–2 Vorschlägen zur Klärung.
 
 ## 10) Hinweise zur Wartbarkeit
+
 - Halte Slugs stabil; dokumentiere Redirects, falls ein Slug später angepasst wird.
 - Vermeide flüchtige Metriken; ergänze Sammeldatum, wenn doch benötigt.
 - Bevorzuge kleine, nachvollziehbare Änderungen; füge bei Modelländerungen kurze Migration‑Notizen bei.

@@ -1,12 +1,7 @@
 ---
 import type { Locale } from '~/lib/i18n';
 // Inline locale switcher; keeps current path while swapping the language prefix.
-import {
-  LOCALE_STORAGE_KEY,
-  getDictionary,
-  localizePath,
-  locales,
-} from '~/lib/i18n';
+import { LOCALE_STORAGE_KEY, getDictionary, localizePath, locales } from '~/lib/i18n';
 
 const props = Astro.props as {
   locale: Locale;
@@ -19,33 +14,36 @@ const className = props.class ?? '';
 const dictionary = getDictionary(locale);
 const storageKey = LOCALE_STORAGE_KEY;
 ---
+
 <div
   class={`flex items-center gap-1 ${className}`.trim()}
   role="group"
   aria-label={dictionary.site.languageLabel}
   data-storage-key={storageKey}
 >
-  {locales.map((code) => {
-    const isActive = code === locale;
-    const href = localizePath(pathname, code);
-    const label = dictionary.site.localeNames[code];
-    return (
-      <a
-        href={href}
-        data-lang-link
-        data-locale={code}
-        lang={code}
-        class={`px-2 py-1 text-sm rounded border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-slate-500 ${
-          isActive
-            ? 'bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100'
-            : 'text-slate-600 hover:text-slate-900 border-slate-300 hover:border-slate-400 dark:text-slate-300 dark:hover:text-white dark:border-slate-600 dark:hover:border-slate-500'
-        }`}
-        aria-current={isActive ? 'true' : undefined}
-      >
-        {label}
-      </a>
-    );
-  })}
+  {
+    locales.map((code) => {
+      const isActive = code === locale;
+      const href = localizePath(pathname, code);
+      const label = dictionary.site.localeNames[code];
+      return (
+        <a
+          href={href}
+          data-lang-link
+          data-locale={code}
+          lang={code}
+          class={`rounded border px-2 py-1 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-500 ${
+            isActive
+              ? 'border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900'
+              : 'border-slate-300 text-slate-600 hover:border-slate-400 hover:text-slate-900 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-white'
+          }`}
+          aria-current={isActive ? 'true' : undefined}
+        >
+          {label}
+        </a>
+      );
+    })
+  }
 </div>
 <script>
   const container = document.currentScript?.previousElementSibling;
@@ -59,7 +57,7 @@ const storageKey = LOCALE_STORAGE_KEY;
           if (locale && storageKey) {
             localStorage.setItem(storageKey, locale);
           }
-        } catch (err) {
+        } catch {
           // Local storage might be unavailable (e.g. disabled cookies)
         }
       });

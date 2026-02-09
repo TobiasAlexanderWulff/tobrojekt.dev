@@ -1,15 +1,10 @@
 ---
-import "~/styles/global.css";
-import LangToggle from "~/components/LangToggle.astro";
-import ThemeToggle from "~/components/ThemeToggle.astro";
-import type { Locale, LocalizedValue } from "~/lib/i18n";
-import {
-  getDictionary,
-  localizePath,
-  resolveLocale,
-  resolveLocalizedValue,
-} from "~/lib/i18n";
-import { THEME_STORAGE_KEY } from "~/lib/theme";
+import '~/styles/global.css';
+import LangToggle from '~/components/LangToggle.astro';
+import ThemeToggle from '~/components/ThemeToggle.astro';
+import type { Locale, LocalizedValue } from '~/lib/i18n';
+import { getDictionary, localizePath, resolveLocale, resolveLocalizedValue } from '~/lib/i18n';
+import { THEME_STORAGE_KEY } from '~/lib/theme';
 
 type BaseProps = {
   title?: LocalizedValue<string>;
@@ -21,26 +16,25 @@ const props = Astro.props as BaseProps;
 const locale: Locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 
-const resolvedTitle =
-  resolveLocalizedValue(props.title, locale) ?? `${dictionary.site.name}`;
+const resolvedTitle = resolveLocalizedValue(props.title, locale) ?? `${dictionary.site.name}`;
 const resolvedDescription =
   resolveLocalizedValue(props.description, locale) ?? dictionary.site.description;
 
 const navLinks = [
   {
-    href: localizePath("/projects", locale),
+    href: localizePath('/projects', locale),
     label: dictionary.nav.projects,
   },
   {
-    href: localizePath("/tags", locale),
-    label: dictionary.nav.tags,
+    href: localizePath('/blogs', locale),
+    label: dictionary.nav.blogs,
   },
 ];
 
-const searchHref = localizePath("/search", locale);
 const pathname = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
 ---
+
 <html lang={locale} class="h-full" data-theme="light" data-theme-storage={THEME_STORAGE_KEY}>
   <head>
     <meta charset="utf-8" />
@@ -51,8 +45,12 @@ const currentYear = new Date().getFullYear();
     <link rel="alternate icon" href="/favicon.ico" />
     <noscript>
       <style>
-        .logo-img { opacity: 1 !important; }
-        .logo-skeleton { display: none !important; }
+        .logo-img {
+          opacity: 1 !important;
+        }
+        .logo-skeleton {
+          display: none !important;
+        }
       </style>
     </noscript>
     <script is:inline>
@@ -74,26 +72,29 @@ const currentYear = new Date().getFullYear();
             setTheme(stored);
             return;
           }
-        } catch (err) {
+        } catch {
           // Ignore storage access issues and fall back to system preference.
         }
         setTheme(prefersDark() ? 'dark' : 'light');
       })();
     </script>
   </head>
-  <body class="min-h-screen flex flex-col bg-white text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100">
+  <body
+    class="flex min-h-screen flex-col bg-white text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100"
+  >
     <header class="border-b border-slate-200 dark:border-slate-800">
-      <nav class="container flex flex-col gap-3 py-3 text-slate-700 sm:flex-row sm:items-center sm:gap-6 sm:py-2 dark:text-slate-300">
+      <nav
+        class="container flex flex-col gap-3 py-3 text-slate-700 dark:text-slate-300 sm:flex-row sm:items-center sm:gap-6 sm:py-2"
+      >
         <div class="flex items-center justify-between gap-4 sm:justify-start">
           <a
-            href={localizePath("/", locale)}
+            href={localizePath('/', locale)}
             class="flex items-center gap-2 font-semibold text-slate-900 transition-colors hover:text-slate-700 dark:text-white dark:hover:text-slate-200"
           >
             <span class="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
               <span
-                class="logo-skeleton absolute inset-0 rounded bg-slate-200/80 animate-pulse dark:bg-slate-700/60"
-                aria-hidden="true"
-              ></span>
+                class="logo-skeleton absolute inset-0 animate-pulse rounded bg-slate-200/80 dark:bg-slate-700/60"
+                aria-hidden="true"></span>
               <img
                 src="/logo-light.svg"
                 alt=""
@@ -111,7 +112,7 @@ const currentYear = new Date().getFullYear();
           </a>
           <button
             type="button"
-            class="flex h-10 w-10 items-center justify-center rounded border border-slate-300 text-slate-600 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 sm:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-white dark:focus-visible:ring-slate-500"
+            class="flex h-10 w-10 items-center justify-center rounded border border-slate-300 text-slate-600 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-white dark:focus-visible:ring-slate-500 sm:hidden"
             data-nav-toggle
             aria-expanded="false"
             aria-controls="primary-navigation"
@@ -125,7 +126,7 @@ const currentYear = new Date().getFullYear();
               stroke-width="1.5"
               aria-hidden="true"
             >
-              <path stroke-linecap="round" d="M3 6.5h14M3 10h14M3 13.5h14" />
+              <path stroke-linecap="round" d="M3 6.5h14M3 10h14M3 13.5h14"></path>
             </svg>
           </button>
         </div>
@@ -133,32 +134,23 @@ const currentYear = new Date().getFullYear();
           id="primary-navigation"
           data-nav-menu
           data-open="false"
-          class="hidden flex-col gap-3 text-slate-600 sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-4 dark:text-slate-300"
+          class="hidden flex-col gap-3 text-slate-600 dark:text-slate-300 sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-4"
         >
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 sm:flex-1">
-            {navLinks.map((link) => (
-              <a
-                href={link.href}
-                class="transition hover:text-slate-900 dark:hover:text-white"
-              >
-                {link.label}
-              </a>
-            ))}
-            <a
-              href={searchHref}
-              class="transition hover:text-slate-900 sm:ml-auto dark:hover:text-white"
-            >
-              {dictionary.nav.search}
-            </a>
+          <div class="flex flex-col gap-3 sm:flex-1 sm:flex-row sm:items-center sm:gap-4">
+            {
+              navLinks.map((link) => (
+                <a href={link.href} class="transition hover:text-slate-900 dark:hover:text-white">
+                  {link.label}
+                </a>
+              ))
+            }
           </div>
-          <div class="mt-2 border-t border-slate-200 pt-2 sm:mt-0 sm:border-0 sm:p-0 sm:ml-3 dark:border-slate-700">
+          <div
+            class="mt-2 border-t border-slate-200 pt-2 dark:border-slate-700 sm:ml-3 sm:mt-0 sm:border-0 sm:p-0"
+          >
             <div class="flex flex-wrap items-center gap-2 sm:justify-end">
               <ThemeToggle locale={locale} />
-              <LangToggle
-                class="sm:ml-1"
-                locale={locale}
-                pathname={pathname}
-              />
+              <LangToggle class="sm:ml-1" locale={locale} pathname={pathname} />
             </div>
           </div>
         </div>
@@ -208,6 +200,73 @@ const currentYear = new Date().getFullYear();
               setState(shouldOpen);
             });
           }
+
+          const tocLinks = Array.from(document.querySelectorAll('[data-toc-link]')).filter(
+            (node): node is HTMLAnchorElement => node instanceof HTMLAnchorElement,
+          );
+          if (tocLinks.length > 0) {
+            const targets = tocLinks
+              .map((link) => {
+                const hash = link.hash?.startsWith('#') ? link.hash.slice(1) : '';
+                const id = hash ? decodeURIComponent(hash) : '';
+                const element = id ? document.getElementById(id) : null;
+                return element ? { id, element } : null;
+              })
+              .filter(
+                (
+                  entry,
+                ): entry is {
+                  id: string;
+                  element: HTMLElement;
+                } => Boolean(entry),
+              );
+
+            if (targets.length > 0) {
+              const activate = (id: string) => {
+                tocLinks.forEach((link) => {
+                  const hash = link.hash?.startsWith('#')
+                    ? decodeURIComponent(link.hash.slice(1))
+                    : '';
+                  const isActive = hash === id;
+                  link.classList.toggle('is-active', isActive);
+                  if (isActive) {
+                    link.setAttribute('aria-current', 'location');
+                  } else {
+                    link.removeAttribute('aria-current');
+                  }
+                });
+              };
+
+              const updateActiveFromScroll = () => {
+                const offset = 148;
+                let activeId = targets[0].id;
+                for (const target of targets) {
+                  const top = target.element.getBoundingClientRect().top;
+                  if (top - offset <= 0) {
+                    activeId = target.id;
+                  } else {
+                    break;
+                  }
+                }
+                activate(activeId);
+              };
+
+              tocLinks.forEach((link) => {
+                link.addEventListener('click', () => {
+                  const hash = link.hash?.startsWith('#')
+                    ? decodeURIComponent(link.hash.slice(1))
+                    : '';
+                  if (hash) {
+                    activate(hash);
+                  }
+                });
+              });
+
+              window.addEventListener('scroll', updateActiveFromScroll, { passive: true });
+              window.addEventListener('resize', updateActiveFromScroll);
+              updateActiveFromScroll();
+            }
+          }
         }
       </script>
     </header>
@@ -220,5 +279,4 @@ const currentYear = new Date().getFullYear();
       </div>
     </footer>
   </body>
-  
 </html>

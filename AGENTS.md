@@ -3,11 +3,13 @@
 This document defines general, tech‑agnostic guidelines for automated coding agents and contributors working on the tobrojekt.dev repository. It focuses on goals, quality bars, decision‑making, and workflow. Do not include language, framework, or tool‑specific instructions here; add those later in dedicated, stack‑specific docs.
 
 ## 1) Vision & Objectives
+
 - Purpose: A personal hub for showcasing and managing all relevant projects, with room to grow into a broader digital garden/portfolio over time.
 - Outcomes: Clear, accurate, and discoverable representation of projects; simple maintenance; space for future features (filters, search, feeds, timelines, notes, etc.).
 - North Stars: Clarity, extensibility, accessibility, performance, and privacy.
 
 ## 2) Scope & Non‑Goals
+
 - In‑Scope (initial):
   - Project listing and detail pages.
   - Basic organization (tags/categories/status), featured and archived sections.
@@ -21,6 +23,7 @@ This document defines general, tech‑agnostic guidelines for automated coding a
   - Tech stack decisions in this file (keep this document stack‑agnostic).
 
 ## 3) Operating Principles
+
 - Content‑first: Project information remains the source of truth; UI reflects it accurately.
 - Extensible by design: Favor modular, swappable boundaries (e.g., data providers, theming, routing, analytics as optional modules).
 - Accessibility: Meet WCAG fundamentals (headings, color contrast, focus, ARIA where needed, keyboard navigation).
@@ -29,9 +32,11 @@ This document defines general, tech‑agnostic guidelines for automated coding a
 - Maintainability: Small, focused changes; clear docs; stable interfaces and migration notes for breaking changes.
 
 ## 4) Information Architecture & Content Model
+
 Define entities and shared fields in a tech‑neutral way. Add stack‑specific schemas elsewhere when chosen.
 
 ### 4.1 Entities
+
 - Project:
   - id (stable unique identifier)
   - slug (URL‑safe, stable; changes require redirects policy)
@@ -60,12 +65,14 @@ Define entities and shared fields in a tech‑neutral way. Add stack‑specific 
   - legal/privacy statements (optional)
 
 ### 4.2 Invariants & Conventions
+
 - Slugs are unique and stable; if a slug changes, record a redirect.
 - Each project has exactly one `id`; never reuse ids.
 - All media includes alt text and dimensions (where known) to reduce layout shift.
 - Avoid embedding secrets or tokens in content.
 
 ## 5) Features & Roadmap (Milestones)
+
 - M0 — Repo Hygiene
   - Establish this AGENTS.md, a minimal README, and a CHANGELOG when relevant.
   - Define directories for content/assets/docs/tests as needed (stack‑agnostic path names are fine).
@@ -84,6 +91,7 @@ Define entities and shared fields in a tech‑neutral way. Add stack‑specific 
   - Optional analytics/telemetry modules that respect privacy and can be disabled.
 
 ## 6) UX & Content Guidelines
+
 - Voice & tone: Clear, concise, professional; emphasize outcomes and impact.
 - Structure: Use consistent headings; lead with a summary; include clear calls to action (e.g., “View source”).
 - Accessibility: Provide text alternatives, keyboard support, sensible focus order, and color contrast.
@@ -92,6 +100,7 @@ Define entities and shared fields in a tech‑neutral way. Add stack‑specific 
 - SEO basics: Unique titles, meta descriptions, canonical URLs, and structured data where appropriate.
 
 ## 7) Data & Configuration
+
 - Configuration should be explicit and versioned. Include defaults and allow overrides without breaking consumers.
 - Content storage should be human‑readable and diff‑friendly. Prefer stable filenames and folders.
 - IDs are immutable once published. Slugs change only with recorded redirects.
@@ -99,6 +108,7 @@ Define entities and shared fields in a tech‑neutral way. Add stack‑specific 
 - Visibility controls: Respect `visibility` for excluding private items from public surfaces.
 
 ## 8) Quality & Validation
+
 - Testing strategy (tech‑agnostic):
   - Unit: Content/model utilities, data shaping, sorting/filtering logic.
   - Integration: Listing pages, detail rendering, basic navigation flows.
@@ -113,12 +123,14 @@ Define entities and shared fields in a tech‑neutral way. Add stack‑specific 
   - Changelog entry for user‑visible changes.
 
 ## 9) Security & Privacy
+
 - No secrets in the repository or logs. Use environment configuration or secret stores outside VCS.
 - Avoid collecting PII; document any data collected and make it opt‑in.
 - Respect third‑party asset licenses; store attribution where required.
 - Treat external integrations as untrusted; sanitize inputs/outputs and handle failures gracefully.
 
 ## 10) Workflow for Agents
+
 - Before you start:
   - Clarify ambiguous requirements; confirm acceptance criteria and constraints.
   - Propose a short plan with milestones and risks.
@@ -132,6 +144,7 @@ Define entities and shared fields in a tech‑neutral way. Add stack‑specific 
   - Update CHANGELOG and any relevant docs. Seek review where appropriate.
 
 ## 11) Repository Conventions (Suggested, Tech‑Neutral)
+
 - Suggested directories (adapt as needed):
   - `content/projects/` — project entries and metadata
   - `content/tags/` — tag/category metadata (optional)
@@ -146,20 +159,24 @@ Define entities and shared fields in a tech‑neutral way. Add stack‑specific 
   - Keep URL structure human‑readable and stable.
 
 ## 12) Observability (Optional, Privacy‑Respecting)
+
 - If analytics/telemetry are added, they must be:
   - Clearly documented and easy to disable.
   - Minimal by default, aggregated, and privacy‑respecting.
   - Resilient to failure and network variability.
 
 ## 13) Decision Records
+
 - For meaningful architectural or content‑model changes, add a short ADR in `docs/adr/` recording context, options, and decision.
 - Keep ADRs concise and focused on trade‑offs and reversibility.
 
 ## 14) Clarifications & Requests
+
 - When requirements are ambiguous or competing, pause and request clarification rather than guessing.
 - Offer 1–2 clear options with pros/cons if a trade‑off is involved (e.g., simplicity vs. flexibility).
 
 ## 15) Appendix: Project Field Reference (Tech‑Neutral)
+
 - Minimal required fields: `id`, `slug`, `title`, `summary`, `visibility`.
 - Recommended fields: `description`, `status`, `tags`, `links`, `media`, `dates`, `featured`, `priority`.
 - URL rules: Slugs are lowercase, hyphenated, ASCII; avoid collisions; record redirects when changed.

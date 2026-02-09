@@ -6,7 +6,11 @@
   "additionalProperties": false,
   "required": ["id", "label"],
   "properties": {
-    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "description": "Slug-style identifier for the tag/category." },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Slug-style identifier for the tag/category."
+    },
     "label": { "type": "string" },
     "description": { "type": "string" }
   }

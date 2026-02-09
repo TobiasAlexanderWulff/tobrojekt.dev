@@ -89,6 +89,24 @@ const projects = defineCollection({
   }),
 });
 
+const blogs = defineCollection({
+  type: 'content',
+  schema: z.object({
+    id: z.string(),
+    title: localizedString,
+    summary: localizedString,
+    description: localizedString.optional(),
+    tags: z.array(z.string()).default([]),
+    categories: z.array(z.string()).default([]).optional(),
+    links: z.array(linkSchema).default([]),
+    media: mediaSchema,
+    dates: datesSchema,
+    featured: z.boolean().default(false).optional(),
+    priority: z.number().int().nonnegative().optional(),
+    visibility: z.enum(['public', 'private']).default('public').optional(),
+  }),
+});
+
 /** Lightweight taxonomy entries for tag/category landing pages. */
 const tags = defineCollection({
   type: 'data',
@@ -100,4 +118,4 @@ const tags = defineCollection({
 });
 
 /** Exported to Astro so `getCollection()` can hydrate the strongly-typed data. */
-export const collections = { projects, tags };
+export const collections = { projects, blogs, tags };

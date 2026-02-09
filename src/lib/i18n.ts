@@ -28,8 +28,7 @@ export type Dictionary = {
   nav: {
     home: string;
     projects: string;
-    tags: string;
-    search: string;
+    blogs: string;
   };
   footer: {
     rights: string;
@@ -38,14 +37,19 @@ export type Dictionary = {
   homepage: {
     heroTitle: string;
     heroIntro: string;
-    featuredHeading: string;
-    featuredEmpty: string;
-    recentHeading: string;
-    recentEmpty: string;
+    featuredProjectsHeading: string;
+    featuredProjectsEmpty: string;
+    featuredBlogsHeading: string;
+    featuredBlogsEmpty: string;
   };
   projectsIndex: {
     heading: string;
     metaDescription: string;
+    description: string;
+    recentHeading: string;
+    recentEmpty: string;
+    allHeading: string;
+    allEmpty: string;
   };
   projectDetail: {
     status: string;
@@ -62,17 +66,14 @@ export type Dictionary = {
     imageCounterTemplate: string;
     statusLabels: Record<'planned' | 'active' | 'completed' | 'archived', string>;
   };
-  tagsIndex: {
+  blogIndex: {
     heading: string;
     metaDescription: string;
-    detailTitle: (label: string) => string;
-    detailMetaTitle: (label: string) => string;
-    detailMetaDescription: (label: string) => string;
-    empty: string;
-  };
-  search: {
-    heading: string;
-    metaDescription: string;
+    description: string;
+    recentHeading: string;
+    recentEmpty: string;
+    allHeading: string;
+    allEmpty: string;
   };
 };
 
@@ -93,8 +94,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     nav: {
       home: 'Home',
       projects: 'Projects',
-      tags: 'Tags',
-      search: 'Search',
+      blogs: 'Blogs',
     },
     footer: {
       rights: 'All rights reserved.',
@@ -109,16 +109,20 @@ const dictionaries: Record<Locale, Dictionary> = {
     },
     homepage: {
       heroTitle: 'Hey, I am Tobias',
-      heroIntro:
-        `I enjoy developing software, especially when data and machine learning are involved. I love the challenge of understanding and mastering complex topics.\n\nOn this page, I collect my projects and experiments. Feel free to take a look around, it's (mostly) tidy.`,
-      featuredHeading: 'Featured Projects',
-      featuredEmpty: 'No featured projects yet.',
-      recentHeading: 'Recently Added',
-      recentEmpty: 'No recent projects yet.',
+      heroIntro: `I enjoy developing software, especially when data and machine learning are involved. I love the challenge of understanding and mastering complex topics.\n\nOn this page, I collect my projects and experiments. Feel free to take a look around, it's (mostly) tidy.`,
+      featuredProjectsHeading: 'Featured Projects',
+      featuredProjectsEmpty: 'No featured projects yet.',
+      featuredBlogsHeading: 'Featured Blogs',
+      featuredBlogsEmpty: 'No featured blogs yet.',
     },
     projectsIndex: {
       heading: 'Projects',
       metaDescription: 'All public projects',
+      description: 'Here you can browse all my public projects. Feel free to look around!',
+      recentHeading: 'Recently Added',
+      recentEmpty: 'No recent projects found.',
+      allHeading: 'All projects',
+      allEmpty: 'No projects found.',
     },
     projectDetail: {
       status: 'Status',
@@ -140,17 +144,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         archived: 'Archived',
       },
     },
-    tagsIndex: {
-      heading: 'Tags',
-      metaDescription: 'Browse projects by tag',
-      detailTitle: (label: string) => `Tag: ${label}`,
-      detailMetaTitle: (label: string) => `${label} – Tags`,
-      detailMetaDescription: (label: string) => `Projects tagged ${label}`,
-      empty: 'No projects with this tag yet.',
-    },
-    search: {
-      heading: 'Search',
-      metaDescription: 'Search projects and pages',
+    blogIndex: {
+      heading: 'Blogs',
+      metaDescription: 'My blogs all around programming',
+      description:
+        'Here I share my blogs on various programming-related topics.\n\nYou might find something interesting.',
+      recentHeading: 'Recently Added',
+      recentEmpty: 'No recent blogs found.',
+      allHeading: 'All Blogs',
+      allEmpty: 'No blogs found.',
     },
   },
   de: {
@@ -168,8 +170,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     nav: {
       home: 'Start',
       projects: 'Projekte',
-      tags: 'Tags',
-      search: 'Suche',
+      blogs: 'Blogs',
     },
     footer: {
       rights: 'Alle Rechte vorbehalten.',
@@ -186,14 +187,19 @@ const dictionaries: Record<Locale, Dictionary> = {
       heroTitle: 'Hey, ich bin Tobias',
       heroIntro:
         'Ich entwickle gerne Software, besonders wenn Daten und Machine Learning dabei eine Rolle spielen. Ich liebe die Herausforderung darin, komplexe Themen zu durchdringen und zu meistern.\n\nAuf dieser Seite sammle ich meine Projekte und Experimente. Schau dich gerne um, es ist (meistens) aufgeräumt.',
-      featuredHeading: 'Hervorgehobene Projekte',
-      featuredEmpty: 'Keine Projekte hervorgehoben.',
-      recentHeading: 'Kürzlich hinzugefügt',
-      recentEmpty: 'Noch keine neuen Projekte.',
+      featuredProjectsHeading: 'Hervorgehobene Projekte',
+      featuredProjectsEmpty: 'Keine hervorgehobenen Projekte.',
+      featuredBlogsHeading: 'Hervorgehobene Blogs',
+      featuredBlogsEmpty: 'Keine hervorgehobenen Blogs.',
     },
     projectsIndex: {
       heading: 'Projekte',
       metaDescription: 'Alle öffentlichen Projekte',
+      description: 'Hier kannst du alle meine öffentlichen Projekte finden. Schau dich gerne um!',
+      recentHeading: 'Kürzlich hinzugefügt',
+      recentEmpty: 'Keine kürzlich hinzugefügten Projekte gefunden.',
+      allHeading: 'Alle Projekte',
+      allEmpty: 'Keine Projekte gefunden.',
     },
     projectDetail: {
       status: 'Status',
@@ -201,7 +207,8 @@ const dictionaries: Record<Locale, Dictionary> = {
       created: 'Erstellt',
       completed: 'Abgeschlossen',
       updated: 'Aktualisiert',
-      inlineDemoFallback: 'Wenn die Demo in deinem Browser nicht geladen wird, öffne sie in einem neuen Tab:',
+      inlineDemoFallback:
+        'Wenn die Demo in deinem Browser nicht geladen wird, öffne sie in einem neuen Tab:',
       openDemo: 'Demo öffnen',
       viewImage: 'Bild anzeigen',
       closeImage: 'Bildvorschau schließen',
@@ -215,17 +222,15 @@ const dictionaries: Record<Locale, Dictionary> = {
         archived: 'Archiviert',
       },
     },
-    tagsIndex: {
-      heading: 'Tags',
-      metaDescription: 'Projekte nach Tags durchsuchen',
-      detailTitle: (label: string) => `Schlagwort: ${label}`,
-      detailMetaTitle: (label: string) => `${label} – Tags`,
-      detailMetaDescription: (label: string) => `Projekte mit dem Schlagwort ${label}`,
-      empty: 'Noch keine Projekte mit diesem Schlagwort.',
-    },
-    search: {
-      heading: 'Suche',
-      metaDescription: 'Projekte und Seiten durchsuchen',
+    blogIndex: {
+      heading: 'Blogs',
+      metaDescription: 'Hier poste ich meine Blogs',
+      description:
+        'Hier poste ich meine Blogs zu verschiedenen Themen rund ums Programmieren. Vielleicht findest du etwas, das dich interessiert. ',
+      recentHeading: 'Kürzlich hinzugefügt',
+      recentEmpty: 'Keine kürzlich hinzugefügten Blogs gefunden.',
+      allHeading: 'Alle Blogs',
+      allEmpty: 'Keine Blogs gefunden.',
     },
   },
 };
@@ -258,7 +263,10 @@ export function resolveLocale(locale: string | undefined): Locale {
  * Expand localized content down to a single value using an explicit locale,
  * falling back to the default language and finally the first available entry.
  */
-export function resolveLocalizedValue<T>(value: LocalizedValue<T> | undefined, locale: Locale): T | undefined {
+export function resolveLocalizedValue<T>(
+  value: LocalizedValue<T> | undefined,
+  locale: Locale,
+): T | undefined {
   if (value === undefined || value === null) {
     return undefined;
   }

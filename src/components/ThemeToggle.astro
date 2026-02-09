@@ -12,6 +12,7 @@ const className = props.class ?? '';
 const dictionary = getDictionary(props.locale);
 const storageKey = THEME_STORAGE_KEY;
 ---
+
 <button
   type="button"
   class={`flex h-10 w-10 items-center justify-center rounded border border-slate-300 text-slate-600 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-white dark:focus-visible:ring-slate-500 ${className}`.trim()}
@@ -34,7 +35,7 @@ const storageKey = THEME_STORAGE_KEY;
       stroke-linecap="round"
       stroke-linejoin="round"
       d="M10 3.5v-2m0 17v-2m6.5-6.5h2m-17 0h2m11.01-4.51l1.42-1.42m-12.02 12.02l1.42-1.42m0-9.18L4.39 4.39m12.02 12.02l-1.42-1.42M10 6.5a3.5 3.5 0 110 7 3.5 3.5 0 010-7z"
-    />
+    ></path>
   </svg>
   <svg
     data-theme-icon="dark"
@@ -48,8 +49,7 @@ const storageKey = THEME_STORAGE_KEY;
     <path
       stroke-linecap="round"
       stroke-linejoin="round"
-      d="M15.5 13.5A6.5 6.5 0 016.5 4.5 5 5 0 1015.5 13.5z"
-    />
+      d="M15.5 13.5A6.5 6.5 0 016.5 4.5 5 5 0 1015.5 13.5z"></path>
   </svg>
 </button>
 <script>
@@ -67,7 +67,8 @@ const storageKey = THEME_STORAGE_KEY;
       return;
     }
 
-    const storageKey = doc.dataset.themeStorage || buttons[0].dataset.storageKey || 'preferred-theme';
+    const storageKey =
+      doc.dataset.themeStorage || buttons[0].dataset.storageKey || 'preferred-theme';
 
     const setIconState = (button: HTMLButtonElement, theme: Theme) => {
       const lightIcon = button.querySelector('[data-theme-icon="light"]');
@@ -84,7 +85,7 @@ const storageKey = THEME_STORAGE_KEY;
         if (!(node instanceof HTMLImageElement)) return;
         const lightSrc = node.dataset.themeSrcLight;
         const darkSrc = node.dataset.themeSrcDark;
-        const next = theme === 'dark' ? darkSrc ?? lightSrc : lightSrc ?? darkSrc;
+        const next = theme === 'dark' ? (darkSrc ?? lightSrc) : (lightSrc ?? darkSrc);
         if (next && node.getAttribute('src') !== next) {
           node.setAttribute('src', next);
         }
@@ -114,7 +115,7 @@ const storageKey = THEME_STORAGE_KEY;
         if (stored === 'light' || stored === 'dark') {
           return stored;
         }
-      } catch (err) {
+      } catch {
         // Storage might be unavailable (e.g. private mode)
       }
       return null;
@@ -124,7 +125,7 @@ const storageKey = THEME_STORAGE_KEY;
       if (!storageKey) return;
       try {
         localStorage.setItem(storageKey, theme);
-      } catch (err) {
+      } catch {
         // Safe to ignore; persistence is best-effort
       }
     };
@@ -133,7 +134,8 @@ const storageKey = THEME_STORAGE_KEY;
       if (doc.dataset.theme === 'light' || doc.dataset.theme === 'dark') {
         return doc.dataset.theme;
       }
-      return typeof window !== 'undefined' && typeof window.matchMedia === 'function' &&
+      return typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
         window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
         : 'light';

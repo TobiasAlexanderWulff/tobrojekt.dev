@@ -2,14 +2,17 @@
 import Base from "~/layouts/Base.astro";
 import TagList from "~/components/TagList.astro";
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { getLatestCommitDate, formatYMD } from "~/lib/github";
-import { resolveProjectLink } from "~/lib/links";
-import type { ProjectLinkInput, ResolvedProjectLink } from "~/lib/links";
-import { getDictionary, resolveLocale, resolveLocalizedValue } from "~/lib/i18n";
+import { formatYMD } from "~/lib/github";
+import { resolveBlogLink } from "~/lib/links";
+import type { BlogLinkInput, ResolvedBlogLink } from "~/lib/links";
+import {
+  getDictionary,
+  resolveLocale,
+  resolveLocalizedValue,
+} from "~/lib/i18n";
 
-type ProjectEntry = CollectionEntry<'projects'>;
-type ProjectStatus = 'planned' | 'active' | 'completed' | 'archived';
-type ProjectImage = {
+type BlogEntry = CollectionEntry<'blogs'>;
+type BlogImage = {
   src: string;
   alt: string;
   width?: number;
@@ -26,13 +29,13 @@ type TocHeading = {
 };
 
 export async function getStaticPaths() {
-  const entries: ProjectEntry[] = await getCollection('projects');
+  const entries: BlogEntry[] = await getCollection('blogs');
   return entries
-    .filter((e: ProjectEntry) => e.data.visibility !== 'private')
-    .map((entry: ProjectEntry) => ({ params: { slug: entry.slug }, props: { entry } }));
+    .filter((e: BlogEntry) => e.data.visibility !== 'private')
+    .map((entry: BlogEntry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
-const { entry } = Astro.props as { entry: ProjectEntry };
+const { entry } = Astro.props as { entry: BlogEntry };
 const { Content, headings } = await entry.render();
 
 const locale = resolveLocale(Astro.currentLocale);
@@ -42,90 +45,39 @@ const detailsTitle = locale === 'de' ? 'Überblick' : 'Overview';
 const linksTitle = locale === 'de' ? 'Links' : 'Links';
 const localizedTitle = resolveLocalizedValue(entry.data.title, locale) ?? '';
 const localizedSummary = resolveLocalizedValue(entry.data.summary, locale) ?? '';
-const status = entry.data.status as ProjectStatus | undefined;
-const statusLabel = status
-  ? dictionary.projectDetail.statusLabels[status] ?? status
-  : null;
-const statusToneByValue: Record<ProjectStatus, string> = {
-  planned:
-    'border-amber-300/70 bg-amber-100/80 text-amber-900 dark:border-amber-700/70 dark:bg-amber-950/40 dark:text-amber-200',
-  active:
-    'border-emerald-300/70 bg-emerald-100/80 text-emerald-900 dark:border-emerald-700/70 dark:bg-emerald-950/40 dark:text-emerald-200',
-  completed:
-    'border-blue-300/70 bg-blue-100/80 text-blue-900 dark:border-blue-700/70 dark:bg-blue-950/40 dark:text-blue-200',
-  archived:
-    'border-slate-300/70 bg-slate-100/80 text-slate-800 dark:border-slate-600/70 dark:bg-slate-800/70 dark:text-slate-200',
-};
-const startedLabel = entry.data.dates?.started
-  ? dictionary.projectDetail.started
-  : dictionary.projectDetail.created;
-const startedValue = entry.data.dates?.started ?? entry.data.dates?.created ?? null;
-const displayStarted = startedValue ? formatYMD(startedValue) : null;
-const completedValue = entry.data.dates?.completed ?? null;
-const displayCompleted = completedValue ? formatYMD(completedValue) : null;
 
 const pageTitle = `${localizedTitle} – ${dictionary.site.name}`;
 const pageDescription = localizedSummary;
-
-// Prefer external GitHub updated date when configured
-let externalUpdated: string | null = null;
-const gh = entry.data.external?.github as { repo?: string; branch?: string } | undefined;
-if (gh?.repo) {
-  externalUpdated = await getLatestCommitDate(gh.repo, gh.branch ?? 'main');
-}
-const updatedDate = externalUpdated ?? entry.data.dates?.updated;
-const displayUpdated = updatedDate ? formatYMD(updatedDate) : null;
-
-// Prefer an inline playable demo when available
-const demoLink = entry.data.links?.find((l: ProjectLinkInput) => l.rel === 'demo');
-let inlineDemoUrl: string | null = null;
-if (demoLink?.url) {
-  try {
-    const parsedDemoUrl = new URL(demoLink.url);
-    if (parsedDemoUrl.protocol === 'https:') {
-      inlineDemoUrl = parsedDemoUrl.toString();
-    }
-  } catch {
-    inlineDemoUrl = null;
-  }
-}
-const sc = entry.data.media?.social_card;
-const aspectPadding = sc?.width && sc?.height ? `${(sc.height / sc.width) * 100}%` : '56.25%';
-const resolvedLinks: ResolvedProjectLink[] = (entry.data.links ?? []).map((link: ProjectLinkInput) =>
-  resolveProjectLink(link, dictionary),
+const resolvedLinks: ResolvedBlogLink[] = (entry.data.links ?? []).map((link: BlogLinkInput) =>
+  resolveBlogLink(link, dictionary),
 );
-const primaryActionOrder: Array<ResolvedProjectLink['rel']> = ['demo', 'source', 'github'];
+const primaryActionOrder: Array<ResolvedBlogLink['rel']> = ['demo', 'docs', 'source', 'github'];
 const prioritizedPrimaryAction = primaryActionOrder
-  .map((rel) => resolvedLinks.find((link: ResolvedProjectLink) => link.rel === rel))
-  .find((link): link is ResolvedProjectLink => Boolean(link));
+  .map((rel) => resolvedLinks.find((link: ResolvedBlogLink) => link.rel === rel))
+  .find((link): link is ResolvedBlogLink => Boolean(link));
 const primaryActions = prioritizedPrimaryAction
   ? [prioritizedPrimaryAction]
   : resolvedLinks.length > 0
     ? [resolvedLinks[0]]
     : [];
 const secondaryActions = resolvedLinks.filter(
-  (link: ResolvedProjectLink) => !primaryActions.includes(link),
+  (link: ResolvedBlogLink) => !primaryActions.includes(link),
 );
 
+const displayCreated = entry.data.dates?.created ? formatYMD(entry.data.dates.created) : null;
+const displayUpdated = entry.data.dates?.updated ? formatYMD(entry.data.dates.updated) : null;
 const headerMeta: HeaderMetaItem[] = [];
-if (displayStarted) {
-  headerMeta.push({ label: startedLabel, value: displayStarted });
+if (displayCreated) {
+  headerMeta.push({ label: dictionary.projectDetail.created, value: displayCreated });
 }
-if (displayCompleted) {
-  headerMeta.push({ label: dictionary.projectDetail.completed, value: displayCompleted });
-}
-if (!displayCompleted && displayUpdated) {
+if (displayUpdated && displayUpdated !== displayCreated) {
   headerMeta.push({ label: dictionary.projectDetail.updated, value: displayUpdated });
 }
-
-const sidebarFacts: HeaderMetaItem[] = statusLabel
-  ? [{ label: dictionary.projectDetail.status, value: statusLabel }, ...headerMeta]
-  : headerMeta;
 const tocHeadings: TocHeading[] = (headings ?? []).filter(
   (heading: TocHeading) => (heading.depth === 2 || heading.depth === 3) && Boolean(heading.slug),
 );
 
-const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
+const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
   ? entry.data.media.images
   : [];
 ---
@@ -134,26 +86,12 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
     <header class="mb-8">
       <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm dark:border-slate-800 dark:from-slate-900/80 dark:to-slate-950/70 sm:p-8">
         <div class="flex flex-col gap-5">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <h1 class="max-w-4xl text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">
-              {localizedTitle}
-            </h1>
-            {statusLabel && status ? (
-              <span
-                class:list={[
-                  'inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider',
-                  statusToneByValue[status],
-                ]}
-              >
-                {statusLabel}
-              </span>
-            ) : null}
-          </div>
-
+          <h1 class="max-w-4xl text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">
+            {localizedTitle}
+          </h1>
           <p class="max-w-4xl text-lg leading-relaxed text-slate-700 dark:text-slate-300">
             {localizedSummary}
           </p>
-
           {(headerMeta.length > 0 || primaryActions.length > 0 || secondaryActions.length > 0 || entry.data.tags?.length) ? (
             <div class="border-t border-slate-200/80 pt-4 dark:border-slate-700/70">
               <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -167,10 +105,9 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
                     ))}
                   </dl>
                 ) : null}
-
                 {(primaryActions.length > 0 || secondaryActions.length > 0) ? (
                   <div class="flex flex-wrap gap-2">
-                    {primaryActions.map((link: ResolvedProjectLink) => (
+                    {primaryActions.map((link: ResolvedBlogLink) => (
                       <a
                         href={link.href}
                         rel="noopener noreferrer"
@@ -193,7 +130,7 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
                         <span>{link.label}</span>
                       </a>
                     ))}
-                    {secondaryActions.map((link: ResolvedProjectLink) => (
+                    {secondaryActions.map((link: ResolvedBlogLink) => (
                       <a
                         href={link.href}
                         rel="noopener noreferrer"
@@ -225,34 +162,7 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
         </div>
       </div>
 
-      {inlineDemoUrl ? (
-        <section class="mt-4 max-w-4xl">
-          <div class="rounded border border-slate-200 overflow-hidden dark:border-slate-700">
-            <div class="relative w-full" style={`padding-top: ${aspectPadding}`}>
-              <iframe
-                src={inlineDemoUrl}
-                title={`${localizedTitle} demo`}
-                loading="lazy"
-                allow="autoplay; fullscreen; clipboard-write; gamepad"
-                allowfullscreen
-                referrerpolicy="strict-origin-when-cross-origin"
-                class="absolute inset-0 w-full h-full"
-              ></iframe>
-            </div>
-            <div class="px-3 py-2 text-xs text-slate-600 bg-slate-50 border-t border-slate-200 dark:text-slate-400 dark:bg-slate-800 dark:border-slate-700">
-              {dictionary.projectDetail.inlineDemoFallback}
-              <a
-                href={demoLink?.url ?? inlineDemoUrl}
-                class="ml-1 text-blue-700 hover:underline dark:text-blue-400"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {demoLink?.label ?? dictionary.projectDetail.openDemo}
-              </a>
-            </div>
-          </div>
-        </section>
-      ) : entry.data.media?.social_card?.src ? (
+      {entry.data.media?.social_card?.src ? (
         <figure class="mt-4 max-w-4xl mx-auto inline-flex">
           <img
             src={entry.data.media.social_card.src}
@@ -275,7 +185,7 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
         {galleryImages.length > 0 ? (
           <section class="mt-8">
             <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {galleryImages.map((img: ProjectImage, index: number) => (
+              {galleryImages.map((img: BlogImage, index: number) => (
                 <li class="border rounded overflow-hidden border-slate-200 dark:border-slate-700">
                   <a
                     href={img.src}
@@ -303,69 +213,6 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
                 </li>
               ))}
             </ul>
-          </section>
-        ) : null}
-      </div>
-      {(tocHeadings.length > 0 || sidebarFacts.length > 0 || resolvedLinks.length > 0) ? (
-        <aside class="content-aside">
-          {tocHeadings.length > 0 ? (
-            <section class="surface-card">
-              <h2 class="rail-title">{tocTitle}</h2>
-              <nav aria-label={tocTitle}>
-                <ul class="toc-list">
-                  {tocHeadings.map((heading: TocHeading) => (
-                    <li>
-                      <a
-                        href={`#${heading.slug}`}
-                        class="toc-link"
-                        data-toc-link
-                        data-depth={String(heading.depth)}
-                      >
-                        {heading.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </section>
-          ) : null}
-          {sidebarFacts.length > 0 ? (
-            <section class="surface-card">
-              <h2 class="rail-title">{detailsTitle}</h2>
-              <dl class="meta-list">
-                {sidebarFacts.map((item) => (
-                  <div class="meta-row">
-                    <dt class="meta-key">{item.label}</dt>
-                    <dd class="meta-value">{item.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          ) : null}
-          {resolvedLinks.length > 0 ? (
-            <section class="surface-card">
-              <h2 class="rail-title">{linksTitle}</h2>
-              <ul class="toc-list">
-                {resolvedLinks.map((link: ResolvedProjectLink) => (
-                  <li>
-                    <a
-                      href={link.href}
-                      class="toc-link"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-        </aside>
-      ) : null}
-    </div>
-    {galleryImages.length > 0 ? (
-      <>
         <dialog
           data-gallery-dialog
           class="gallery-lightbox"
@@ -990,7 +837,66 @@ const galleryImages: ProjectImage[] = Array.isArray(entry.data.media?.images)
             }
           }
         </style>
-      </>
-    ) : null}
+          </section>
+        ) : null}
+      </div>
+      {(tocHeadings.length > 0 || headerMeta.length > 0 || resolvedLinks.length > 0) ? (
+        <aside class="content-aside">
+          {tocHeadings.length > 0 ? (
+            <section class="surface-card">
+              <h2 class="rail-title">{tocTitle}</h2>
+              <nav aria-label={tocTitle}>
+                <ul class="toc-list">
+                  {tocHeadings.map((heading: TocHeading) => (
+                    <li>
+                      <a
+                        href={`#${heading.slug}`}
+                        class="toc-link"
+                        data-toc-link
+                        data-depth={String(heading.depth)}
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </section>
+          ) : null}
+          {headerMeta.length > 0 ? (
+            <section class="surface-card">
+              <h2 class="rail-title">{detailsTitle}</h2>
+              <dl class="meta-list">
+                {headerMeta.map((item) => (
+                  <div class="meta-row">
+                    <dt class="meta-key">{item.label}</dt>
+                    <dd class="meta-value">{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
+          {resolvedLinks.length > 0 ? (
+            <section class="surface-card">
+              <h2 class="rail-title">{linksTitle}</h2>
+              <ul class="toc-list">
+                {resolvedLinks.map((link: ResolvedBlogLink) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      class="toc-link"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </aside>
+      ) : null}
+    </div>
   </article>
 </Base>

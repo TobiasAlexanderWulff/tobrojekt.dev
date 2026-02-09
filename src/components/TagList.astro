@@ -1,0 +1,49 @@
+---
+type Props = {
+  tags?: string[];
+  max?: number;
+  className?: string;
+};
+
+const props = Astro.props as Props;
+const tags = Array.isArray(props.tags)
+  ? props.tags.filter((tag) => tag && tag.trim().length > 0)
+  : [];
+const max = typeof props.max === 'number' ? props.max : 6;
+const visibleTags = tags.slice(0, max);
+const hiddenTags = tags.slice(max);
+const remainingCount = tags.length - visibleTags.length;
+---
+
+{
+  visibleTags.length > 0 ? (
+    <div class={`flex flex-wrap items-center gap-2 ${props.className ?? ''}`}>
+      {visibleTags.map((tag) => (
+        <span class="rounded-full border border-slate-200/70 bg-slate-100/70 px-2.5 py-1 text-[11px] font-medium tracking-wide text-slate-600 dark:border-slate-700/80 dark:bg-slate-800/55 dark:text-slate-300">
+          {tag}
+        </span>
+      ))}
+      {remainingCount > 0 ? (
+        <>
+          <button
+            type="button"
+            aria-expanded="false"
+            class="rounded-full border border-slate-300/80 bg-slate-200/70 px-2.5 py-1 text-[11px] font-medium text-slate-600 transition hover:border-slate-400 hover:bg-slate-200 dark:border-slate-600/80 dark:bg-slate-700/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700"
+            onclick="this.setAttribute('aria-expanded','true'); this.setAttribute('hidden',''); let next=this.nextElementSibling; while(next && next.dataset.tagHidden === 'true'){ next.hidden=false; next=next.nextElementSibling; }"
+          >
+            +{remainingCount}
+          </button>
+          {hiddenTags.map((tag) => (
+            <span
+              data-tag-hidden="true"
+              hidden
+              class="rounded-full border border-slate-200/70 bg-slate-100/70 px-2.5 py-1 text-[11px] font-medium tracking-wide text-slate-600 dark:border-slate-700/80 dark:bg-slate-800/55 dark:text-slate-300"
+            >
+              {tag}
+            </span>
+          ))}
+        </>
+      ) : null}
+    </div>
+  ) : null
+}

@@ -11,9 +11,5 @@
       "~/*": ["src/*"]
     }
   },
-  "include": [
-    "src",
-    "astro.config.mjs",
-    "package.json"
-  ]
+  "include": ["src", "astro.config.mjs", "package.json"]
 }
