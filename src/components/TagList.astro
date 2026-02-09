@@ -16,12 +16,12 @@ const remainingCount = tags.length - visibleTags.length;
   visibleTags.length > 0 ? (
     <div class={`flex flex-wrap gap-2 ${props.className ?? ''}`}>
       {visibleTags.map((tag) => (
-        <span class="rounded bg-slate-100 px-2 py-1 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+        <span class="rounded-full border border-slate-200/70 bg-slate-100/70 px-2.5 py-1 text-[11px] font-medium tracking-wide text-slate-600 dark:border-slate-700/80 dark:bg-slate-800/55 dark:text-slate-300">
           {tag}
         </span>
       ))}
       {remainingCount > 0 ? (
-        <span class="rounded bg-slate-200 px-2 py-1 text-xs text-slate-700 dark:bg-slate-700 dark:text-slate-100">
+        <span class="rounded-full border border-slate-300/80 bg-slate-200/70 px-2.5 py-1 text-[11px] font-medium text-slate-600 dark:border-slate-600/80 dark:bg-slate-700/70 dark:text-slate-200">
           +{remainingCount}
         </span>
       ) : null}
