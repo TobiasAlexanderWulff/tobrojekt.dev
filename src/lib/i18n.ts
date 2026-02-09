@@ -28,7 +28,7 @@ export type Dictionary = {
   nav: {
     home: string;
     projects: string;
-    blog: string;
+    blogs: string;
     search: string;
   };
   footer: {
@@ -38,14 +38,17 @@ export type Dictionary = {
   homepage: {
     heroTitle: string;
     heroIntro: string;
-    featuredHeading: string;
-    featuredEmpty: string;
-    recentHeading: string;
-    recentEmpty: string;
+    featuredProjectsHeading: string;
+    featuredProjectsEmpty: string;
   };
   projectsIndex: {
     heading: string;
     metaDescription: string;
+    description: string;
+    recentHeading: string;
+    recentEmpty: string;
+    allHeading: string;
+    allEmpty: string;
   };
   projectDetail: {
     status: string;
@@ -90,7 +93,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     nav: {
       home: 'Home',
       projects: 'Projects',
-      blog: 'Blogs',
+      blogs: 'Blogs',
       search: 'Search',
     },
     footer: {
@@ -108,14 +111,17 @@ const dictionaries: Record<Locale, Dictionary> = {
       heroTitle: 'Hey, I am Tobias',
       heroIntro:
         `I enjoy developing software, especially when data and machine learning are involved. I love the challenge of understanding and mastering complex topics.\n\nOn this page, I collect my projects and experiments. Feel free to take a look around, it's (mostly) tidy.`,
-      featuredHeading: 'Featured Projects',
-      featuredEmpty: 'No featured projects yet.',
-      recentHeading: 'Recently Added',
-      recentEmpty: 'No recent projects yet.',
+      featuredProjectsHeading: 'Featured Projects',
+      featuredProjectsEmpty: 'No featured projects yet.',
     },
     projectsIndex: {
       heading: 'Projects',
       metaDescription: 'All public projects',
+      description: 'Here you can browse all my public projects. Feel free to look around!',
+      recentHeading: 'Recently Added',
+      recentEmpty: 'No recent projects found.',
+      allHeading: 'All projects',
+      allEmpty: 'No projects found.',
     },
     projectDetail: {
       status: 'Status',
@@ -162,7 +168,7 @@ const dictionaries: Record<Locale, Dictionary> = {
     nav: {
       home: 'Start',
       projects: 'Projekte',
-      blog: 'Blogs',
+      blogs: 'Blogs',
       search: 'Suche',
     },
     footer: {
@@ -180,14 +186,17 @@ const dictionaries: Record<Locale, Dictionary> = {
       heroTitle: 'Hey, ich bin Tobias',
       heroIntro:
         'Ich entwickle gerne Software, besonders wenn Daten und Machine Learning dabei eine Rolle spielen. Ich liebe die Herausforderung darin, komplexe Themen zu durchdringen und zu meistern.\n\nAuf dieser Seite sammle ich meine Projekte und Experimente. Schau dich gerne um, es ist (meistens) aufgeräumt.',
-      featuredHeading: 'Hervorgehobene Projekte',
-      featuredEmpty: 'Keine Projekte hervorgehoben.',
-      recentHeading: 'Kürzlich hinzugefügt',
-      recentEmpty: 'Noch keine neuen Projekte.',
+      featuredProjectsHeading: 'Hervorgehobene Projekte',
+      featuredProjectsEmpty: 'Keine Projekte hervorgehoben.',
     },
     projectsIndex: {
       heading: 'Projekte',
       metaDescription: 'Alle öffentlichen Projekte',
+      description: 'Hier kannst du alle meine öffentlichen Projekte finden. Schau dich gerne um!',
+      recentHeading: 'Kürzlich hinzugefügt',
+      recentEmpty: 'Keine kürzlich hinzugefügten Projekte gefunden.',
+      allHeading: 'Alle Projekte',
+      allEmpty: 'Keine Projekte gefunden.',
     },
     projectDetail: {
       status: 'Status',

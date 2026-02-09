@@ -26,21 +26,10 @@ const all = await getCollection('projects');
 const featured = all
   .filter((p) => p.data.visibility !== 'private' && p.data.featured)
   .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
-const recent = all
-  .filter((p) => p.data.visibility !== 'private')
-  .slice(0, 6);
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const featuredLocalized: LocalizedProject[] = featured.map((entry) => ({
-  entry,
-  title: resolveLocalizedValue(entry.data.title, locale) ?? '',
-  summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
-  links: (entry.data.links ?? []).map((link: ProjectLinkInput) =>
-    resolveProjectLink(link, dictionary),
-  ),
-}));
-const recentLocalized: LocalizedProject[] = recent.map((entry) => ({
   entry,
   title: resolveLocalizedValue(entry.data.title, locale) ?? '',
   summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
@@ -56,57 +45,12 @@ const recentLocalized: LocalizedProject[] = recent.map((entry) => ({
   </section>
 
   <section class="container py-6">
-    <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.featuredHeading}</h2>
+    <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.featuredProjectsHeading}</h2>
     {featuredLocalized.length === 0 ? (
-      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.featuredEmpty}</p>
+      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.featuredProjectsEmpty}</p>
     ) : (
       <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {featuredLocalized.map(({ entry, title, summary, links }) => (
-          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
-            <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
-              <h3 class="font-semibold">{title}</h3>
-              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
-            </a>
-            {links.length ? (
-              <div class="mt-2 flex items-center gap-2">
-                {links.map((link) => (
-                  <a
-                    href={link.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    aria-label={link.ariaLabel}
-                    class="inline-flex"
-                    title={link.label}
-                  >
-                    <img
-                      src={link.icon.light}
-                      alt={link.icon.alt}
-                      width="16"
-                      height="16"
-                      loading="lazy"
-                      class="w-4 h-4 rounded-sm"
-                      data-theme-image
-                      data-theme-src-light={link.icon.light}
-                      data-theme-src-dark={link.icon.dark}
-                      onerror={link.icon.onError}
-                    />
-                  </a>
-                ))}
-              </div>
-            ) : null}
-          </li>
-        ))}
-      </ul>
-    )}
-  </section>
-
-  <section class="container py-6">
-    <h2 class="text-2xl font-semibold mb-4">{dictionary.homepage.recentHeading}</h2>
-    {recentLocalized.length === 0 ? (
-      <p class="text-slate-600 dark:text-slate-400">{dictionary.homepage.recentEmpty}</p>
-    ) : (
-      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {recentLocalized.map(({ entry, title, summary, links }) => (
           <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
             <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
               <h3 class="font-semibold">{title}</h3>

@@ -19,6 +19,9 @@ type LocalizedProject = {
 };
 
 const all = await getCollection('projects');
+const recent = all
+  .filter((p) => p.data.visibility !== 'private')
+  .slice(0, 6);
 const projects = all
   .filter((p) => p.data.visibility !== 'private')
   .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
@@ -34,53 +37,109 @@ const localizedProjects: LocalizedProject[] = projects.map((entry) => ({
     resolveProjectLink(link, dictionary),
   ),
 }));
+const recentLocalized: LocalizedProject[] = recent.map((entry) => ({
+  entry,
+  title: resolveLocalizedValue(entry.data.title, locale) ?? '',
+  summary: resolveLocalizedValue(entry.data.summary, locale) ?? '',
+  links: (entry.data.links ?? []).map((link: ProjectLinkInput) =>
+    resolveProjectLink(link, dictionary),
+  ),
+}));
 ---
 <Base title={pageTitle} description={dictionary.projectsIndex.metaDescription}>
   <section class="container py-10">
     <h1 class="text-3xl font-bold mb-6">{dictionary.projectsIndex.heading}</h1>
-    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {localizedProjects.map(({ entry, title, summary, links }) => (
-        <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
-          <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
-            <h3 class="font-semibold">{title}</h3>
-            <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
-            {entry.data.tags?.length ? (
-              <div class="mt-2 flex flex-wrap gap-2">
-                {entry.data.tags.map((t: string) => (
-                  <a href={localizePath(`/tags/${t}`, locale)} class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-700 dark:bg-slate-800 dark:text-slate-200">{t}</a>
+    <p class="text-slate-700 max-w-prose dark:text-slate-300 whitespace-pre-line">{dictionary.projectsIndex.description}</p>
+    <section class="container py-6">
+      <h2 class="text-2xl font-semibold mb-4">{dictionary.projectsIndex.recentHeading}</h2>
+      {recentLocalized.length === 0 ? (
+        <p class="text-slate-600 dark:text-slate-400">{dictionary.projectsIndex.recentEmpty}</p>
+      ) : (
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {recentLocalized.map(({ entry, title, summary, links }) => (
+            <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+              <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
+                <h3 class="font-semibold">{title}</h3>
+                <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
+              </a>
+              {links.length ? (
+                <div class="mt-2 flex items-center gap-2">
+                  {links.map((link) => (
+                    <a
+                      href={link.href}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      aria-label={link.ariaLabel}
+                      class="inline-flex"
+                      title={link.label}
+                    >
+                      <img
+                        src={link.icon.light}
+                        alt={link.icon.alt}
+                        width="16"
+                        height="16"
+                        loading="lazy"
+                        class="w-4 h-4 rounded-sm"
+                        data-theme-image
+                        data-theme-src-light={link.icon.light}
+                        data-theme-src-dark={link.icon.dark}
+                        onerror={link.icon.onError}
+                      />
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+    <section class="container py-6">
+      <h2 class="text-2xl font-semibold mb-4">{dictionary.projectsIndex.allHeading}</h2>
+      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {localizedProjects.map(({ entry, title, summary, links }) => (
+          <li class="p-4 border rounded bg-white transition hover:shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+            <a href={localizePath(`/projects/${entry.slug}`, locale)} class="block">
+              <h3 class="font-semibold">{title}</h3>
+              <p class="text-slate-700 text-sm dark:text-slate-300">{summary}</p>
+              {entry.data.tags?.length ? (
+                <div class="mt-2 flex flex-wrap gap-2">
+                  {entry.data.tags.map((t: string) => (
+                    <a href={localizePath(`/tags/${t}`, locale)} class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-700 dark:bg-slate-800 dark:text-slate-200">{t}</a>
+                  ))}
+                </div>
+              ) : null}
+            </a>
+            {links.length ? (
+              <div class="mt-2 flex items-center gap-2">
+                {links.map((link) => (
+                  <a
+                    href={link.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    aria-label={link.ariaLabel}
+                    class="inline-flex"
+                    title={link.label}
+                  >
+                    <img
+                      src={link.icon.light}
+                      alt={link.icon.alt}
+                      width="16"
+                      height="16"
+                      loading="lazy"
+                      class="w-4 h-4 rounded-sm"
+                      data-theme-image
+                      data-theme-src-light={link.icon.light}
+                      data-theme-src-dark={link.icon.dark}
+                      onerror={link.icon.onError}
+                    />
+                  </a>
                 ))}
               </div>
             ) : null}
-          </a>
-          {links.length ? (
-            <div class="mt-2 flex items-center gap-2">
-              {links.map((link) => (
-                <a
-                  href={link.href}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  aria-label={link.ariaLabel}
-                  class="inline-flex"
-                  title={link.label}
-                >
-                  <img
-                    src={link.icon.light}
-                    alt={link.icon.alt}
-                    width="16"
-                    height="16"
-                    loading="lazy"
-                    class="w-4 h-4 rounded-sm"
-                    data-theme-image
-                    data-theme-src-light={link.icon.light}
-                    data-theme-src-dark={link.icon.dark}
-                    onerror={link.icon.onError}
-                  />
-                </a>
-              ))}
-            </div>
-          ) : null}
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+    </section>
   </section>
 </Base>
