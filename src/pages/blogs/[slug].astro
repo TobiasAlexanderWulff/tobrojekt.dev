@@ -51,17 +51,18 @@ const pageDescription = localizedSummary;
 const resolvedLinks: ResolvedBlogLink[] = (entry.data.links ?? []).map((link: BlogLinkInput) =>
   resolveBlogLink(link, dictionary),
 );
-const primaryActionRels = new Set(['source', 'github', 'demo', 'docs']);
-let primaryActions = resolvedLinks.filter((link: ResolvedBlogLink) =>
-  primaryActionRels.has(link.rel),
+const primaryActionOrder: Array<ResolvedBlogLink['rel']> = ['demo', 'docs', 'source', 'github'];
+const prioritizedPrimaryAction = primaryActionOrder
+  .map((rel) => resolvedLinks.find((link: ResolvedBlogLink) => link.rel === rel))
+  .find((link): link is ResolvedBlogLink => Boolean(link));
+const primaryActions = prioritizedPrimaryAction
+  ? [prioritizedPrimaryAction]
+  : resolvedLinks.length > 0
+    ? [resolvedLinks[0]]
+    : [];
+const secondaryActions = resolvedLinks.filter(
+  (link: ResolvedBlogLink) => !primaryActions.includes(link),
 );
-let secondaryActions = resolvedLinks.filter(
-  (link: ResolvedBlogLink) => !primaryActionRels.has(link.rel),
-);
-if (primaryActions.length === 0 && resolvedLinks.length > 0) {
-  primaryActions = [resolvedLinks[0]];
-  secondaryActions = resolvedLinks.slice(1);
-}
 
 const displayCreated = entry.data.dates?.created ? formatYMD(entry.data.dates.created) : null;
 const displayUpdated = entry.data.dates?.updated ? formatYMD(entry.data.dates.updated) : null;
@@ -112,7 +113,7 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
                         rel="noopener noreferrer"
                         target="_blank"
                         title={link.label}
-                        class="inline-flex items-center gap-2 rounded-full border border-blue-600 bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:border-blue-500 hover:bg-blue-500"
+                        class="inline-flex items-center gap-2 rounded-full border border-slate-900 bg-slate-900 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:border-slate-800 hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EE7C49]/35 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900 dark:hover:border-white dark:hover:bg-white"
                       >
                         <img
                           src={link.icon.dark || link.icon.light}
@@ -121,6 +122,9 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
                           height="16"
                           loading="lazy"
                           class="h-4 w-4 rounded-sm"
+                          data-theme-image
+                          data-theme-src-light={link.icon.dark || link.icon.light}
+                          data-theme-src-dark={link.icon.light}
                           onerror={link.icon.onError}
                         />
                         <span>{link.label}</span>
@@ -132,7 +136,7 @@ const galleryImages: BlogImage[] = Array.isArray(entry.data.media?.images)
                         rel="noopener noreferrer"
                         target="_blank"
                         title={link.label}
-                        class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white"
+                        class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3.5 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EE7C49]/25 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-800/70 dark:hover:text-white"
                       >
                         <img
                           src={link.icon.light}
