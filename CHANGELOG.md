@@ -19,7 +19,7 @@ The format is inspired by Keep a Changelog. Semantic Versioning will be adopted 
   - Content Collections in `src/content/config.ts`.
   - Example MDX project at `src/content/projects/tobrojekt-dev.mdx`.
   - Tags data at `src/content/tags/`.
-  - Pages: home, projects list, project detail, tags, search.
+  - Pages: home, projects list, project detail, blogs.
 - Sitemap and robots endpoints: `src/pages/sitemap.xml.ts`, `src/pages/robots.txt.ts`.
 - Project detail page now shows tags, status, and dates.
 - Tetris project entry updated with `dates.updated` and `priority`.
@@ -29,3 +29,14 @@ The format is inspired by Keep a Changelog. Semantic Versioning will be adopted 
 - Project gallery: Renders `media.images` as a responsive grid below the content (lazy-loaded).
 - Project detail pages inline an `<iframe>` demo when a project provides a secure `links` entry with `rel: "demo"`.
 - Docs: Updated `docs/agent-templates/project-export.md` to use `media.social_card` and `media.images` with guidance on sizes and alt text.
+- Shared gallery lightbox component (`src/components/GalleryLightbox.astro`) and reuse across project/blog detail pages.
+- Content/config validation test script at `tests/validate-content.mjs` with `npm run test`.
+
+### Changed
+
+- Base layout now reads site metadata and primary navigation from `config/site.json`.
+- Sitemap date serialization now skips invalid date values instead of throwing.
+
+### Fixed
+
+- Corrected tag metadata typo `descritpion` to `description` in tag JSON files.

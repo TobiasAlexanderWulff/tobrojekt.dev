@@ -25,7 +25,8 @@ This document captures the current stack-specific implementation details that co
 
 ## Search & Metadata
 
-- The search page (`src/pages/search.astro`) is a shell around Pagefind. Assets in `/pagefind/` only exist after `npm run build`; the UI guards against missing assets during development.
+- Pagefind runs after `npm run build` and writes index assets to `dist/pagefind/`.
+- A dedicated search route is not wired yet; Pagefind indexing is in place for future integration.
 - `src/pages/sitemap.xml.ts` builds a localized sitemap at build time, merging project timestamps with optional GitHub commit dates.
 - `src/pages/robots.txt.ts` references the sitemap and allows all crawlers by default.
 - When adding new routes, update the sitemap handler if they should be indexed.
